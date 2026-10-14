@@ -1,9 +1,9 @@
 node_modules/
-src/dist/
+**/dist/
 build/
-coverage/
-test-results/
-playwright-report/
+**/coverage/
+**/test-results/
+**/playwright-report/
 .angular/cache/
 *.log
 .env*
