@@ -1,0 +1,158 @@
+<section class="score-entry" aria-labelledby="score-entry-title">
+  <div class="score-entry-heading">
+    <div>
+      <p class="eyebrow"><span class="live-dot"></span> Gift {{ game().gifts.length + 1 }}</p>
+    </div>
+    <div class="input-field contract-select">
+      <select id="contract" materializeSelect aria-label="Contract" [value]="contract()"
+        (change)="updateContract($any($event.target).value)">
+        @for (option of contractOptions; track option.value) { <option [value]="option.value">{{ option.label }}
+        </option> }
+      </select>
+      <label for="contract">Contract</label>
+    </div>
+  </div>
+
+  @if (contract() === 'rik-afrik' || contract() === 'troel') {
+  <div class="rikker-fields">
+    <fieldset class="rikker-group">
+      <legend>Kies spelers</legend>
+      <div class="rikker-player-fields">
+        <div class="input-field">
+          <select id="rikker-1" materializeSelect aria-label="Rikker 1" [value]="rikkerIds()[0]"
+            (change)="updateRikker(0, $any($event.target).value)">
+            <option value="">Kies speler</option>
+            @for (player of activePlayers(); track player.id) { <option [value]="player.id"
+              [disabled]="rikkerIds()[1] === player.id">{{ player.name }}</option> }
+          </select>
+          <label for="rikker-1">Rikker 1</label>
+        </div>
+        <div class="input-field">
+          <select id="rikker-2" materializeSelect aria-label="Rikker 2" [value]="rikkerIds()[1]"
+            (change)="updateRikker(1, $any($event.target).value)">
+            <option value="">Kies speler</option>
+            @for (player of activePlayers(); track player.id) { <option [value]="player.id"
+              [disabled]="rikkerIds()[0] === player.id">{{ player.name }}</option> }
+          </select>
+          <label for="rikker-2">Rikker 2</label>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset class="rikker-group rikker-tricks-group">
+      <legend>Aantal slagen</legend>
+      <div class="input-field">
+        <div class="tricks-slider">
+          <label for="tricks-taken">Slagen rikkers <output>{{ tricksTaken() }}</output></label>
+          <input id="tricks-taken" type="range" min="0" max="13" step="1" aria-label="Slagen rikkers"
+            [value]="tricksTaken()" (input)="updateTricks($any($event.target).value)">
+        </div>
+      </div>
+      <div class="input-field">
+        <div class="tricks-slider">
+          <label for="opponent-tricks">Slagen tegenstanders <output>{{ opponentsTricks() }}</output></label>
+          <input id="opponent-tricks" type="range" min="0" max="13" step="1" aria-label="Slagen tegenstanders"
+            [value]="opponentsTricks()" (input)="updateOpponentTricks($any($event.target).value)">
+        </div>
+      </div>
+    </fieldset>
+  </div>
+  }
+
+  @if (isSoloContract()) {
+  <div class="contract-fields">
+    <div class="input-field">
+      <select id="soloist" materializeSelect aria-label="Soloist" [value]="soloistId()"
+        (change)="updateSoloist($any($event.target).value)">
+        <option value="">Kies speler</option>
+        @for (player of activePlayers(); track player.id) { <option [value]="player.id">{{ player.name }}</option> }
+      </select>
+      <label for="soloist">Soloist</label>
+    </div>
+    <div class="input-field">
+      <select id="solo-outcome" materializeSelect aria-label="Uitkomst" [value]="successes()[0]"
+        (change)="updateSuccess(0, $any($event.target).value === 'true')">
+        <option value="true">Geslaagd</option>
+        <option value="false">Mislukt</option>
+      </select>
+      <label for="solo-outcome">Uitkomst</label>
+    </div>
+  </div>
+  }
+
+  @if (contract() === 'miserie-two') {
+  <div class="contract-fields">
+    @for (index of [0, 1]; track index) {
+    <div class="input-field">
+      <select [id]="'miserie-player-' + (index + 1)" materializeSelect
+        [attr.aria-label]="'Miserie-speler ' + (index + 1)" [value]="miseriePlayerIds()[index]"
+        (change)="updateMiseriePlayer(index === 0 ? 0 : 1, $any($event.target).value)">
+        <option value="">Kies speler</option>
+        @for (player of activePlayers(); track player.id) { <option [value]="player.id"
+          [disabled]="miseriePlayerIds()[index === 0 ? 1 : 0] === player.id">{{ player.name }}</option> }
+      </select>
+      <label [attr.for]="'miserie-player-' + (index + 1)">Miserie-speler {{ index + 1 }}</label>
+    </div>
+    <div class="input-field">
+      <select [id]="'miserie-outcome-' + (index + 1)" materializeSelect
+        [attr.aria-label]="'Uitkomst Miserie ' + (index + 1)" [value]="successes()[index]"
+        (change)="updateSuccess(index === 0 ? 0 : 1, $any($event.target).value === 'true')">
+        <option value="true">Geslaagd</option>
+        <option value="false">Mislukt</option>
+      </select>
+      <label [attr.for]="'miserie-outcome-' + (index + 1)">Uitkomst {{ index + 1 }}</label>
+    </div>
+    }
+  </div>
+  }
+
+  @if (contract() === 'manual' || contract() === 'verzaking') {
+  <div class="manual-score-list">
+    @for (player of game().players; track player.id) {
+    <label class="manual-score-row input-field" [attr.data-player-id]="player.id"
+      [class.dealer-sit-out]="game().players.length === 5 && player.id === dealerId()">
+      <span>{{ player.name }}@if (game().players.length === 5 && player.id === dealerId()) { <svg lucideToilet
+          aria-label="Zit uit als deler" title="Zit uit als deler" size="14"></svg> }</span>
+      <input type="number" step="1" [attr.aria-label]="'Punten voor ' + player.name"
+        [value]="manualChanges()[player.id] ?? 0" [disabled]="game().players.length === 5 && player.id === dealerId()"
+        (input)="updateManualChange(player.id, $any($event.target).value)">
+    </label>
+    }
+    <label class="field-label" for="manual-note">Toelichting <span>optioneel</span></label>
+    <div class="input-field">
+      <input id="manual-note" type="text" aria-label="Toelichting" [value]="manualNote()"
+        (input)="updateManualNote($any($event.target).value)">
+    </div>
+  </div>
+  }
+
+  <div class="score-preview" role="group" aria-label="Voorbeeld scorewijzigingen">
+    @for (player of game().players; track player.id) {
+    <div class="score-preview-row" [attr.data-player-id]="player.id">
+      <span>{{ player.name }}@if (game().players.length === 5 && player.id === dealerId()) { <svg lucideToilet
+          aria-label="Zit uit" title="Zit uit" size="14"></svg> }</span>
+      <strong>{{ formatChange(calculation().changes?.[player.id]) }}</strong>
+    </div>
+    }
+  </div>
+
+  @if (calculation().error) { <p class="form-message" role="status">{{ calculation().error }}</p> }
+  @if (message()) { <p class="form-message" role="alert">{{ message() }}</p> }
+  <div class="score-entry-actions">
+    @if (contract() === 'manual' || contract() === 'verzaking') {
+    @if (manualBalance() !== 0 && !imbalanceConfirmed()) {
+    <button class="btn-flat red-text text-darken-2" type="button" data-action="save-gift" (click)="saveGift()">Opslaan
+      met waarschuwing</button>
+    } @else {
+    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift opslaan</button>
+    }
+    @if (message()) { <button class="btn-flat red-text text-darken-2" type="button" data-action="confirm-imbalance"
+      (click)="confirmImbalance()">Toch handmatig opslaan</button> }
+    } @else {
+    @if (isAutomaticContract() && calculation().changes) {
+    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift opslaan</button>
+    }
+    <button class="btn-flat" type="button" data-action="manual-entry" (click)="manualEntry()">Handmatig
+      invoeren</button>
+    }
+  </div>
+</section>

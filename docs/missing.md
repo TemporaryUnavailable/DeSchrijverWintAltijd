@@ -1,0 +1,9 @@
+Still needed, in priority order
+
+1. Implement the actual scoring workflow. Currently players enter signed manual changes; there’s no contract selection, automatic Rikken scoring, result preview, or validation that manual changes balance. Those are requirements. REQUIREMENTS.md:24
+2. Complete round progress and game end. The app counts rounds but doesn’t show the expected 12/15 gifts, stop at that limit, or present a distinct final standings state. app.html:43
+3. Make corrections and undo usable and safe. A score-update method exists but isn’t connected to the table; saved round values are read-only. Any round can be deleted immediately without confirmation. app.ts:105 score-table.component.html:20
+4. Protect imports from overwriting archived cards. There’s no import preview or duplicate-import feedback. If no card is currently open and an imported backup has an ID already in the archive, saving replaces that archived card without confirmation. app.ts:253 game-repository.service.ts:44
+5. Finish player setup. Previously used names aren’t suggested. Also, blank player slots are filtered out before validation, so a five-slot setup with four names can silently create a four-player game instead of requiring every selected seat to be filled. app.ts:66
+6. Meet the stated UI dependencies. package.json has no Materialize CSS or Lucide Angular package; the app currently uses custom CSS and text glyphs. package.json
+7. Complete docs and test coverage. The README lacks npm ci, deployment/static-host guidance, camera HTTPS details, and several user workflows; its architecture note is also outdated. The suite has 10 tests, but none cover contract scoring, round correction/undo, QR import/serialization, duplicate imports, gift limits, or remembered names. README.md:18 app.spec.ts:23

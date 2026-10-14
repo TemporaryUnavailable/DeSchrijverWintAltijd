@@ -1,0 +1,50 @@
+<section class="setup-layout" aria-labelledby="setup-title">
+
+  <form class="setup-form scorecard-setup-form card-panel z-depth-1" (submit)="createGame($event)">
+    <p class="form-kicker">Gegevens</p>
+    <label class="field-label" for="game-name">Naam van de avond <span>optioneel</span></label>
+    <div class="input-field">
+      <input id="game-name" class="game-name-input" type="text" [value]="gameName()" (input)="updateName($any($event.target).value)" maxlength="36" placeholder="Bijv. Vrijdag bij Jan" autocomplete="off">
+    </div>
+
+    <div class="input-field system-select">
+      <select id="scoring-system" materializeSelect aria-label="Scoringssysteem" aria-required="true" [value]="selectedSystemId()" (change)="updateSystem($any($event.target).value)">
+        <option value="">Kies een scoringssysteem</option>
+        @for (system of systems; track system.id) {
+          <option [value]="system.id">{{ system.name }}{{ system.verification === 'unverified' ? ' (handmatig)' : '' }}</option>
+        }
+      </select>
+      <label for="scoring-system">Scoringssysteem</label>
+    </div>
+
+    <div class="players-label-row">
+      <span class="field-label">Spelers</span>
+      <span class="players-actions">
+        <span class="players-count">{{ playerDrafts().length }} spelers</span>
+        @if (playerDrafts().length < 5) {
+          <button class="btn tonal add-draft" type="button" data-action="add-seat" (click)="addSeat()"><span class="mr-1"><svg lucideUserRoundPlus aria-hidden="true" size="15"></svg></span> Speler toevoegen</button>
+        }
+      </span>
+    </div>
+    <div class="draft-list">
+      @for (draft of playerDrafts(); track $index; let index = $index) {
+        <div class="draft-player">
+          <span class="draft-number">{{ (index + 1).toString().padStart(2, '0') }}</span>
+          <div class="input-field">
+            <input type="text" [value]="draft" (input)="updatePlayer(index, $any($event.target).value)" maxlength="28" [attr.aria-label]="'Naam speler ' + (index + 1)" [placeholder]="'Speler ' + (index + 1)" [attr.list]="suggestions.length ? 'remembered-player-names' : null" autocomplete="off">
+          </div>
+          @if (playerDrafts().length > 4) {
+            <button class="remove-draft" type="button" [attr.aria-label]="'Speler ' + (index + 1) + ' veld verwijderen'" (click)="removeSeat(index)">×</button>
+          }
+        </div>
+      }
+    </div>
+    @if (suggestions.length) {
+      <datalist id="remembered-player-names">
+        @for (suggestion of suggestions; track suggestion) { <option [value]="suggestion"></option> }
+      </datalist>
+    }
+    @if (message()) { <p class="form-message" role="alert">{{ message() }}</p> }
+    <button class="btn filled waves-effect waves-light begin-button" type="submit">Scorekaart maken <span class="ml-1"><svg lucideMoveUpRight aria-hidden="true" size="15" ></svg></span></button>
+  </form>
+</section>

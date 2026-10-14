@@ -1,0 +1,19 @@
+<button class="btn-flat nav-menu-button" type="button" [attr.aria-expanded]="open()" aria-label="Navigatiemenu openen" (click)="toggleMenu()">
+  <svg lucideMenu aria-hidden="true" size="21"></svg>
+</button>
+
+<ul #sidenav id="scorekeeper-sidenav" class="sidenav side-navigation" aria-label="Hoofdnavigatie">
+  <li class="side-navigation-heading">
+    <strong>Rikken</strong>
+    <button class="btn-flat sidenav-close nav-close-button" type="button" aria-label="Menu sluiten" (click)="closeMenu()">×</button>
+  </li>
+  <li><button class="btn-flat sidenav-close side-navigation-item" type="button" data-action="nav-home" (click)="goHome()">
+    <span class="nav-item-content"><svg lucideHouse aria-hidden="true" size="19"></svg><span>Home</span></span>
+  </button></li>
+  <li><button class="btn-flat sidenav-close side-navigation-item" type="button" data-action="nav-qr" (click)="scanQr()">
+    <span class="nav-item-content"><svg lucideQrCode aria-hidden="true" size="19"></svg><span>QR-code scannen</span></span>
+  </button></li>
+  <li><button class="btn-flat sidenav-close side-navigation-item" type="button" data-action="nav-settings" (click)="openSettings()">
+    <span class="nav-item-content"><svg lucideSettings aria-hidden="true" size="19"></svg><span>Scoringsystemen</span></span>
+  </button></li>
+</ul>

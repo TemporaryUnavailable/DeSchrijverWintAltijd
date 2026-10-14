@@ -1,0 +1,8 @@
+:host { display: contents; }
+.nav-menu-button { width: 42px; height: 42px; flex: 0 0 42px; display: grid; place-items: center; padding: 0; }
+.side-navigation { width: min(320px, 84vw); padding: 18px 14px; }
+.side-navigation-heading { min-height: 46px; margin-bottom: 15px; padding: 0 8px 13px; display: flex !important; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+.nav-close-button { width: 36px; height: 36px; padding: 0; font-size: 21px; }
+.side-navigation-item { width: 100%; min-height: 48px; margin: 0 !important; padding: 0 11px; display: flex; justify-content: flex-start; text-align: left; }
+.nav-item-content { display: flex; align-items: center; gap: 13px; }
+.nav-item-content svg { flex: 0 0 19px; }

@@ -1,0 +1,11 @@
+:host { display: block; width: 100%; }
+.system-select { width: 100%; margin: 7px 0 24px; }
+.scorecard-setup-form .form-kicker { margin-bottom: 10px; }
+.scorecard-setup-form .players-actions { display: flex; align-items: center; gap: 4px; }
+.scorecard-setup-form .players-count { color: #757575; font-size: .8rem; white-space: nowrap; }
+.scorecard-setup-form .add-draft { margin: 0; padding: 0 8px; white-space: nowrap; }
+
+@media (max-width: 760px) {
+  :host .setup-layout { grid-template-columns: 1fr; gap: 28px; padding: 42px 0 56px; }
+  :host .setup-stamp { margin-top: 24px; }
+}

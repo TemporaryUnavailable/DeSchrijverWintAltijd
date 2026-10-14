@@ -1,0 +1,29 @@
+:host { display: block; width: 100%; }
+.score-entry { display: grid; gap: 18px; }
+.score-entry-heading { display: grid; grid-template-columns: 1fr minmax(180px, 260px); align-items: end; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #e0e0e0; }
+.score-entry h2 { margin: 8px 0 0; }
+.contract-select { min-width: 0; width: 100%; margin: 0; }
+.contract-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rikker-fields { display: grid; gap: 14px; }
+.rikker-group { min-width: 0; margin: 0; padding: 12px 0 0; border: 0; border-top: 1px solid #e0e0e0; }
+.rikker-group legend { padding-right: 8px; font-weight: 600; }
+.rikker-player-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rikker-player-fields > .input-field, .rikker-tricks-group > .input-field { min-width: 0; margin: 0; }
+.rikker-tricks-group { display: grid; gap: 12px; }
+.contract-fields > .input-field { min-width: 0; margin: 0; }
+.tricks-slider label { display: flex; justify-content: space-between; font-weight: 500; }
+.tricks-slider input[type="range"] { width: 100%; margin: 8px 0 0; }
+.score-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 8px; padding: 12px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
+.score-preview-row { min-width: 0; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-left: 3px solid #607d76; border-radius: 4px; background: #f3f7f5; }
+.score-preview-row span, .manual-score-row span { overflow-wrap: anywhere; color: #757575; font-size: .85rem; }
+.score-preview-row strong { color: #263c38; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+.score-preview-row small, .manual-score-row small { display: block; color: #d32f2f; font-size: .75rem; }
+.manual-score-list { display: grid; gap: 9px; }
+.manual-score-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, 160px); align-items: center; gap: 12px; }
+.manual-score-row input { height: 40px; }
+.score-entry-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+@media (max-width: 600px) {
+  .score-entry-heading { grid-template-columns: 1fr; align-items: stretch; }
+  .contract-fields { grid-template-columns: 1fr 1fr; }
+}

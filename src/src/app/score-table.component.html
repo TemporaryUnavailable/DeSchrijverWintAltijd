@@ -1,0 +1,122 @@
+@if (isV2()) {
+  <section class="gift-history" aria-label="Giften en scores">
+    <div class="table-scroll" role="region" aria-label="Giften en scores" tabindex="0">
+      <table class="score-table striped highlight centered" [class.gift-label-visible]="showGiftLabels">
+        <thead>
+          <tr>
+            <th class="round-heading" scope="col"></th>
+            @if (showGiftLabels) { <th class="gift-label-heading" scope="col">Gift</th> }
+            @for (player of v2Game().players; track player.id) { <th scope="col" class="player-heading"><span>{{ player.name }}</span></th> }
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="starting-row">
+            <th scope="row"><span class="visually-hidden"></span></th>
+            @if (showGiftLabels) { <td class="gift-label-column"></td> }
+            @for (player of v2Game().players; track player.id) { <td>100</td> }
+          </tr>
+          @for (gift of v2Game().gifts; track gift.id; let row = $index) {
+            <tr [attr.data-entry-mode]="gift.entryMode">
+              <th class="round-cell" scope="row">
+                <span class="round-index">{{ (row + 1).toString().padStart(2, '0') }}</span>
+                @if (!v2Game().legacy && showEditControls) {
+                  <button class="edit-gift" type="button" [attr.data-edit-gift]="gift.id" [attr.aria-label]="'Gift ' + (row + 1) + ' bewerken'" (click)="editGift.emit(gift.id)"><svg lucidePen aria-hidden="true" size="14"></svg></button>
+                  @if (row === v2Game().gifts.length - 1) { <button class="remove-round" type="button" [attr.data-delete-gift]="gift.id" [attr.aria-label]="'Gift ' + (row + 1) + ' verwijderen'" (click)="requestDeleteGift(gift.id)"><svg lucideX aria-hidden="true" size="14"></svg></button> }
+                }
+              </th>
+              @if (showGiftLabels) { <td class="gift-label-column">{{ giftLabel(gift) }}</td> }
+              @for (player of v2Game().players; track player.id) {
+                @let dealer = gift.dealerId === player.id;
+                @let scoreChange = gift.scoreChanges[player.id] ?? 0;
+                <td [attr.aria-label]="scoreCellLabel(player.name, scoreAfterGift(row, player.id), dealer, dealer && v2Game().players.length === 5, showScoreChanges ? scoreChange : 0)" [class.dealer-cell]="dealer" [class.dealer-sit-out]="dealer && v2Game().players.length === 5">
+                  @if (dealer) { <span class="dealer-mark">Deler</span> }
+                  @if (dealer && v2Game().players.length === 5) { <svg lucideToilet class="sit-out-icon" aria-hidden="true" size="18"></svg> }
+                  <span class="score-value">{{ scoreAfterGift(row, player.id) }}</span>
+                  @if (showScoreChanges && scoreChange !== 0) {
+                    <span class="score-change" [class.score-gain]="scoreChange > 0" [class.score-loss]="scoreChange < 0" aria-hidden="true">
+                      {{ scoreChange > 0 ? '+' : '' }}{{ scoreChange }}
+                    </span>
+                  }
+                </td>
+              }
+            </tr>
+          } @empty {
+            <tr class="empty-row"><td [attr.colspan]="v2Game().players.length + (showGiftLabels ? 2 : 1)">Nog geen gifts.</td></tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row"><span class="total-caption">Totaal</span></th>
+            @if (showGiftLabels) { <td class="gift-label-column"></td> }
+            @for (player of v2Game().players; track player.id) {
+              <td [class.total-leader]="leaders.includes(player.id)">
+                <strong>{{ totals[player.id] }}</strong>
+              </td>
+            }
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    @if (isComplete()) {
+      <section class="final-standings" aria-label="Eindstand">
+        <h6>Eindstand</h6>
+        @for (standing of finalStandings(); track standing.playerId) {
+          <p class="standing-row"><span>{{ standing.rank }}. {{ standing.playerName }}</span><strong>: {{ standing.total }}</strong></p>
+        }
+      </section>
+    }
+  </section>
+} @else {
+<div class="table-scroll" role="region" aria-label="Rondes en scores" tabindex="0">
+  <table class="score-table striped highlight centered">
+    <thead>
+      <tr>
+        <th class="round-heading" scope="col"></th>
+        @for (player of legacyGame().players; track player.id) {
+          <th scope="col" class="player-heading"><span>{{ player.name }}</span></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="starting-row">
+        <th scope="row"><span class="visually-hidden"></span></th>
+        @for (player of legacyGame().players; track player.id) { <td>100</td> }
+      </tr>
+      @for (round of legacyGame().rounds; track round.id; let row = $index) {
+        <tr>
+          <th class="round-cell" scope="row">
+            <span class="round-index">{{ (row + 1).toString().padStart(2, '0') }}</span>
+            @if (showEditControls) { <button class="remove-round" type="button" [attr.aria-label]="'Ronde ' + (row + 1) + ' verwijderen'" title="Ronde verwijderen" (click)="removeRound.emit(round.id)"><svg lucideX aria-hidden="true" size="14"></svg></button> }
+          </th>
+          @for (player of legacyGame().players; track player.id) {
+            @let dealer = isDealer(round, row, player.id);
+            <td [attr.aria-label]="scoreCellLabel(player.name, scoreAfterRound(row, player.id), dealer, dealer && legacyGame().players.length === 5)" [class.dealer-cell]="dealer" [class.dealer-sit-out]="dealer && legacyGame().players.length === 5">
+              @if (dealer) { <span class="dealer-mark">Deler</span> }
+              @if (dealer && legacyGame().players.length === 5) { <svg lucideToilet class="sit-out-icon" aria-hidden="true" size="18"></svg> }
+              <span class="score-value">{{ scoreAfterRound(row, player.id) }}</span>
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr class="empty-row">
+          <td [attr.colspan]="legacyGame().players.length + 1">
+            <span class="empty-mark z-depth-1 pl-6 pt-3 pr-6 pb-3" aria-hidden="true">✳</span>
+            <span>Nog geen rondes.</span>
+            <button class="btn-flat teal-text" type="button" (click)="startRound.emit()">Start de eerste ronde <span aria-hidden="true">→</span></button>
+          </td>
+        </tr>
+      }
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row"><span class="total-caption">Totaal</span></th>
+        @for (player of legacyGame().players; track player.id) {
+          <td [class.total-leader]="leaders.includes(player.id)">
+            <strong>{{ totals[player.id] }}</strong>
+          </td>
+        }
+      </tr>
+    </tfoot>
+  </table>
+</div>
+}

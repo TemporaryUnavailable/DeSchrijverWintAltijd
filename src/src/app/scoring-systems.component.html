@@ -1,0 +1,81 @@
+<section class="scoring-systems" aria-labelledby="scoring-systems-title">
+  <div class="scoring-systems-heading">
+    <div>
+      <p class="eyebrow"><span class="live-dot"></span> Beheer voor nieuwe scorekaarten</p>
+      <h4 id="scoring-systems-title">Scoringssystemen</h4>
+    </div>
+    @if (!editorOpen()) {
+      <button class="btn waves-effect waves-light" type="button" data-action="new-system" (click)="startCreate()">Nieuw systeem</button>
+    }
+  </div>
+
+  <div class="system-list" aria-label="Beschikbare scoringssystemen">
+    @for (system of systems(); track system.id) {
+      <article class="system-card card z-depth-1" [attr.data-system-id]="system.id">
+        <div class="card-content">
+          <div class="system-card-heading">
+            <h5>{{ system.name }}</h5>
+            <span class="source-verification chip" [class.verified]="system.verification === 'confirmed'" [class.unverified]="system.verification === 'unverified'">
+              {{ system.verification === 'confirmed' ? 'Bevestigd' : 'Nog niet bevestigd' }}
+            </span>
+          </div>
+        </div>
+        <div class="card-action system-card-actions">
+          @if (system.kind === 'source-preset' && system.verification === 'unverified') {
+            <button class="btn-flat teal-text" type="button" data-action="confirm-source" (click)="confirmSource(system)">Bevestig bronwaarden</button>
+          }
+          <button class="btn-flat" type="button" [attr.data-edit-system]="system.id" (click)="startEdit(system)">Bewerken</button>
+          <button class="btn-flat red-text text-darken-2 system-delete" type="button" [attr.data-delete-system]="system.id" (click)="removeSystem(system)">Verwijderen</button>
+        </div>
+      </article>
+    }
+  </div>
+
+  @if (message()) { <p class="form-message" role="alert">{{ message() }}</p> }
+
+  @if (editorOpen()) {
+    <form class="system-editor card-panel z-depth-1" (submit)="saveSystem($event)">
+      <div class="system-editor-heading">
+        <h2>{{ editingId() ? 'Scoringssysteem bewerken' : 'Nieuw scoringssysteem' }}</h2>
+        <button class="btn-flat" type="button" (click)="cancelEdit()">Annuleren</button>
+      </div>
+
+      <label class="field-label" for="scoring-system-name">Naam</label>
+      <div class="input-field">
+        <input id="scoring-system-name" class="system-name-input" type="text" aria-label="Naam scoringssysteem" [value]="draftName()" (input)="updateName($any($event.target).value)" maxlength="48" autocomplete="off">
+      </div>
+
+      <fieldset>
+        <legend>Rik/Afrik per aantal slagen van de rikkers</legend>
+        <div class="rule-editor-grid rik-afrik-grid">
+          @for (value of draftValues().rikAfrik; track $index; let index = $index) {
+            <label class="rule-field input-field">
+              <span>{{ 13 - index }}</span>
+              <input type="number" step="1" [value]="value" [attr.aria-label]="'Rik/Afrik bij ' + (13 - index) + ' slagen'" (input)="updateRikAfrik(index, $any($event.target).value)">
+            </label>
+          }
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Solo-contracten: waarde voor de soloist</legend>
+        <div class="rule-editor-grid solo-contract-grid">
+          @for (contract of soloContracts; track contract.key) {
+            <label class="rule-field input-field">
+              <span>{{ contract.label }}</span>
+              <input type="number" min="3" step="1" [value]="draftValues().soloContracts[contract.key]" [attr.aria-label]="contract.label" (input)="updateSoloContract(contract.key, $any($event.target).value)">
+            </label>
+          }
+          <label class="rule-field input-field">
+            <span>Twee-speler-Miserie</span>
+            <input type="number" min="1" step="1" [value]="draftValues().twoPlayerMiserie" aria-label="Twee-speler-Miserie" (input)="updateTwoPlayerMiserie($any($event.target).value)">
+          </label>
+        </div>
+      </fieldset>
+
+      <p class="fixed-rule-note">Troel verdubbelt Rik/Afrik. Verzaking blijft handmatige invoer; de overige rolverdelingen staan vast.</p>
+      @if (message()) { <p class="form-message" role="alert">{{ message() }}</p> }
+      <button class="btn waves-effect waves-light" type="submit" data-action="save-system">Opslaan</button>
+    </form>
+  }
+</section>

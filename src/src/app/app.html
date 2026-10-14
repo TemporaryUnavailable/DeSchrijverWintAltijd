@@ -1,0 +1,245 @@
+<div class="app-shell">
+  <header class="topbar white z-depth-2">
+    <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" />
+    <a class="brand" href="/" aria-label="Rikken scorekaart, naar overzicht" (click)="showOverview()">
+      <span class="brand-mark teal white-text">R</span>
+      <span class="brand-name">Rikken <span>scorekaart</span></span>
+    </a>
+
+    @if (game()) {
+    <nav class="top-actions" aria-label="Scorekaartacties">
+      <!--<button class="button button-quiet" type="button" (click)="showOverview()">Overzicht</button>-->
+      <button class="btn-flat" type="button" aria-label="Scorekaart delen" title="Scorekaart delen"
+        (click)="openTransfer('share')">
+        <svg lucideShare2 aria-hidden="true" size="19"></svg>
+      </button>
+      <button class="btn-flat red-text text-darken-2" type="button" data-action="delete-scorecard"
+        aria-label="Scorekaart verwijderen" title="Scorekaart verwijderen" (click)="deleteCurrentGame()">
+        <svg lucideTrash2 aria-hidden="true" size="19"></svg>
+      </button>
+      <!--<button class="button button-quiet" type="button" (click)="exportJson()">Back-up downloaden</button>-->
+      <!--<label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
+        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
+        -->
+    </nav>
+    } @else if (setupOpen()) {
+    <nav class="top-actions" aria-label="Navigatie">
+      <!--<button class="button button-quiet" type="button" (click)="showOverview()">Overzicht</button>
+        <button class="button button-quiet" type="button" (click)="openTransfer('scan')">QR-code scannen</button>
+        <label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
+        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
+      -->
+    </nav>
+    } @else {
+    <!--<nav class="top-actions" aria-label="Scorekaart overnemen">
+        <button class="button button-quiet" type="button" (click)="openTransfer('scan')">QR scannen</button>
+        <label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
+        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
+      </nav>-->
+    }
+  </header>
+
+  <main class="main-content">
+    @if (message()) { <p class="form-message" role="status">{{ message() }}</p> }
+    @if (settingsOpen()) {
+    <app-scoring-systems />
+    } @else if (game(); as currentGame) {
+    <section class="scorecard" aria-labelledby="game-title">
+      <div class="scorecard-heading">
+        <div>
+          <p class="eyebrow"><span class="live-dot"></span> Scorekaart</p>
+          <h5 id="game-title">{{ currentGame.name }}</h5>
+          <p class="save-note">Laatst bijgewerkt om {{ formatSavedAt(savedAt()) }}</p>
+        </div>
+      </div>
+
+      <div class="table-toolbar">
+        <div>
+          <span class="toolbar-note">{{ currentGame.players.length }} spelers <span aria-hidden="true">·</span></span>
+        </div>
+      </div>
+
+      @if (!isPlayable(currentGame)) { <p class="toolbar-note" role="status">Alleen historische weergave; nieuwe gifts
+        zijn niet beschikbaar.</p> }
+      <app-score-table [game]="currentGame" [totals]="totals()" [leaders]="leaders()"
+        [showGiftLabels]="giftDetailsVisible()" [showScoreChanges]="giftDetailsVisible()" [showEditControls]="tableEditMode()" (editGift)="editGift($event)"
+        (removeGift)="removeGift($event)" (undoLatestGift)="undoLatestGift()" />
+
+    </section>
+    @if (scoreEntryOpen() && entryDealerId(); as dealerId) {
+    <div class="modal-backdrop" (click)="cancelScoreEntry()">
+      <section class="transfer-modal round-modal card-panel z-depth-3" role="dialog" aria-modal="true"
+        aria-labelledby="round-title" (click)="$event.stopPropagation()">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow">Gift {{ giftCount(currentGame) + (editingGift() ? 0 : 1) }}</p>
+            <h5 id="round-title">{{ editingGift() ? 'Gift bewerken' : 'Score invoeren' }}</h5>
+          </div>
+          <button class="modal-close" type="button" aria-label="Venster sluiten" (click)="cancelScoreEntry()">×</button>
+        </div>
+        <app-score-entry [game]="currentGame" [dealerId]="editingGift()?.dealerId ?? dealerId"
+          [initialGift]="editingGift()" (saved)="saveGift($event)" />
+      </section>
+    </div>
+    }
+    } @else if (setupOpen()) {
+    <app-scorecard-setup (created)="createScorecard($event)" />
+    } @else {
+    <section class="archive-layout" aria-labelledby="archive-title">
+      <div class="archive-heading">
+        <div>
+          <h3 id="archive-title">Rik-scorekaarten<span>.</span></h3>
+          <p class="archive-intro">Open een scorekaart of maak een nieuwe.</p>
+        </div>
+      </div>
+
+      @if (sortedGames().length) {
+      <div class="archive-list collection" aria-label="Scorekaarten, nieuwste eerst">
+        @for (archivedGame of sortedGames(); track archivedGame.id) {
+        <button class="collection-item archive-entry" type="button" (click)="openGame(archivedGame)">
+          <span class="archive-entry-main">
+            <span class="archive-created">{{ formatCreatedAt(archivedGame.createdAt) }}</span>
+            <strong class="archive-title">{{ archivedGame.name }}</strong>
+            <span class="archive-participants">{{ participantNames(archivedGame) }}</span>
+            <span class="archive-participants">{{ scoringSystemLabel(archivedGame) }} · {{ manualGiftCount(archivedGame)
+              }} handmatige gifts</span>
+          </span>
+          <span class="archive-entry-meta">
+            <span>{{ giftCount(archivedGame) }} {{ giftCount(archivedGame) === 1 ? 'gift' : 'gifts' }}</span>
+            @if (!isPlayable(archivedGame)) { <span>Alleen geschiedenis</span> }
+            <span class="archive-arrow" aria-hidden="true">↗</span>
+          </span>
+        </button>
+        }
+      </div>
+      } @else {
+      <div class="archive-empty">
+        <span class="empty-mark" aria-hidden="true">
+          <svg lucideHeart size="18"></svg>
+          <svg lucideDiamond size="18"></svg>
+          <svg lucideSpade size="18"></svg>
+          <svg lucideClub size="18"></svg>
+        </span>
+        <strong>Nog geen scorekaarten</strong>
+        <span>Maak een scorekaart om een potje bij te houden.</span>
+      </div>
+      }
+    </section>
+    }
+  </main>
+
+  @if (game(); as currentGame) {
+  <footer class="scorecard-footer">
+    <div class="scorecard-footer-content">
+      <div class="valign-wrapper">
+        <button class="btn-flat teal lighten-2 white-text gift-label-toggle mr-3" type="button"
+          [attr.aria-label]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'"
+          [title]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'" (click)="toggleGiftDetails()">
+          @if (giftDetailsVisible()) { <svg lucideEyeOff aria-hidden="true" size="19"></svg> }
+          @else { <svg lucideEye aria-hidden="true" size="19"></svg> }
+        </button>
+        <button class="btn-flat teal lighten-2 white-text table-edit-toggle" type="button"
+          [attr.aria-label]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
+          [title]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
+          (click)="toggleTableEditMode()">
+          @if (tableEditMode()) { <svg lucidePencilOff aria-hidden="true" size="19"></svg> }
+          @else { <svg lucidePencil aria-hidden="true" size="19"></svg> }
+        </button>
+        @if (!scoreEntryOpen()) {
+        <div class="fixed-action-btn scorecard-fab">
+          <button class="btn-floating btn-large waves-effect waves-circle purple lighten-2 white-text z-depth-2" type="button"
+            [disabled]="!isPlayable(currentGame) || !nextDealerId()" aria-label="Gift toevoegen" title="Gift toevoegen"
+            (click)="addGift()">
+            <svg lucidePlus aria-hidden="true" size="23"></svg>
+          </button>
+        </div>
+        }
+      </div>
+    </div>
+  </footer>
+  }
+
+  @if (transferOpen()) {
+  <div class="modal-backdrop" (click)="closeTransfer()">
+    <section class="transfer-modal card-panel z-depth-3" role="dialog" aria-modal="true"
+      aria-labelledby="transfer-title" (click)="$event.stopPropagation()">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">Scorekaart overzetten</p>
+          <h2 id="transfer-title">{{ transferMode() === 'share' ? 'Scorekaart delen' : 'QR-code scannen' }}</h2>
+        </div>
+        <button class="modal-close" type="button" aria-label="Venster sluiten" (click)="closeTransfer()">×</button>
+      </div>
+      @if (transferMode() === 'share') {
+      <div class="qr-frame">
+        @if (qrImage()) { <img [src]="qrImage()" alt="QR-code met de huidige scorekaart"> }
+        @else { <span class="qr-loading">QR</span> }
+      </div>
+      <p class="modal-copy">Scan deze code met een ander apparaat om de scorekaart te importeren.</p>
+      <button class="btn-flat teal-text modal-action" type="button" (click)="openTransfer('scan')">QR-code
+        scannen <span aria-hidden="true">↗</span></button>
+      } @else {
+      <div id="qr-reader" class="qr-reader"></div>
+      <p class="modal-copy">{{ message() || 'Geef toegang tot je camera om een scorekaart te scannen.' }}</p>
+      <button class="btn waves-effect waves-light modal-action" type="button" (click)="startScanner()">Camera starten
+        <span aria-hidden="true">↗</span></button>
+      }
+      @if (message() && transferMode() === 'share') { <p class="form-message" role="status">{{ message() }}</p> }
+      <div class="modal-divider"><span>Of</span></div>
+      <button class="btn-flat modal-json" type="button" (click)="exportJson()">Back-up downloaden (JSON) <span
+          aria-hidden="true">↓</span></button>
+    </section>
+  </div>
+  }
+
+  @if (importPreview(); as preview) {
+  <div class="modal-backdrop" (click)="cancelImport()">
+    <section class="transfer-modal import-preview card-panel z-depth-3" role="dialog" aria-modal="true"
+      aria-labelledby="import-preview-title" (click)="$event.stopPropagation()">
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">Scorekaart overzetten</p>
+          <h2 id="import-preview-title">Import controleren</h2>
+        </div>
+        <button class="modal-close" type="button" aria-label="Import annuleren" (click)="cancelImport()">×</button>
+      </div>
+      <p><strong>{{ preview.game.name }}</strong></p>
+      <p>{{ participantNames(preview.game) }}</p>
+      <p>Voortgang: {{ previewProgress(preview.game) }} · volgende dealer: {{ previewNextDealer(preview.game) }}</p>
+      <ul class="import-preview-scores" aria-label="Voorbeeld totaalscores">
+        @for (player of preview.game.players; track player.id) {
+        <li><span>{{ player.name }}</span><strong>{{ previewTotals(preview.game)[player.id] }}</strong></li>
+        }
+      </ul>
+      @if (preview.collision) {
+      <p class="form-message" role="alert">Bestaat al in het archief. Importeer als kopie om beide kaarten te bewaren.
+      </p>
+      <button class="btn waves-effect waves-light modal-action" type="button" data-action="import-copy"
+        (click)="confirmImport(true)">Als kopie importeren</button>
+      } @else {
+      <button class="btn waves-effect waves-light modal-action" type="button" data-action="confirm-import"
+        (click)="confirmImport()">Scorekaart importeren</button>
+      }
+      <button class="btn-flat modal-action" type="button" data-action="cancel-import"
+        (click)="cancelImport()">Annuleren</button>
+    </section>
+  </div>
+  }
+
+  @if (message() && !game() && !setupOpen() && !transferOpen() && !importPreview()) {
+  <p class="form-message repository-message" role="status">{{ message() }}</p>
+  }
+
+  @if (!setupOpen() && !settingsOpen() && !game()) {
+  <div class="fixed-action-btn">
+    <button class="btn-floating btn-large waves-effect waves-circle purple lighten-2 white-text z-depth-2"
+      id="addNewScorecardButton"
+      type="button"
+      [disabled]="!!game() && (!isPlayable(game()!) || !nextDealerId())"
+      [attr.aria-label]="game() ? 'Gift toevoegen' : 'Nieuwe scorekaart maken'"
+      [title]="game() ? 'Gift toevoegen' : 'Nieuwe scorekaart maken'" (click)="game() ? addGift() : startNewGame()">
+      <svg lucidePlus aria-hidden="true" size="23"></svg>
+    </button>
+  </div>
+  }
+</div>

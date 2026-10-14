@@ -1,0 +1,42 @@
+:host { display: block; width: 100%; }
+
+.scoring-systems { width: 100%; padding: 56px 0 72px; }
+.scoring-systems-heading,
+.system-editor-heading,
+.system-card-heading { display: flex; align-items: center; }
+.scoring-systems-heading,
+.system-editor-heading { justify-content: space-between; gap: 20px; }
+.scoring-systems-heading { margin-bottom: 24px; padding-bottom: 22px; border-bottom: 1px solid #e0e0e0; }
+.scoring-systems h1 { margin: 12px 0 0; }
+.system-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 18px; }
+.system-card { min-width: 0; margin: 0; display: flex; flex-direction: column; }
+.system-card .card-content { flex: 1; padding: 20px; }
+.system-card-heading { justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.system-card h5 { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+.source-verification { height: auto; margin: 0; padding: 0 10px; font-size: 0.75rem; line-height: 28px; }
+.source-verification.verified { background: #e0f2f1; color: #00796b; }
+.source-verification.unverified { background: #ffebee; color: #c62828; }
+.system-card-actions { min-height: 60px; padding: 10px 14px; display: flex; align-items: center; flex-wrap: wrap; gap: 2px; }
+.system-card-actions .btn-flat { padding-inline: 10px; }
+.system-editor { margin-top: 30px; padding: 22px; }
+.system-editor-heading { margin-bottom: 20px; }
+.system-editor-heading h2 { margin: 0; }
+.system-name-input { margin: 7px 0 22px; }
+.system-editor fieldset { min-width: 0; margin: 0 0 18px; padding: 14px; border: 1px solid #e0e0e0; }
+.system-editor legend { padding: 0 6px; color: #757575; }
+.rule-editor-grid { display: grid; gap: 9px; }
+.rik-afrik-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.solo-contract-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rule-field { min-width: 0; display: grid; gap: 5px; color: #757575; font-size: .8rem; }
+.rule-field span { overflow-wrap: anywhere; }
+.rule-field input { height: 38px; padding-inline: 8px; }
+.fixed-rule-note { margin: 0 0 16px; color: #757575; font-size: 0.85rem; }
+
+@media (max-width: 680px) {
+  .scoring-systems { padding-top: 34px; }
+  .scoring-systems-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
+  .system-card-actions { align-items: flex-start; }
+  .rik-afrik-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .solo-contract-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .system-editor { padding: 16px; }
+}
