@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { afterNextRender, Component, computed, ElementRef, inject, OnDestroy, signal, viewChild } from '@angular/core';
 import { getLeaderIds } from './score-rules';
 import { GameV2, Gift } from './models/game';
 import { PersistedStateV2 } from './models/persisted-state';
@@ -15,6 +15,8 @@ import { ScoringSystemsComponent } from './scoring-systems.component';
 import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideShare2, LucideSpade, LucideTrash2 } from '@lucide/angular';
 
 type TransferMode = 'share' | 'scan';
+type Handedness = 'right' | 'left';
+const HANDEDNESS_KEY = 'rikken-handedness';
 interface ImportPreview { game: GameV2; collision: boolean; }
 
 const EMPTY_STATE: PersistedStateV2 = {
@@ -31,6 +33,9 @@ const EMPTY_STATE: PersistedStateV2 = {
   imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, LucidePlus, LucideShare2, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
 })
 export class App implements OnDestroy {
+  private readonly handednessDialog = viewChild.required<ElementRef<HTMLDialogElement>>('handednessDialog');
+  protected readonly handednessError = signal('');
+  protected readonly handedness = signal(this.loadHandedness());
   private readonly gameService = inject(GameService);
   private readonly gameRepository = inject(GameRepository);
   private readonly scoringSystems = inject(ScoringSystemService);
@@ -70,6 +75,35 @@ export class App implements OnDestroy {
   protected readonly entryDealerId = computed(() => this.editingGift()?.dealerId ?? this.nextDealerId());
 
   private scanner: import('html5-qrcode').Html5Qrcode | null = null;
+
+  constructor() {
+    afterNextRender(() => {
+      if (!this.handedness()) this.handednessDialog().nativeElement.showModal();
+    });
+  }
+
+  private loadHandedness(): Handedness | null {
+    try {
+      const value = localStorage.getItem(HANDEDNESS_KEY);
+      if (value === 'right' || value === 'left') return value;
+      if (value !== null) this.handednessError.set('De opgeslagen handvoorkeur is ongeldig. Kies opnieuw.');
+    } catch {
+      this.handednessError.set('Uw handvoorkeur kan niet worden gelezen. Browseropslag is niet beschikbaar.');
+    }
+    return null;
+  }
+
+  protected chooseHandedness(value: Handedness): void {
+    try {
+      localStorage.setItem(HANDEDNESS_KEY, value);
+    } catch {
+      this.handednessError.set('Uw handvoorkeur kon niet worden opgeslagen. Controleer de browseropslagruimte en probeer opnieuw.');
+      return;
+    }
+    this.handedness.set(value);
+    this.handednessError.set('');
+    this.handednessDialog().nativeElement.close();
+  }
 
   protected createScorecard(game: GameV2): void {
     this.setupOpen.set(false);

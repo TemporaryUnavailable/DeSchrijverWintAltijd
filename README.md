@@ -4,10 +4,12 @@ Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies 
 
 ## Spelen
 
+- Kies bij de eerste start **Rechtshandig** of **Linkshandig**. De browser bewaart je keuze; wijzigen kan via **Handvoorkeur** in het menu. Voor linkshandigen staan de zwevende knoppen links en de knoppen voor giftdetails en bewerken rechts, zonder overlap. Rechtshandigen behouden de bestaande indeling.
 - Open in **Scorekaarten** een bestaande kaart of maak een nieuwe met vier of vijf spelers. De volgorde van de spelers bepaalt de eerste dealer en de volgende dealerbeurten. Met vijf spelers deelt de dealer, maar speelt die gift niet mee.
 - Kies bij het maken een scoringssysteem. De bronpreset begint onbevestigd; zolang de waarden niet bevestigd zijn, voer je scores handmatig in. Eigen systemen wijzigen alleen de getallen. Elke kaart bewaart een eigen regelsnapshot, zodat latere systeemwijzigingen oude scores niet aanpassen.
 - Een nieuwe score begint voor iedereen op 100. Kies bij **Gift toevoegen** het contract, vul de spelers en uitslag in en controleer het voorbeeld. Bevestigde regels berekenen de score automatisch. Handmatige invoer accepteert gehele getallen en waarschuwt bij een ongebalanceerde verdeling.
 - Giftinvoer gebruikt op telefoons een compacte indeling met de scorevoorbeelden naast elkaar, zodat de gewone invoer zonder verticaal scrollen past vanaf 320 × 640. Bij een kleiner zichtbaar scherm (zoals met het toetsenbord open), grote tekst of lange namen blijft scrollen mogelijk.
+- **Handmatig invoeren** staat boven **Gift opslaan**; beide knoppen gebruiken de volledige breedte van de giftinvoer.
 - Bewerk een gift via **Bewerk**, verwijder die na bevestiging of maak de laatste gift ongedaan. Scores en dealerbeurten worden opnieuw berekend; de overgebleven gift-ID's blijven behouden. Een kaart met 12 gifts (vier spelers) of 15 gifts (vijf spelers) toont de eindstand.
 - Oude v1-kaarten blijven in het overzicht. Ze worden als handmatige, alleen-lezen geschiedenis getoond; ontbrekende spelregels worden niet achteraf afgeleid.
 - Alle tekst in de scoretabel is zwart voor de leesbaarheid; alleen de speler die een gift uitzit wordt grijs getoond.

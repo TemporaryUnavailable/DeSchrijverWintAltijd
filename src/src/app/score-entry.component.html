@@ -145,11 +145,11 @@
     @if (message()) { <button class="btn-flat red-text text-darken-2" type="button" data-action="confirm-imbalance"
       (click)="confirmImbalance()">Toch handmatig opslaan</button> }
     } @else {
+    <button class="btn-flat" type="button" data-action="manual-entry" (click)="manualEntry()">Handmatig
+      invoeren</button>
     @if (isAutomaticContract() && calculation().changes) {
     <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift opslaan</button>
     }
-    <button class="btn-flat" type="button" data-action="manual-entry" (click)="manualEntry()">Handmatig
-      invoeren</button>
     }
   </div>
 </section>

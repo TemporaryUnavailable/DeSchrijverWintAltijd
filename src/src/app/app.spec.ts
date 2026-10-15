@@ -12,11 +12,18 @@ describe('App', () => {
   const storageKey = 'rikken-scorekeeper-v1';
   const archiveKey = 'rikken-scorecards-v1';
   const stateKey = 'rikken-scorekeeper-v2';
+  const handednessKey = 'rikken-handedness';
 
   beforeEach(async () => {
+    // jsdom has no modal dialog methods; browser tests cover native focus and dismissal.
+    Object.defineProperties(HTMLDialogElement.prototype, {
+      showModal: { configurable: true, value() { this.open = true; } },
+      close: { configurable: true, value() { this.open = false; } },
+    });
     localStorage.removeItem(storageKey);
     localStorage.removeItem(archiveKey);
     localStorage.removeItem(stateKey);
+    localStorage.removeItem(handednessKey);
     await TestBed.configureTestingModule({
       imports: [App],
     }).compileComponents();
@@ -24,9 +31,60 @@ describe('App', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal');
+    Reflect.deleteProperty(HTMLDialogElement.prototype, 'close');
     localStorage.removeItem(storageKey);
     localStorage.removeItem(archiveKey);
     localStorage.removeItem(stateKey);
+    localStorage.removeItem(handednessKey);
+  });
+
+  for (const [value, label] of [['right', 'Rechtshandig'], ['left', 'Linkshandig']] as const) {
+    it(`saves and restores ${value}-handed layout`, () => {
+      const fixture = TestBed.createComponent(App);
+      fixture.detectChanges();
+      const element = fixture.nativeElement as HTMLElement;
+      const dialog = element.querySelector('dialog')!;
+      expect(dialog.open).toBe(true);
+      const button = Array.from(dialog.querySelectorAll('button')).find((item) => item.textContent === label)!;
+      button.click();
+      fixture.detectChanges();
+      expect(localStorage.getItem(handednessKey)).toBe(value);
+      expect(dialog.open).toBe(false);
+      expect(element.querySelector('.app-shell')?.classList.contains('left-handed')).toBe(value === 'left');
+
+      fixture.destroy();
+      const reloaded = TestBed.createComponent(App);
+      reloaded.detectChanges();
+      expect(reloaded.nativeElement.querySelector('dialog').open).toBe(false);
+      expect(reloaded.nativeElement.querySelector('.app-shell').classList.contains('left-handed')).toBe(value === 'left');
+    });
+  }
+
+  it('asks again for an invalid stored preference and reports write failures without dismissing the choice', () => {
+    localStorage.setItem(handednessKey, 'invalid');
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('ongeldig');
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { throw new Error('Storage full'); });
+    element.querySelector<HTMLButtonElement>('dialog button')!.click();
+    fixture.detectChanges();
+    expect(element.querySelector('dialog')!.open).toBe(true);
+    expect(element.querySelector('[role="alert"]')?.textContent).toContain('niet worden opgeslagen');
+    expect(localStorage.getItem(handednessKey)).toBe('invalid');
+  });
+
+  it('reports unavailable storage when loading handedness', () => {
+    const getItem = Storage.prototype.getItem;
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(function (this: Storage, key: string) {
+      if (key === handednessKey) throw new Error('Storage unavailable');
+      return getItem.call(this, key);
+    });
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('dialog').open).toBe(true);
+    expect(fixture.nativeElement.querySelector('dialog [role="alert"]').textContent).toContain('niet worden gelezen');
   });
 
   it('starts at the archive and opens setup with four default player slots', () => {

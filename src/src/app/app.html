@@ -1,6 +1,17 @@
-<div class="app-shell">
+<div class="app-shell" [class.left-handed]="handedness() === 'left'">
+  <dialog #handednessDialog class="handedness-dialog z-depth-3" aria-labelledby="handedness-title"
+    aria-describedby="handedness-description" (cancel)="handedness() ? undefined : $event.preventDefault()">
+    <h5 id="handedness-title">Ben je rechtshandig of linkshandig?</h5>
+    <p id="handedness-description">We plaatsen de zwevende knoppen aan die kant. Je keuze wordt in deze browser bewaard.</p>
+    @if (handednessError()) { <p class="form-message" role="alert">{{ handednessError() }}</p> }
+    <button class="btn waves-effect waves-light modal-action" type="button" [attr.aria-pressed]="handedness() === 'right'" (click)="chooseHandedness('right')">Rechtshandig</button>
+    <button class="btn waves-effect waves-light modal-action" type="button" [attr.aria-pressed]="handedness() === 'left'" (click)="chooseHandedness('left')">Linkshandig</button>
+    @if (handedness()) {
+    <button class="btn-flat modal-action" type="button" (click)="handednessDialog.close()">Annuleren</button>
+    }
+  </dialog>
   <header class="topbar white z-depth-2">
-    <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" />
+    <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
     <a class="brand" href="/" aria-label="Rikken scorekaart, naar overzicht" (click)="showOverview()">
       <span class="brand-mark teal white-text">R</span>
       <span class="brand-name">Rikken <span>scorekaart</span></span>

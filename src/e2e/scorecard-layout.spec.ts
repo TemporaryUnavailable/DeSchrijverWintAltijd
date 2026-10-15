@@ -7,9 +7,10 @@ for (const viewport of [
 ]) {
   test(`gift entry fits ${viewport.width}x${viewport.height} without scrolling for every contract`, async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
     await page.getByRole('button', { name: 'Nieuwe scorekaart maken' }).click();
     await page.getByRole('button', { name: 'Speler toevoegen' }).click();
-    await page.getByRole('combobox', { name: 'Scoringssysteem', exact: true }).click();
+    await page.locator('input[role="combobox"][aria-label="Scoringssysteem"]').click();
     await page.getByRole('option', { name: 'Broederschap Abondance', exact: true }).click();
     for (const [index, name] of ['Noor', 'Jules', 'Sam', 'Mila', 'Pim'].entries()) {
       await page.getByLabel(`Naam speler ${index + 1}`).fill(name);
@@ -23,7 +24,7 @@ for (const viewport of [
       'Rik/Afrik', 'Troel', 'Abondance', 'Miserie', 'Twee-speler-Miserie',
       'Open Miserie', '13 slagen', 'Solo slim', 'Verzaking', 'Handmatige invoer',
     ]) {
-      await dialog.getByRole('combobox', { name: 'Contract', exact: true }).click();
+      await dialog.locator('input[role="combobox"][aria-label="Contract"]').click();
       await page.getByRole('option', { name: contract, exact: true }).click();
       await expect(page.getByRole('listbox')).not.toBeVisible();
       await expect.poll(() => dialog.evaluate((element) =>
@@ -32,6 +33,21 @@ for (const viewport of [
       await expect(dialog).toBeInViewport({ ratio: 1 });
       await expect(dialog.getByRole('button', { name: 'Venster sluiten' })).toBeInViewport({ ratio: 1 });
       await expect(dialog.locator('.score-entry-actions button').last()).toBeInViewport({ ratio: 1 });
+      const actions = dialog.locator('.score-entry-actions');
+      const actionBox = await actions.boundingBox();
+      const buttons = await actions.locator('button').all();
+      let previousBottom = 0;
+      for (const button of buttons) {
+        await expect(button).toHaveCSS('justify-content', 'center');
+        await expect(button).toHaveCSS('text-align', 'center');
+        const box = (await button.boundingBox())!;
+        expect(Math.abs(box.width - actionBox!.width)).toBeLessThan(1);
+        expect(box.y).toBeGreaterThanOrEqual(previousBottom);
+        previousBottom = box.y + box.height;
+      }
+      if (await actions.locator('[data-action="manual-entry"]').count()) {
+        await expect(actions.locator('button').first()).toHaveText('Handmatig invoeren');
+      }
       await expect(dialog.locator('.score-preview-row')).toHaveCount(5);
     }
 
@@ -48,6 +64,7 @@ for (const viewport of [
 
 test('five-player table fits a phone viewport and the scorecard footer follows long content', async ({ page }) => {
   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Scorekaarten.' })).toBeVisible();
   await page.getByRole('button', { name: 'Scorekaart maken' }).first().click();
   await page.getByRole('button', { name: 'Speler toevoegen' }).click();
@@ -99,4 +116,81 @@ test('five-player table fits a phone viewport and the scorecard footer follows l
   await expect(footer).toBeInViewport();
   await expect.poll(() => footer.evaluate((element) => Math.abs(element.getBoundingClientRect().bottom - window.innerHeight) < 2)).toBe(true);
   await expect(page.locator('.scorecard-fab')).toBeInViewport();
+});
+
+for (const hand of ['Rechtshandig', 'Linkshandig']) {
+  test(`${hand} choice persists and floating buttons avoid table toggles`, async ({ page }) => {
+    await page.goto('/');
+    const choice = page.getByRole('dialog', { name: 'Ben je rechtshandig of linkshandig?' });
+    await expect(choice).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(choice).toBeVisible();
+    await choice.getByRole('button', { name: hand, exact: true }).click();
+    await page.reload();
+    await expect(choice).not.toBeVisible();
+
+    const leftHanded = hand === 'Linkshandig';
+    const checkSide = async () => {
+      const box = await page.locator('.fixed-action-btn').boundingBox();
+      expect(box).not.toBeNull();
+      const width = page.viewportSize()!.width;
+      expect(leftHanded ? box!.x < width / 2 : box!.x > width / 2).toBe(true);
+    };
+    await checkSide();
+    await page.getByRole('button', { name: 'Nieuwe scorekaart maken' }).click();
+    await page.locator('input[role="combobox"][aria-label="Scoringssysteem"]').click();
+    await page.getByRole('option', { name: 'Broederschap Abondance', exact: true }).click();
+    for (const [index, name] of ['Noor', 'Jules', 'Sam', 'Mila'].entries()) {
+      await page.getByLabel(`Naam speler ${index + 1}`).fill(name);
+    }
+
+    await page.getByRole('button', { name: 'Scorekaart maken', exact: true }).click();
+
+    for (const width of [320, 360, 412, 1280]) {
+      await page.setViewportSize({ width, height: 915 });
+      await checkSide();
+      const fab = await page.getByRole('button', { name: 'Gift toevoegen', exact: true }).boundingBox();
+      for (const name of ['Giftdetails tonen', 'Bewerk- en verwijderknoppen tonen']) {
+        const toggle = page.getByRole('button', { name, exact: true });
+        await expect(toggle).toBeInViewport({ ratio: 1 });
+        const box = await toggle.boundingBox();
+        expect(fab && box && (
+          fab.x + fab.width <= box.x || box.x + box.width <= fab.x ||
+          fab.y + fab.height <= box.y || box.y + box.height <= fab.y
+        )).toBe(true);
+      }
+      await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+    }
+    await page.getByRole('button', { name: 'Gift toevoegen', exact: true }).click();
+    await expect(page.getByRole('dialog', { name: 'Score invoeren' })).toBeVisible();
+  });
+}
+
+test('menu changes handedness immediately and remembers it without changing the current screen', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
+  const dialog = page.getByRole('dialog', { name: 'Ben je rechtshandig of linkshandig?' });
+  const shell = page.locator('.app-shell');
+  const openPreference = async () => {
+    await page.getByRole('button', { name: 'Navigatiemenu openen' }).click();
+    await page.getByRole('button', { name: 'Handvoorkeur', exact: true }).click();
+    await expect(dialog).toBeVisible();
+  };
+  for (const hand of ['Linkshandig', 'Rechtshandig']) {
+    await openPreference();
+    await expect(dialog.getByRole('button', { name: hand === 'Linkshandig' ? 'Rechtshandig' : 'Linkshandig', exact: true })).toHaveAttribute('aria-pressed', 'true');
+    await dialog.getByRole('button', { name: hand, exact: true }).click();
+    await expect(dialog).not.toBeVisible();
+    await expect(shell).toHaveClass(hand === 'Linkshandig' ? /left-handed/ : /^app-shell$/);
+    await page.reload();
+    await expect(dialog).not.toBeVisible();
+    await expect(shell).toHaveClass(hand === 'Linkshandig' ? /left-handed/ : /^app-shell$/);
+  }
+  await openPreference();
+  await dialog.getByRole('button', { name: 'Annuleren' }).click();
+  await expect(shell).not.toHaveClass(/left-handed/);
+  await openPreference();
+  await page.keyboard.press('Escape');
+  await expect(dialog).not.toBeVisible();
+  await expect(page.locator('.archive-layout')).toBeVisible();
 });

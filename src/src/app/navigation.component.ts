@@ -13,6 +13,7 @@ export class NavigationComponent implements OnDestroy {
   readonly home = output<void>();
   readonly qrScan = output<void>();
   readonly settings = output<void>();
+  readonly handedness = output<void>();
   protected readonly open = signal(false);
   private sidenav?: Sidenav;
   private sidenavLoading?: Promise<Sidenav>;
@@ -57,5 +58,10 @@ export class NavigationComponent implements OnDestroy {
   protected openSettings(): void {
     this.closeMenu();
     this.settings.emit();
+  }
+
+  protected openHandedness(): void {
+    this.closeMenu();
+    this.handedness.emit();
   }
 }
