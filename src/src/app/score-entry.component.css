@@ -14,9 +14,9 @@
 .tricks-slider label { display: flex; justify-content: space-between; font-weight: 500; }
 .tricks-slider input[type="range"] { width: 100%; margin: 8px 0 0; }
 .score-preview { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 8px; padding: 12px 0; border-top: 1px solid #e0e0e0; border-bottom: 1px solid #e0e0e0; }
-.score-preview-row { min-width: 0; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-left: 3px solid #607d76; border-radius: 4px; background: #f3f7f5; }
+.score-preview-row { min-width: 0; padding: 10px 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; border-left: 3px solid var(--app-primary); border-radius: 4px; background: #f3e5f5; }
 .score-preview-row span, .manual-score-row span { overflow-wrap: anywhere; color: #757575; font-size: .85rem; }
-.score-preview-row strong { color: #263c38; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
+.score-preview-row strong { color: #4a148c; font-size: 1.1rem; font-weight: 700; white-space: nowrap; }
 .score-preview-row small, .manual-score-row small { display: block; color: #d32f2f; font-size: .75rem; }
 .manual-score-list { display: grid; gap: 13px; }
 .manual-score-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, 160px); align-items: center; gap: 12px; }
@@ -34,7 +34,7 @@
   .tricks-slider label { min-height: 40px; gap: 4px; }
   .tricks-slider input[type="range"] { min-height: 44px; margin: 0; }
   .score-preview { display: flex; gap: 4px; padding: 8px 0; }
-  .score-preview-row { flex: 1; flex-direction: column; justify-content: flex-start; gap: 2px; padding: 6px 2px; border-left: 0; border-top: 3px solid #607d76; text-align: center; }
+  .score-preview-row { flex: 1; flex-direction: column; justify-content: flex-start; gap: 2px; padding: 6px 2px; border-left: 0; border-top: 3px solid var(--app-primary); text-align: center; }
   .score-preview-row span { display: flex; align-items: center; justify-content: center; gap: 2px; }
   .manual-score-list { gap: 8px; }
   .manual-score-list .input-field { margin: 0; }

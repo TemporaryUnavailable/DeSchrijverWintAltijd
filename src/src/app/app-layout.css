@@ -13,7 +13,7 @@ button, input { font: inherit; }
 .top-actions, .toolbar-actions { display: flex; align-items: center; gap: 6px; }
 .main-content { width: min(1180px, calc(100% - 48px)); margin: 0 auto; flex: 1 0 auto; display: flex; align-items: center; }
 .eyebrow { margin: 0; display: flex; align-items: center; gap: 8px; }
-.live-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: #26a69a; }
+.live-dot { width: 7px; height: 7px; flex: 0 0 7px; border-radius: 50%; background: var(--app-primary); }
 .eyebrow-divider { color: #757575; }
 .archive-layout, .scoring-systems { width: 100%; padding: 56px 0 72px; }
 .archive-heading, .scoring-systems-heading { margin-bottom: 24px; padding-bottom: 20px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; border-bottom: 1px solid #e0e0e0; }
@@ -31,8 +31,8 @@ button, input { font: inherit; }
 .archive-empty strong { margin: 8px 0 4px; font-size: 1.3rem; }
 .archive-empty > span:not(.empty-mark) { color: #757575; }
 .archive-empty .btn-flat { margin-top: 10px; }
-.empty-mark { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; color: #26a69a; }
-.empty-mark svg:nth-child(n + 3) { color: #26a69a; }
+.empty-mark { display: flex; justify-content: center; gap: 8px; margin-bottom: 8px; color: var(--app-secondary); }
+.empty-mark svg:nth-child(n + 3) { color: var(--app-secondary); }
 
 .setup-layout { width: 100%; padding: 56px 0 72px; display: grid; grid-template-columns: 1fr minmax(320px, 445px); align-items: center; gap: clamp(32px, 8vw, 120px); }
 .setup-intro { align-self: center; }
@@ -63,7 +63,7 @@ button, input { font: inherit; }
 .summary-player { min-width: 0; padding: 0 16px; display: grid; gap: 3px; }
 .summary-player-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .85; font-size: .85rem; }
 .summary-player strong { font-size: 1.5rem; }
-.summary-player.is-leading strong { color: #26a69a; }
+.summary-player.is-leading strong { color: var(--app-primary-dark); }
 .table-toolbar { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .table-toolbar h2 { margin: 0 0 4px; }
 .table-scroll { overflow-x: auto; border: 1px solid #e0e0e0; background: #fff; scrollbar-color: #9e9e9e transparent; }
@@ -85,9 +85,9 @@ button, input { font: inherit; }
 .round-index { font-size: .75rem; }
 .edit-gift, .remove-round { width: 22px; height: 24px; padding: 0; vertical-align: middle; }
 .score-table tbody td { padding: 6px 3px; text-align: center; }
-.score-table td.dealer-cell { background: #e0f2f1; }
+.score-table td.dealer-cell { background: var(--app-secondary-light); }
 .dealer-mark, .total-caption { display: block; font-size: .75rem; text-align: center; }
-.score-table td.dealer-sit-out { vertical-align: middle; background: #b2dfdb; color: #616161; }
+.score-table td.dealer-sit-out { vertical-align: middle; background: #ffecb3; color: #616161; }
 .sit-out-icon { display: block; margin: 0 auto; }
 .score-value { font-weight: 500; font-variant-numeric: tabular-nums; }
 .score-change { display: block; font-size: .7rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
@@ -99,7 +99,7 @@ button, input { font: inherit; }
 .empty-row .empty-mark { color: inherit; }
 .empty-row .btn-flat { display: block; margin: 8px auto 0; color: inherit; }
 .scorecard-footer-content { width: min(1180px, calc(100% - 48px)); min-height: 76px; display: flex; justify-content: flex-start; align-items: center; gap: 12px; }
-.gift-label-toggle, .table-edit-toggle { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: #26a69a; cursor: pointer; }
+.gift-label-toggle, .table-edit-toggle { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: var(--app-primary-dark); cursor: pointer; }
 .btn-floating { justify-content: center; }
 .scorecard-footer { min-height: 76px; display: flex; justify-content: center; border-top: 1px solid #e0e0e0; }
 .left-handed .fixed-action-btn { left: 23px; right: auto; }

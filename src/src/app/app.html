@@ -13,7 +13,7 @@
   <header class="topbar white z-depth-2">
     <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
     <a class="brand" href="/" aria-label="Rikken scorekaart, naar overzicht" (click)="showOverview()">
-      <span class="brand-mark teal white-text">R</span>
+      <span class="brand-mark purple lighten-2 white-text">R</span>
       <span class="brand-name">Rikken <span>scorekaart</span></span>
     </a>
 
@@ -143,13 +143,13 @@
   <footer class="scorecard-footer">
     <div class="scorecard-footer-content">
       <div class="valign-wrapper">
-        <button class="btn-flat teal lighten-2 white-text gift-label-toggle mr-3" type="button"
+        <button class="btn-flat purple-text text-darken-2 gift-label-toggle mr-3" type="button"
           [attr.aria-label]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'"
           [title]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'" (click)="toggleGiftDetails()">
           @if (giftDetailsVisible()) { <svg lucideEyeOff aria-hidden="true" size="19"></svg> }
           @else { <svg lucideEye aria-hidden="true" size="19"></svg> }
         </button>
-        <button class="btn-flat teal lighten-2 white-text table-edit-toggle" type="button"
+        <button class="btn-flat purple-text text-darken-2 table-edit-toggle" type="button"
           [attr.aria-label]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
           [title]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
           (click)="toggleTableEditMode()">
@@ -187,7 +187,7 @@
         @else { <span class="qr-loading">QR</span> }
       </div>
       <p class="modal-copy">Scan deze code met een ander apparaat om de scorekaart te importeren.</p>
-      <button class="btn-flat teal-text modal-action" type="button" (click)="openTransfer('scan')">QR-code
+      <button class="btn-flat purple-text text-darken-2 modal-action" type="button" (click)="openTransfer('scan')">QR-code
         scannen <span aria-hidden="true">↗</span></button>
       } @else {
       <div id="qr-reader" class="qr-reader"></div>

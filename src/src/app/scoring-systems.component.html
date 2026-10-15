@@ -22,7 +22,7 @@
         </div>
         <div class="card-action system-card-actions">
           @if (system.kind === 'source-preset' && system.verification === 'unverified') {
-            <button class="btn-flat teal-text" type="button" data-action="confirm-source" (click)="confirmSource(system)">Bevestig bronwaarden</button>
+            <button class="btn-flat purple-text text-darken-2" type="button" data-action="confirm-source" (click)="confirmSource(system)">Bevestig bronwaarden</button>
           }
           <button class="btn-flat" type="button" [attr.data-edit-system]="system.id" (click)="startEdit(system)">Bewerken</button>
           <button class="btn-flat red-text text-darken-2 system-delete" type="button" [attr.data-delete-system]="system.id" (click)="removeSystem(system)">Verwijderen</button>

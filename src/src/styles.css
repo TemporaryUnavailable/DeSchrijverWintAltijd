@@ -1,6 +1,14 @@
 @import '@fontsource-variable/roboto';
 @import './app/app-layout.css';
 
+:root {
+	--app-primary: #ba68c8;
+	--app-primary-dark: #7b1fa2;
+	--app-secondary: #ffd54f;
+	--app-secondary-light: #fff8e1;
+	--md-sys-color-on-background: #fff;
+}
+
 :root[theme='light'] {
 	color-scheme: only light;
 }
@@ -10,3 +18,6 @@ html { min-width: 320px; min-height: 100%; }
 body { min-width: 320px; min-height: 100dvh; margin: 0; }
 button, input { font: inherit; }
 button { border: 0; }
+button.btn:not(.btn-flat):not(.btn-floating):not(.tonal) { background-color: var(--app-primary); }
+button.btn:not(.btn-flat):not(.btn-floating):not(.tonal):hover { background-color: #ab47bc; }
+button.btn.tonal { background-color: var(--app-secondary); color: #212121; }
