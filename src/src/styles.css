@@ -2,7 +2,7 @@
 @import './app/app-layout.css';
 
 :root {
-	color-scheme: light;
+	color-scheme: only light;
 }
 
 * { box-sizing: border-box; }

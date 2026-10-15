@@ -1,8 +1,5 @@
-<section class="score-entry" aria-labelledby="score-entry-title">
+<section class="score-entry" aria-label="Giftgegevens">
   <div class="score-entry-heading">
-    <div>
-      <p class="eyebrow"><span class="live-dot"></span> Gift {{ game().gifts.length + 1 }}</p>
-    </div>
     <div class="input-field contract-select">
       <select id="contract" materializeSelect aria-label="Contract" [value]="contract()"
         (change)="updateContract($any($event.target).value)">

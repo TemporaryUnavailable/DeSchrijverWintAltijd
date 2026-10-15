@@ -81,8 +81,11 @@ describe('ScoreEntryComponent', () => {
   });
 
   it('keeps unverified automatic outcomes manual-only', async () => {
-    const unverifiedSystem = TestBed.inject(ScoringSystemService).getSystems()[0];
-    const unverified = TestBed.inject(ScoringSystemService).createSnapshot(unverifiedSystem.id);
+    const scoringSystems = TestBed.inject(ScoringSystemService);
+    const unverified = {
+      ...scoringSystems.createSnapshot(scoringSystems.getSystems()[0].id),
+      verification: 'unverified' as const,
+    };
     const fixture = await createEntry(unverified, 4);
     const compiled = fixture.nativeElement as HTMLElement;
     setSelect(compiled, 'Contract', 'abondance');

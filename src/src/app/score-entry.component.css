@@ -1,6 +1,6 @@
 :host { display: block; width: 100%; }
 .score-entry { display: grid; gap: 18px; }
-.score-entry-heading { display: grid; grid-template-columns: 1fr minmax(180px, 260px); align-items: end; gap: 16px; padding-bottom: 16px; border-bottom: 1px solid #e0e0e0; }
+.score-entry-heading { padding-bottom: 16px; border-bottom: 1px solid #e0e0e0; }
 .score-entry h2 { margin: 8px 0 0; }
 .contract-select { min-width: 0; width: 100%; margin: 0; }
 .contract-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
@@ -24,6 +24,21 @@
 .score-entry-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 
 @media (max-width: 600px) {
-  .score-entry-heading { grid-template-columns: 1fr; align-items: stretch; }
+  .score-entry { gap: 8px; }
+  .score-entry-heading { padding-bottom: 8px; }
   .contract-fields { grid-template-columns: 1fr 1fr; }
+  .rikker-fields { gap: 8px; }
+  .rikker-group { padding-top: 6px; }
+  .rikker-tricks-group { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .tricks-slider label { min-height: 40px; gap: 4px; }
+  .tricks-slider input[type="range"] { min-height: 44px; margin: 0; }
+  .score-preview { display: flex; gap: 4px; padding: 8px 0; }
+  .score-preview-row { flex: 1; flex-direction: column; justify-content: flex-start; gap: 2px; padding: 6px 2px; border-left: 0; border-top: 3px solid #607d76; text-align: center; }
+  .score-preview-row span { display: flex; align-items: center; justify-content: center; gap: 2px; }
+  .manual-score-list { gap: 4px; }
+  .manual-score-list .input-field { margin: 0; }
+  .manual-score-list input { height: 44px; padding-block: 0; }
+  .form-message { margin: 0; }
+  .score-entry-actions { gap: 4px; }
+  .score-entry-actions button { min-height: 44px; padding-inline: 12px; }
 }

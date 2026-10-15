@@ -113,13 +113,22 @@ export class ScoringSystemService {
 
   private loadInitialSystems(): ScoringSystem[] {
     const stored = this.repository.loadScoringSystems();
-    if (stored?.length) return stored;
+    if (stored?.length) {
+      const systems = stored.map((system) =>
+        system.kind === 'source-preset' && system.name === SOURCE_SYSTEM_NAME
+          ? { ...system, verification: 'confirmed' as const }
+          : system);
+      if (systems.some((system, index) => system.verification !== stored[index].verification)) {
+        this.repository.saveScoringSystems(systems);
+      }
+      return systems;
+    }
     const preset: ScoringSystem = {
       id: crypto.randomUUID(),
       name: SOURCE_SYSTEM_NAME,
       revision: 1,
       kind: 'source-preset',
-      verification: 'unverified',
+      verification: 'confirmed',
       values: sourceValues(),
     };
     this.repository.saveScoringSystems([preset]);

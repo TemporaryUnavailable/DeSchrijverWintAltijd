@@ -13,7 +13,7 @@ describe('ScoringSystemService', () => {
 
   afterEach(() => localStorage.removeItem(storageKey));
 
-  it('starts with an unverified source preset and creates a custom system', () => {
+  it('starts with a confirmed source preset and creates a custom system', () => {
     const [preset] = service.getSystems();
     const values = structuredClone(preset.values);
     const changedValues = { ...values, rikAfrik: [8, ...values.rikAfrik.slice(1)] };
@@ -21,10 +21,22 @@ describe('ScoringSystemService', () => {
     const created = service.createSystem('Avondvariant', changedValues);
 
     expect(preset.kind).toBe('source-preset');
-    expect(preset.verification).toBe('unverified');
+    expect(preset.verification).toBe('confirmed');
     expect(created.kind).toBe('custom');
     expect(created.verification).toBe('confirmed');
     expect(service.getSystems().map((system) => system.name)).toContain('Avondvariant');
+  });
+
+  it('confirms the default preset when loading older saved systems', () => {
+    const [preset] = service.getSystems();
+    localStorage.setItem(storageKey, JSON.stringify([{ ...preset, verification: 'unverified' }]));
+
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(ScoringSystemService);
+
+    expect(service.getSystems()[0].verification).toBe('confirmed');
+    expect(JSON.parse(localStorage.getItem(storageKey) ?? '[]')[0].verification).toBe('confirmed');
   });
 
   it('rejects blank and case-insensitive duplicate names', () => {
@@ -68,7 +80,7 @@ describe('ScoringSystemService', () => {
 
     expect(edited.verification).toBe('confirmed');
     expect(edited.revision).toBe(confirmed.revision + 1);
-    expect(existingSnapshot.verification).toBe('unverified');
+    expect(existingSnapshot.verification).toBe('confirmed');
     expect(existingSnapshot.values.rikAfrik[0]).toBe(preset.values.rikAfrik[0]);
     expect(newSnapshot.verification).toBe('confirmed');
     expect(newSnapshot.values.rikAfrik[0]).toBe(8);

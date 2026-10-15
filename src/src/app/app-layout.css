@@ -67,38 +67,37 @@ button, input { font: inherit; }
 .table-toolbar { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .table-toolbar h2 { margin: 0 0 4px; }
 .table-scroll { overflow-x: auto; border: 1px solid #e0e0e0; background: #fff; scrollbar-color: #9e9e9e transparent; }
-.score-table { width: 100%; min-width: 0; table-layout: fixed; }
+.score-table { width: 100%; min-width: 0; table-layout: fixed; color: #000; }
 .score-table th, .score-table td { border-bottom: 1px solid #e0e0e0; }
-.score-table thead { background: #fafafa; }
-.score-table thead th { height: 50px; color: #757575; font-size: .8rem; }
+.score-table thead { background: #fafafa; color: inherit; }
+.score-table thead th { height: 50px; font-size: .8rem; }
 .score-table .round-heading { width: 48px; padding-left: 4px; }
 .gift-label-heading, .gift-label-column { width: 88px; }
 .player-heading { position: relative; min-width: 0; padding: 0 2px; text-align: center; }
 .player-heading span { display: block; overflow-wrap: anywhere; }
-.remove-player, .edit-gift, .remove-round { border: 0; background: transparent; color: #757575; cursor: pointer; }
+.remove-player, .edit-gift, .remove-round { border: 0; background: transparent; color: inherit; cursor: pointer; }
 .remove-player { position: absolute; top: 0; right: 0; width: 18px; height: 18px; padding: 0; border-radius: 50%; font-size: 14px; }
 .remove-player:disabled { opacity: 0; cursor: default; }
 .score-table tbody th, .score-table tbody td { height: 58px; }
-.score-table tbody tr.starting-row th, .score-table tbody tr.starting-row td { height: 46px; background: #fff; color: #757575; text-align: center; font-variant-numeric: tabular-nums; }
+.score-table tbody tr.starting-row th, .score-table tbody tr.starting-row td { height: 46px; background: #fff; text-align: center; font-variant-numeric: tabular-nums; }
 .score-table tbody tr.starting-row th { overflow-wrap: anywhere; font-size: .7rem; line-height: 1.1; }
 .round-cell { padding: 0 2px 0 4px; white-space: nowrap; }
-.round-index { color: #757575; font-size: .75rem; }
+.round-index { font-size: .75rem; }
 .edit-gift, .remove-round { width: 22px; height: 24px; padding: 0; vertical-align: middle; }
 .score-table tbody td { padding: 6px 3px; text-align: center; }
 .score-table td.dealer-cell { background: #e0f2f1; }
-.dealer-mark, .total-caption { display: block; color: #26a69a; font-size: .75rem; text-align: center; }
-.score-table td.dealer-sit-out { vertical-align: middle; background: #b2dfdb; }
-.sit-out-icon { display: block; margin: 0 auto; color: #00897b; }
+.dealer-mark, .total-caption { display: block; font-size: .75rem; text-align: center; }
+.score-table td.dealer-sit-out { vertical-align: middle; background: #b2dfdb; color: #616161; }
+.sit-out-icon { display: block; margin: 0 auto; }
 .score-value { font-weight: 500; font-variant-numeric: tabular-nums; }
 .score-change { display: block; font-size: .7rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
-.score-gain { color: #2e7d32; }
-.score-loss { color: #c62828; }
 .score-table tfoot th, .score-table tfoot td { height: 56px; border-bottom: 0; background: #fff; }
 .score-table tfoot th { padding-left: 4px; }
 .score-table tfoot td { padding: 0 2px; text-align: center; font-weight: 500; font-variant-numeric: tabular-nums; }
-.leader-star { margin-left: 4px; color: #26a69a; }
-.empty-row td { height: 160px !important; padding: 24px !important; color: #757575; text-align: center; }
-.empty-row .btn-flat { display: block; margin: 8px auto 0; }
+.leader-star { margin-left: 4px; }
+.empty-row td { height: 160px !important; padding: 24px !important; text-align: center; }
+.empty-row .empty-mark { color: inherit; }
+.empty-row .btn-flat { display: block; margin: 8px auto 0; color: inherit; }
 .scorecard-footer-content { width: min(1180px, calc(100% - 48px)); min-height: 76px; display: flex; justify-content: flex-start; align-items: center; gap: 12px; }
 .gift-label-toggle, .table-edit-toggle { width: 40px; height: 40px; flex: 0 0 40px; display: grid; place-items: center; padding: 0; border: 0; background: transparent; color: #26a69a; cursor: pointer; }
 .btn-floating { justify-content: center; }
@@ -173,5 +172,9 @@ button, input { font: inherit; }
   .sit-out-icon { width: 16px; height: 16px; }
   .scorecard-footer-content { width: calc(100% - 24px); }
   .transfer-modal { padding: 20px; }
+  .round-modal { max-height: calc(100dvh - 40px); padding: 16px; }
+  .round-modal .modal-heading { margin-bottom: 8px; align-items: center; }
+  .round-modal .modal-heading h5 { margin: 4px 0 0; }
+  .round-modal .modal-close { width: 44px; height: 44px; flex: 0 0 44px; }
   .round-modal-actions .btn { flex: 1; }
 }

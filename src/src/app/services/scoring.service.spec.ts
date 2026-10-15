@@ -89,7 +89,10 @@ describe('ScoringService', () => {
   });
 
   it('keeps unverified and unconfigured outcomes manual-only', () => {
-    const unverified = scoringSystems.createSnapshot(scoringSystems.getSystems()[0].id);
+    const unverified = {
+      ...scoringSystems.createSnapshot(scoringSystems.getSystems()[0].id),
+      verification: 'unverified' as const,
+    };
     expect(() => service.calculate(makeGame(players, unverified), players[0].id, {
       contract: 'rik-afrik',
       rikkerIds: [players[0].id, players[1].id],

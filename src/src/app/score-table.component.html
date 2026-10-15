@@ -102,7 +102,7 @@
           <td [attr.colspan]="legacyGame().players.length + 1">
             <span class="empty-mark z-depth-1 pl-6 pt-3 pr-6 pb-3" aria-hidden="true">✳</span>
             <span>Nog geen rondes.</span>
-            <button class="btn-flat teal-text" type="button" (click)="startRound.emit()">Start de eerste ronde <span aria-hidden="true">→</span></button>
+            <button class="btn-flat" type="button" (click)="startRound.emit()">Start de eerste ronde <span aria-hidden="true">→</span></button>
           </td>
         </tr>
       }
