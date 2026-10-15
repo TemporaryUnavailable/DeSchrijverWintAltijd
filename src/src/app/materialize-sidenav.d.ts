@@ -17,4 +17,20 @@ declare module '@materializecss/materialize' {
     static init(element: HTMLSelectElement): FormSelect;
     destroy(): void;
   }
+
+  export interface ToastOptions {
+    text: string;
+    displayLength: number;
+    outDuration: number;
+    classes: string;
+  }
+
+  export class Toast {
+    readonly options: ToastOptions;
+    readonly message: string;
+    constructor(options: Partial<ToastOptions>);
+    static getInstance(element: HTMLElement): Toast | undefined;
+    static dismissAll(): void;
+    dismiss(): void;
+  }
 }

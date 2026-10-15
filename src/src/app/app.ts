@@ -19,6 +19,23 @@ type Handedness = 'right' | 'left';
 const HANDEDNESS_KEY = 'rikken-handedness';
 interface ImportPreview { game: GameV2; collision: boolean; }
 
+const GIFT_TOASTS = [
+  'Hie pikke de kiekes!',
+  'Aqui pican los pollos!',
+  'Hoog wilde Brussel zien!',
+  'In de poep!',
+  'Hedde gullie hier ne vuilbak?',
+  'Kernfusie!',
+  'Broederschap!',
+  'Broederschap is hoofdzaak!',
+  'Gij moet delen. Nu weeral?',
+  'De logistiek verantwoordelijke zorgt voor de kaarten.',
+  'Op het Belgisch kampioenschap...',
+  'Bij de Landelijke Gilde...',
+  'De schrijver wint altijd!',
+  'Het is niet verboden van iemand 50 euro te geven.'
+];
+
 const EMPTY_STATE: PersistedStateV2 = {
   version: 2,
   games: [],
@@ -137,10 +154,21 @@ export class App implements OnDestroy {
   protected saveGift(gift: Gift): void {
     const game = this.game();
     if (!game) return;
+    const isNewGift = !this.editingGift();
     try {
       this.saveGame(this.gameService.saveGift(game, gift));
       this.scoreEntryOpen.set(false);
       this.editingGift.set(null);
+      if (isNewGift && Math.random() < 0.5) {
+        void import('@materializecss/materialize').then(({ Toast }) => {
+          new Toast({
+            text: GIFT_TOASTS[Math.floor(Math.random() * GIFT_TOASTS.length)],
+            displayLength: 6000,
+            outDuration: 600,
+            classes: 'rounded red lighten-2 black-text opacity-75',
+          });
+        }).catch(() => this.message.set('Toast kon niet worden getoond.'));
+      }
     } catch (error) {
       this.message.set(error instanceof Error ? error.message : 'Gift kan niet worden opgeslagen.');
     }

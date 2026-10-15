@@ -138,6 +138,11 @@ button, input { font: inherit; }
 .round-score-hint { margin: 13px 0 19px; color: #757575; font-size: .85rem; }
 .round-modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
 .repository-message { position: fixed; right: 20px; bottom: 90px; z-index: 6; }
+.opacity-0 { opacity: 0; }
+.opacity-25 { opacity: 0.25; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.opacity-100 { opacity: 1; }
 
 @media (max-width: 760px) {
   .topbar { min-height: 64px; padding-inline: 16px; }

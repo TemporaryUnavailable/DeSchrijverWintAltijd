@@ -7,6 +7,7 @@ import { PersistedStateV2 } from './models/persisted-state';
 import { GameV2, Gift } from './models/game';
 import { ScoreTransferService } from './services/score-transfer.service';
 import { GameRepository } from './services/game-repository.service';
+import { Toast } from '@materializecss/materialize';
 
 describe('App', () => {
   const storageKey = 'rikken-scorekeeper-v1';
@@ -261,6 +262,28 @@ describe('App', () => {
     expect(savedGame.players).toHaveLength(4);
     expect(savedGame.players[0].name).toBe('Noor');
     expect(savedGame.gifts[0].scoreChanges[savedGame.players[0].id]).toBe(14);
+  });
+
+  it('randomly shows a Materialize toast after saving a new gift', async () => {
+    const game = createV2Fixture();
+    localStorage.setItem(stateKey, JSON.stringify({ ...createState([game]), activeGameId: game.id }));
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const app = fixture.componentInstance as unknown as { saveGift(gift: Gift): void };
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.1).mockReturnValueOnce(0.5);
+
+    app.saveGift(makeFixtureGift(game));
+    await vi.waitFor(() => expect(document.querySelector('.toast')).toBeNull());
+
+    app.saveGift(makeFixtureGift(game));
+    await vi.waitFor(() => expect(document.querySelector('#toast-container .toast')).not.toBeNull());
+    const toast = Toast.getInstance(document.querySelector<HTMLElement>('#toast-container .toast')!)!;
+    expect(toast.message).toBe('Broederschap!');
+    expect(toast.options.displayLength).toBe(6000);
+    expect(toast.options.outDuration).toBe(600);
+    toast.options.outDuration = 0;
+    toast.dismiss();
+    await vi.waitFor(() => expect(document.querySelector('#toast-container')).toBeNull());
   });
 
   it('shows a far-left menu with level-five shadow and home and QR destinations', async () => {
