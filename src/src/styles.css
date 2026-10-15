@@ -1,7 +1,7 @@
 @import '@fontsource-variable/roboto';
 @import './app/app-layout.css';
 
-:root {
+:root[theme='light'] {
 	color-scheme: only light;
 }
 

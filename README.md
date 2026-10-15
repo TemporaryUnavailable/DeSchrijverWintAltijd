@@ -4,6 +4,7 @@ Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies 
 
 ## Spelen
 
+- De app gebruikt altijd het lichte thema, ook als je telefoon of browser op donker staat.
 - Kies bij de eerste start **Rechtshandig** of **Linkshandig**. De browser bewaart je keuze; wijzigen kan via **Handvoorkeur** in het menu. Voor linkshandigen staan de zwevende knoppen links en de knoppen voor giftdetails en bewerken rechts, zonder overlap. Rechtshandigen behouden de bestaande indeling.
 - Open in **Scorekaarten** een bestaande kaart of maak een nieuwe met vier of vijf spelers. De volgorde van de spelers bepaalt de eerste dealer en de volgende dealerbeurten. Met vijf spelers deelt de dealer, maar speelt die gift niet mee.
 - Kies bij het maken een scoringssysteem. De bronpreset begint onbevestigd; zolang de waarden niet bevestigd zijn, voer je scores handmatig in. Eigen systemen wijzigen alleen de getallen. Elke kaart bewaart een eigen regelsnapshot, zodat latere systeemwijzigingen oude scores niet aanpassen.

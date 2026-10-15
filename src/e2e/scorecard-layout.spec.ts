@@ -1,5 +1,29 @@
 import { expect, test } from '@playwright/test';
 
+test('keeps the light palette and native controls when the phone prefers dark mode', async ({ page }) => {
+  await page.emulateMedia({ colorScheme: 'light' });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
+  await page.getByRole('button', { name: 'Nieuwe scorekaart maken' }).click();
+  await expect(page.getByLabel('Naam speler 1')).toBeVisible();
+
+  const colors = () => page.locator('html, body, .setup-form, .draft-player input').evaluateAll((elements) =>
+    elements.map((element) => {
+      const style = getComputedStyle(element);
+      const palette = Array.from(style)
+        .filter((name) => name.startsWith('--md-sys-color-'))
+        .sort()
+        .map((name) => style.getPropertyValue(name));
+      return [style.color, style.backgroundColor, style.colorScheme, ...palette];
+    }),
+  );
+  const lightColors = await colors();
+
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await expect(page.locator('html')).toHaveCSS('color-scheme', 'light only');
+  await expect.poll(colors).toEqual(lightColors);
+});
+
 for (const viewport of [
   { width: 320, height: 640 },
   { width: 360, height: 740 },
