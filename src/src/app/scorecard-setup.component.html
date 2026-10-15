@@ -9,9 +9,9 @@
 
     <div class="input-field system-select">
       <select id="scoring-system" materializeSelect aria-label="Scoringssysteem" aria-required="true" [value]="selectedSystemId()" (change)="updateSystem($any($event.target).value)">
-        <option value="">Kies een scoringssysteem</option>
+        <option value="" [selected]="!selectedSystemId()">Kies een scoringssysteem</option>
         @for (system of systems; track system.id) {
-          <option [value]="system.id">{{ system.name }}{{ system.verification === 'unverified' ? ' (handmatig)' : '' }}</option>
+          <option [value]="system.id" [selected]="selectedSystemId() === system.id">{{ system.name }}{{ system.verification === 'unverified' ? ' (handmatig)' : '' }}</option>
         }
       </select>
       <label for="scoring-system">Scoringssysteem</label>

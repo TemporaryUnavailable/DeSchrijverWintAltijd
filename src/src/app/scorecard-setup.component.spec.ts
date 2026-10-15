@@ -22,6 +22,8 @@ describe('ScorecardSetupComponent', () => {
   });
 
   it('requires a scoring system and rejects blank or duplicate seats', () => {
+    const systems = TestBed.inject(ScoringSystemService);
+    systems.createSystem('Avondvariant', systems.getSystems()[0].values);
     const fixture = TestBed.createComponent(ScorecardSetupComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -43,6 +45,22 @@ describe('ScorecardSetupComponent', () => {
     compiled.querySelector<HTMLButtonElement>('.begin-button')?.click();
     fixture.detectChanges();
     expect(compiled.querySelector('[role="alert"]')?.textContent).toMatch(/verschill|dubbel/i);
+  });
+
+  it('selects the only scoring system by default when creating a scorecard', () => {
+    const fixture = TestBed.createComponent(ScorecardSetupComponent);
+    const created = vi.fn<(game: GameV2) => void>();
+    fixture.componentInstance.created.subscribe(created);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const [system] = TestBed.inject(ScoringSystemService).getSystems();
+
+    expect(compiled.querySelector<HTMLSelectElement>('[aria-label="Scoringssysteem"]')?.value).toBe(system.id);
+    setNames(compiled, ['Noor', 'Jules', 'Sam', 'Mila']);
+    compiled.querySelector<HTMLButtonElement>('.begin-button')?.click();
+
+    expect(created).toHaveBeenCalledOnce();
+    expect(created.mock.calls[0][0].rulesSnapshot?.systemId).toBe(system.id);
   });
 
   it('emits valid four- and five-player games in the selected order', () => {

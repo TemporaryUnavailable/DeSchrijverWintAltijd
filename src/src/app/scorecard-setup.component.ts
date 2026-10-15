@@ -23,7 +23,7 @@ export class ScorecardSetupComponent {
   readonly created = output<GameV2>();
   protected readonly systems = this.scoringSystems.getSystems();
   protected readonly suggestions = this.playerNames.getSuggestions();
-  protected readonly selectedSystemId = signal('');
+  protected readonly selectedSystemId = signal(this.systems.length === 1 ? this.systems[0].id : '');
   protected readonly gameName = signal('');
   protected readonly playerDrafts = signal(['', '', '', '']);
   protected readonly message = signal('');
