@@ -33,7 +33,16 @@ const GIFT_TOASTS = [
   'Op het Belgisch kampioenschap...',
   'Bij de Landelijke Gilde...',
   'De schrijver wint altijd!',
-  'Het is niet verboden van iemand 50 euro te geven.'
+  'Het is niet verboden van iemand 50 euro te geven.',
+  '... and the world\'s misery',
+  'Als ge zwijgt krijgt ge ook slaag.',
+  'Ik zwijg niet meer!',
+  'Passen op de voorhand',
+  '\'k Hem goei handspel',
+  'Hansrikske',
+  'yolo-rikske',
+  'Sonja zou fier zijn op u!',
+  'De Sooi zou direct uw foto aan de muur van \'t Hemeltje hangen!'
 ];
 
 const EMPTY_STATE: PersistedStateV2 = {
@@ -159,7 +168,7 @@ export class App implements OnDestroy {
       this.saveGame(this.gameService.saveGift(game, gift));
       this.scoreEntryOpen.set(false);
       this.editingGift.set(null);
-      if (isNewGift && Math.random() < 0.5) {
+      if (isNewGift && Math.random() < 0.4) {
         void import('@materializecss/materialize').then(({ Toast }) => {
           new Toast({
             text: GIFT_TOASTS[Math.floor(Math.random() * GIFT_TOASTS.length)],
