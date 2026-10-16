@@ -242,6 +242,7 @@ export class GameRepository {
       && Array.isArray(game.players)
       && game.players.length >= 4
       && game.players.length <= (game.legacy ? 7 : 5)
+      && (game.startingScore === undefined || game.startingScore === 0 || game.startingScore === 100)
       && Array.isArray(game.gifts)
       && game.gifts.every((gift) => !!gift && typeof gift.id === 'string'
         && typeof gift.dealerId === 'string'

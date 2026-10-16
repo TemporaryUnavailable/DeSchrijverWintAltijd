@@ -46,9 +46,13 @@ export class ScoreTableComponent {
   }
 
   scoreAfterGift(giftIndex: number, playerId: string): number {
-    return 100 + this.v2Game().gifts
+    return this.startingScore() + this.v2Game().gifts
       .slice(0, giftIndex + 1)
       .reduce((total, gift) => total + (gift.scoreChanges[playerId] ?? 0), 0);
+  }
+
+  startingScore(): 0 | 100 {
+    return this.gameService.getStartingScore(this.v2Game());
   }
 
   scoreCellLabel(playerName: string, score: number, dealer: boolean, sitsOut: boolean, scoreChange = 0): string {

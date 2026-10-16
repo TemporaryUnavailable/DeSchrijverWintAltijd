@@ -25,6 +25,7 @@ export class ScorecardSetupComponent {
   protected readonly suggestions = this.playerNames.getSuggestions();
   protected readonly selectedSystemId = signal(this.systems.length === 1 ? this.systems[0].id : '');
   protected readonly gameName = signal('');
+  protected readonly startingScore = signal<0 | 100>(100);
   protected readonly playerDrafts = signal(['', '', '', '']);
   protected readonly message = signal('');
 
@@ -35,6 +36,10 @@ export class ScorecardSetupComponent {
 
   protected updateName(value: string): void {
     this.gameName.set(value);
+  }
+
+  protected updateStartingScore(value: 0 | 100): void {
+    this.startingScore.set(value);
   }
 
   protected updatePlayer(index: number, value: string): void {
@@ -73,6 +78,7 @@ export class ScorecardSetupComponent {
         this.gameName(),
         names,
         this.scoringSystems.createSnapshot(system.id),
+        this.startingScore(),
       );
       this.playerNames.remember(names);
       this.message.set('');

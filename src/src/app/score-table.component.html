@@ -13,7 +13,7 @@
           <tr class="starting-row">
             <th scope="row"><span class="visually-hidden"></span></th>
             @if (showGiftLabels) { <td class="gift-label-column"></td> }
-            @for (player of v2Game().players; track player.id) { <td>100</td> }
+            @for (player of v2Game().players; track player.id) { <td>{{ startingScore() }}</td> }
           </tr>
           @for (gift of v2Game().gifts; track gift.id; let row = $index) {
             <tr [attr.data-entry-mode]="gift.entryMode">

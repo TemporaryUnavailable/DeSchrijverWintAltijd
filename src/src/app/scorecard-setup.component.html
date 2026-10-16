@@ -17,6 +17,20 @@
       <label for="scoring-system">Scoringssysteem</label>
     </div>
 
+    <fieldset class="starting-score-field">
+      <legend>Beginscore</legend>
+      <div class="starting-score-options">
+        <label class="starting-score-option">
+          <input type="radio" name="starting-score" value="100" [checked]="startingScore() === 100" (change)="updateStartingScore(100)">
+          <span>100 punten</span>
+        </label>
+        <label class="starting-score-option">
+          <input type="radio" name="starting-score" value="0" [checked]="startingScore() === 0" (change)="updateStartingScore(0)">
+          <span>0 punten</span>
+        </label>
+      </div>
+    </fieldset>
+
     <div class="players-label-row">
       <span class="field-label">Spelers</span>
       <span class="players-actions">

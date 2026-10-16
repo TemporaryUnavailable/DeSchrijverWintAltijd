@@ -22,11 +22,20 @@ describe('GameService scorecard creation', () => {
 
     expect(game.players.map((player) => player.name)).toEqual(['Noor', 'Jules', 'Sam', 'Mila']);
     expect(new Set(game.players.map((player) => player.id)).size).toBe(4);
+    expect(game.startingScore).toBe(100);
     expect(gameService.getTotals(game)).toEqual(Object.fromEntries(game.players.map((player) => [player.id, 100])));
     expect(gameService.getGiftLimit(game)).toBe(12);
     expect(gameService.getNextGiftDealerId(game)).toBe(game.players[0].id);
     expect(game.rulesSnapshot).toEqual(snapshot);
     expect(game.rulesSnapshot).not.toBe(snapshot);
+  });
+
+  it('creates scorecards with a zero-point starting score when selected', () => {
+    const snapshot = scoringSystems.createSnapshot(scoringSystems.getSystems()[0].id);
+    const game = gameService.createScorecard('Zonder startpunten', ['Noor', 'Jules', 'Sam', 'Mila'], snapshot, 0);
+
+    expect(game.startingScore).toBe(0);
+    expect(gameService.getTotals(game)).toEqual(Object.fromEntries(game.players.map((player) => [player.id, 0])));
   });
 
   it('creates five-player scorecards and rejects incomplete, duplicate, or unsupported lineups', () => {

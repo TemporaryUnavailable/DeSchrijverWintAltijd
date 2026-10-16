@@ -56,6 +56,21 @@ describe('ScoreTransferService', () => {
     }
   });
 
+  it('transfers the selected starting score and defaults older scorecards to 100', () => {
+    const zeroStart = gameService.createScorecard(
+      'Nulstart',
+      ['Noor', 'Jules', 'Sam', 'Mila'],
+      TestBed.inject(ScoringSystemService).createSnapshot(TestBed.inject(ScoringSystemService).getSystems()[0].id),
+      0,
+    );
+    expect((v2.parse(v2.serialize(zeroStart)) as GameV2).startingScore).toBe(0);
+
+    const oldGame = createV2Game();
+    delete oldGame.startingScore;
+    expect(v2.parse(v2.serialize(oldGame))).toEqual(oldGame);
+    expect(() => v2.serialize({ ...oldGame, startingScore: 50 } as unknown as GameV2)).toThrow();
+  });
+
   it('rejects unsupported versions and duplicate player IDs', () => {
     const game = createV2Game();
     const duplicatePlayers = { ...game, players: game.players.map((player, index) => index ? { ...player, id: game.players[0].id } : player) };

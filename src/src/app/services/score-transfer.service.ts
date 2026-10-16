@@ -79,7 +79,8 @@ export class ScoreTransferService {
   private isV2GameShape(game: GameV2): boolean {
     const isLegacy = game.legacy === true;
     if (typeof game.legacy !== 'boolean'
-      || !this.hasOnlyKeys(game, ['id', 'name', 'players', 'rulesSnapshot', 'gifts', 'legacy', 'createdAt', 'updatedAt'])
+      || !this.hasOnlyKeys(game, ['id', 'name', 'players', 'startingScore', 'rulesSnapshot', 'gifts', 'legacy', 'createdAt', 'updatedAt'])
+      || (game.startingScore !== undefined && game.startingScore !== 0 && game.startingScore !== 100)
       || !UUID_PATTERN.test(game.id) || typeof game.name !== 'string' || !game.name.trim()
       || !Array.isArray(game.players) || game.players.length < 4 || game.players.length > (isLegacy ? 7 : 5)
       || !Array.isArray(game.gifts) || (isLegacy ? game.rulesSnapshot !== null : !this.isRulesSnapshot(game.rulesSnapshot))

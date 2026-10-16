@@ -56,11 +56,29 @@ describe('ScorecardSetupComponent', () => {
     const [system] = TestBed.inject(ScoringSystemService).getSystems();
 
     expect(compiled.querySelector<HTMLSelectElement>('[aria-label="Scoringssysteem"]')?.value).toBe(system.id);
+    expect(compiled.querySelector<HTMLInputElement>('input[name="starting-score"][value="100"]')?.checked).toBe(true);
     setNames(compiled, ['Noor', 'Jules', 'Sam', 'Mila']);
     compiled.querySelector<HTMLButtonElement>('.begin-button')?.click();
 
     expect(created).toHaveBeenCalledOnce();
     expect(created.mock.calls[0][0].rulesSnapshot?.systemId).toBe(system.id);
+    expect(created.mock.calls[0][0].startingScore).toBe(100);
+  });
+
+  it('creates a scorecard with zero as the selected starting score', () => {
+    const fixture = TestBed.createComponent(ScorecardSetupComponent);
+    const created = vi.fn<(game: GameV2) => void>();
+    fixture.componentInstance.created.subscribe(created);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    const zeroOption = compiled.querySelector<HTMLInputElement>('input[name="starting-score"][value="0"]')!;
+    zeroOption.checked = true;
+    zeroOption.dispatchEvent(new Event('change', { bubbles: true }));
+    setNames(compiled, ['Noor', 'Jules', 'Sam', 'Mila']);
+    compiled.querySelector<HTMLButtonElement>('.begin-button')?.click();
+
+    expect(created).toHaveBeenCalledOnce();
+    expect(created.mock.calls[0][0].startingScore).toBe(0);
   });
 
   it('emits valid four- and five-player games in the selected order', () => {

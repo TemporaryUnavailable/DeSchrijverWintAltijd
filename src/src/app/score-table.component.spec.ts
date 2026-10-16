@@ -57,6 +57,18 @@ describe('ScoreTableComponent v2 history', () => {
     expect(cells[2].querySelector('.score-change')).toBeNull();
   });
 
+  it('starts the gift history at zero when the scorecard starts at zero', () => {
+    const gift = makeGift('zero-start-gift', players[0].id, { contract: 'manual' }, 'manual', players);
+    gift.scoreChanges[players[0].id] = 14;
+    const fixture = createTable([gift], snapshot, players, 0);
+    const compiled = fixture.nativeElement as HTMLElement;
+    const startingCells = compiled.querySelectorAll<HTMLTableCellElement>('.starting-row td');
+    const resultCell = compiled.querySelector<HTMLTableCellElement>('[data-entry-mode="manual"] td');
+
+    expect(Array.from(startingCells).map((cell) => cell.textContent?.trim())).toEqual(['0', '0', '0', '0']);
+    expect(resultCell?.querySelector('.score-value')?.textContent?.trim()).toBe('14');
+  });
+
   it('keeps migrated legacy history display-only', () => {
     const gift = makeGift('legacy-gift', players[0].id, null, 'legacy-manual', players);
     const fixture = createTable([gift], snapshot, players);
@@ -180,20 +192,21 @@ describe('ScoreTableComponent v2 history', () => {
   });
 });
 
-function createTable(gifts: Gift[], snapshot: RulesSnapshot, players: Player[]) {
+function createTable(gifts: Gift[], snapshot: RulesSnapshot, players: Player[], startingScore: 0 | 100 = 100) {
   const fixture = TestBed.createComponent(ScoreTableComponent);
   const now = '2026-10-07T18:00:00.000Z';
   const game: GameV2 = {
     id: 'game',
     name: 'Test',
     players,
+    startingScore,
     rulesSnapshot: snapshot,
     gifts,
     legacy: false,
     createdAt: now,
     updatedAt: now,
   };
-  const totals = Object.fromEntries(players.map((player) => [player.id, 100]));
+  const totals = Object.fromEntries(players.map((player) => [player.id, startingScore]));
   fixture.componentRef.setInput('game', game);
   fixture.componentRef.setInput('totals', totals);
   fixture.componentRef.setInput('leaders', []);

@@ -4,6 +4,12 @@
 .scorecard-setup-form .players-actions { display: flex; align-items: center; gap: 4px; }
 .scorecard-setup-form .players-count { color: #757575; font-size: .8rem; white-space: nowrap; }
 .scorecard-setup-form .add-draft { margin: 0; padding: 0 8px; white-space: nowrap; }
+.starting-score-field { min-width: 0; margin: 0 0 20px; padding: 0; border: 0; }
+.starting-score-field legend { margin-bottom: 8px; font-weight: 500; }
+.starting-score-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.starting-score-option { min-height: 44px; padding: 8px 12px; display: flex; align-items: center; gap: 9px; border: 1px solid #bdbdbd; border-radius: 4px; background: #fff; cursor: pointer; }
+.starting-score-option:has(input:checked) { border-color: var(--app-primary-dark); background: #fff8e1; }
+.starting-score-option input { margin: 0; accent-color: var(--app-primary-dark); }
 
 @media (max-width: 760px) {
   :host .setup-layout { grid-template-columns: 1fr; gap: 28px; padding: 42px 0 56px; }

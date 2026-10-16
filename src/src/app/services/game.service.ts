@@ -30,7 +30,7 @@ export class GameService {
     };
   }
 
-  createScorecard(name: string, playerNames: readonly string[], rulesSnapshot: RulesSnapshot): GameV2 {
+  createScorecard(name: string, playerNames: readonly string[], rulesSnapshot: RulesSnapshot, startingScore: 0 | 100 = 100): GameV2 {
     const names = playerNames.map((playerName) => playerName.trim());
     if (!this.arePlayerNamesValid(names) || names.some((playerName) => !playerName)) {
       throw new Error('Vul vier of vijf verschillende spelersnamen in.');
@@ -38,12 +38,14 @@ export class GameService {
     if (!rulesSnapshot?.systemId || !rulesSnapshot.name || !rulesSnapshot.values) {
       throw new Error('Kies een geldig scoringssysteem.');
     }
+    if (startingScore !== 0 && startingScore !== 100) throw new Error('Kies een geldige beginscore.');
 
     const now = new Date().toISOString();
     return {
       id: crypto.randomUUID(),
       name: name.trim() || 'Rikken',
       players: names.map((playerName) => ({ id: crypto.randomUUID(), name: playerName })),
+      startingScore,
       rulesSnapshot: {
         ...rulesSnapshot,
         values: {
@@ -61,13 +63,18 @@ export class GameService {
   }
 
   getTotals(game: GameV2): Record<string, number> {
-    const totals = Object.fromEntries(game.players.map((player) => [player.id, 100]));
+    const startingScore = game.startingScore ?? 100;
+    const totals: Record<string, number> = Object.fromEntries(game.players.map((player) => [player.id, startingScore]));
     for (const gift of game.gifts) {
       for (const [playerId, scoreChange] of Object.entries(gift.scoreChanges)) {
-        totals[playerId] = (totals[playerId] ?? 100) + scoreChange;
+        totals[playerId] = (totals[playerId] ?? startingScore) + scoreChange;
       }
     }
     return totals;
+  }
+
+  getStartingScore(game: GameV2): 0 | 100 {
+    return game.startingScore ?? 100;
   }
 
   getStandings(game: GameV2): { playerId: string; playerName: string; total: number; rank: number }[] {

@@ -54,6 +54,7 @@ export interface GameV2 {
   id: string;
   name: string;
   players: Player[];
+  startingScore?: 0 | 100;
   readonly rulesSnapshot: RulesSnapshot | null;
   gifts: Gift[];
   legacy: boolean;
