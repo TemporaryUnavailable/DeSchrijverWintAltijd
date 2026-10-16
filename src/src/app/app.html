@@ -12,9 +12,8 @@
   </dialog>
   <header class="topbar white z-depth-2">
     <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
-    <a class="brand" href="/" aria-label="Rikken scorekaart, naar overzicht" (click)="showOverview()">
-      <span class="brand-mark purple lighten-2 white-text">R</span>
-      <span class="brand-name">Rikken <span>scorekaart</span></span>
+    <a class="brand" href="/" aria-label="Broederschap Abondance, naar overzicht" (click)="showOverview()">
+      <span class="brand-name"><span class="brand-title">Broederschap</span><span class="brand-subtitle">Abondance</span></span>
     </a>
 
     @if (game()) {
