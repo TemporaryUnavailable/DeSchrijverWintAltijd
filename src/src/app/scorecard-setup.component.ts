@@ -1,5 +1,6 @@
 import { Component, inject, output, signal } from '@angular/core';
 import { LucideMoveUpRight, LucideUserRoundPlus } from '@lucide/angular';
+import { MaterializeAutocompleteDirective } from './materialize-autocomplete.directive';
 import { MaterializeSelectDirective } from './materialize-select.directive';
 import { GameV2 } from './models/game';
 import { GameService } from './services/game.service';
@@ -11,7 +12,7 @@ const MAX_PLAYERS = 7;
 
 @Component({
   selector: 'app-scorecard-setup',
-  imports: [LucideMoveUpRight, LucideUserRoundPlus, MaterializeSelectDirective],
+  imports: [LucideMoveUpRight, LucideUserRoundPlus, MaterializeAutocompleteDirective, MaterializeSelectDirective],
   templateUrl: './scorecard-setup.component.html',
   styleUrl: './scorecard-setup.component.css',
 })

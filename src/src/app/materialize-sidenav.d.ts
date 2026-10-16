@@ -18,6 +18,22 @@ declare module '@materializecss/materialize' {
     destroy(): void;
   }
 
+  export interface AutocompleteOption {
+    id: string | number;
+    text?: string;
+  }
+
+  export interface AutocompleteOptions {
+    data?: AutocompleteOption[];
+    minLength?: number;
+    onAutocomplete?: (values: AutocompleteOption[]) => void;
+  }
+
+  export class Autocomplete {
+    static init(element: HTMLInputElement, options?: AutocompleteOptions): Autocomplete;
+    destroy(): void;
+  }
+
   export interface ToastOptions {
     text: string;
     displayLength: number;

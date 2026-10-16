@@ -63,6 +63,7 @@ describe('ScorecardSetupComponent', () => {
     expect(created).toHaveBeenCalledOnce();
     expect(created.mock.calls[0][0].rulesSnapshot?.systemId).toBe(system.id);
     expect(created.mock.calls[0][0].startingScore).toBe(100);
+    expect(TestBed.inject(PlayerNameService).getSuggestions()).toEqual(['Noor', 'Jules', 'Sam', 'Mila']);
   });
 
   it('creates a scorecard with zero as the selected starting score', () => {
@@ -111,9 +112,10 @@ describe('ScorecardSetupComponent', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
 
-    const suggestions = compiled.querySelector('datalist');
-    expect(suggestions?.querySelector('option')?.getAttribute('value')).toBe('Luca');
-    expect(compiled.querySelector<HTMLInputElement>('[aria-label="Naam speler 1"]')?.value).toBe('');
+    const playerInput = compiled.querySelector<HTMLInputElement>('[aria-label="Naam speler 1"]');
+    expect(playerInput?.classList.contains('autocomplete')).toBe(true);
+    expect(compiled.querySelector('datalist')).toBeNull();
+    expect(playerInput?.value).toBe('');
   });
 });
 

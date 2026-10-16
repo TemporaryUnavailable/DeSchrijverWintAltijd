@@ -45,7 +45,7 @@
         <div class="draft-player">
           <span class="draft-number">{{ (index + 1).toString().padStart(2, '0') }}</span>
           <div class="input-field">
-            <input type="text" [value]="draft" (input)="updatePlayer(index, $any($event.target).value)" maxlength="28" [attr.aria-label]="'Naam speler ' + (index + 1)" [placeholder]="'Speler ' + (index + 1)" [attr.list]="suggestions.length ? 'remembered-player-names' : null" autocomplete="off">
+            <input type="text" class="autocomplete" [autocompleteOptions]="suggestions" [value]="draft" (input)="updatePlayer(index, $any($event.target).value)" maxlength="28" [attr.aria-label]="'Naam speler ' + (index + 1)" [placeholder]="'Speler ' + (index + 1)" autocomplete="off">
           </div>
           @if (playerDrafts().length > 4) {
             <button class="remove-draft" type="button" [attr.aria-label]="'Speler ' + (index + 1) + ' veld verwijderen'" (click)="removeSeat(index)">×</button>
@@ -53,11 +53,6 @@
         </div>
       }
     </div>
-    @if (suggestions.length) {
-      <datalist id="remembered-player-names">
-        @for (suggestion of suggestions; track suggestion) { <option [value]="suggestion"></option> }
-      </datalist>
-    }
     @if (message()) { <p class="form-message" role="alert">{{ message() }}</p> }
     <button class="btn filled waves-effect waves-light begin-button" type="submit">Scorekaart maken <span class="ml-1"><svg lucideMoveUpRight aria-hidden="true" size="15" ></svg></span></button>
   </form>
