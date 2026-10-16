@@ -142,13 +142,13 @@
   <footer class="scorecard-footer">
     <div class="scorecard-footer-content">
       <div class="valign-wrapper">
-        <button class="btn-flat purple-text text-darken-2 gift-label-toggle mr-3" type="button"
+        <button class="btn outlined white purple-text text-darken-2 gift-label-toggle mr-3" type="button"
           [attr.aria-label]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'"
           [title]="giftDetailsVisible() ? 'Giftdetails verbergen' : 'Giftdetails tonen'" (click)="toggleGiftDetails()">
           @if (giftDetailsVisible()) { <svg lucideEyeOff aria-hidden="true" size="19"></svg> }
           @else { <svg lucideEye aria-hidden="true" size="19"></svg> }
         </button>
-        <button class="btn-flat purple-text text-darken-2 table-edit-toggle" type="button"
+        <button class="btn outlined white purple-text text-darken-2 table-edit-toggle" type="button"
           [attr.aria-label]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
           [title]="tableEditMode() ? 'Bewerk- en verwijderknoppen verbergen' : 'Bewerk- en verwijderknoppen tonen'"
           (click)="toggleTableEditMode()">
