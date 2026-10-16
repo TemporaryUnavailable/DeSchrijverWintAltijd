@@ -168,13 +168,13 @@ export class App implements OnDestroy {
       this.saveGame(this.gameService.saveGift(game, gift));
       this.scoreEntryOpen.set(false);
       this.editingGift.set(null);
-      if (isNewGift && Math.random() < 0.4) {
+      if (isNewGift && Math.random() < 0.6) {
         void import('@materializecss/materialize').then(({ Toast }) => {
           new Toast({
             text: GIFT_TOASTS[Math.floor(Math.random() * GIFT_TOASTS.length)],
             displayLength: 6000,
             outDuration: 600,
-            classes: 'rounded red lighten-2 black-text opacity-75 mb-3',
+            classes: 'toast-quote',
           });
         }).catch(() => this.message.set('Toast kon niet worden getoond.'));
       }
