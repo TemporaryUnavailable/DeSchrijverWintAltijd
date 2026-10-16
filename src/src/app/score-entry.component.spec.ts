@@ -30,6 +30,13 @@ describe('ScoreEntryComponent', () => {
     expect(tricksSlider.type).toBe('range');
     expect(tricksSlider.value).toBe('8');
     expect(opponentSlider.value).toBe('5');
+    for (const slider of [tricksSlider, opponentSlider]) {
+      const datalist = compiled.querySelector<HTMLDataListElement>(`datalist[id="${slider.getAttribute('list')}"]`);
+      expect(datalist).not.toBeNull();
+      expect(Array.from(datalist!.options, (option) => option.value)).toEqual(
+        Array.from({ length: 14 }, (_, index) => String(index)),
+      );
+    }
     expect(compiled.querySelector('.score-preview h5')).toBeNull();
     expect(compiled.querySelector('.score-preview')?.getAttribute('role')).toBe('group');
 
