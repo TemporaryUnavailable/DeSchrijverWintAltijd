@@ -110,13 +110,6 @@ describe('ScoreTransferService', () => {
     }
   });
 
-  it('rejects QR payloads that exceed the practical code size', async () => {
-    const game = createV2Game();
-    game.gifts.push({ ...makeManualGift(game), manualNote: 'x'.repeat(5000) });
-
-    await expect(v2.createQrImage(game)).rejects.toThrow(/back-up|QR/i);
-  });
-
   it('creates an import copy with regenerated game, player, and gift IDs', () => {
     const game = createV2Game();
     game.gifts.push(makeManualGift(game));
@@ -151,7 +144,6 @@ describe('ScoreTransferService', () => {
 interface TransferApi {
   serialize(game: Game | GameV2): string;
   parse(raw: string): Game | GameV2;
-  createQrImage(game: Game | GameV2): Promise<string>;
   copyWithNewIds(game: GameV2): GameV2;
 }
 

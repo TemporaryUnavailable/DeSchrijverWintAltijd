@@ -2,9 +2,9 @@
 
 ## Decision 1: Match Dependencies to the Locked Angular Runtime
 
-**Decision**: Keep Angular 22.2, TypeScript 6, Angular CLI/Vitest, `qrcode`, and `html5-qrcode`. Add locally bundled Materialize CSS, Angular Material M3, and Lucide Angular at mutually compatible stable versions; verify peer dependencies against the installed Angular major and commit the lockfile. Set the supported Node range to `^22.22.3 || ^24.15.0 || >=26.0.0`, matching the Angular 22.2 lockfile engines, and update the README's stale Node 20.19 prerequisite.
+**Decision**: Keep Angular 22.2, TypeScript 6, and Angular CLI/Vitest. Add locally bundled Materialize CSS, Angular Material M3, and Lucide Angular at mutually compatible stable versions; verify peer dependencies against the installed Angular major and commit the lockfile. Set the supported Node range to `^22.22.3 || ^24.15.0 || >=26.0.0`, matching the Angular 22.2 lockfile engines, and update the README's stale Node 20.19 prerequisite.
 
-**Rationale**: The lockfile requires that Node range for Angular 22.2 packages; the existing README's Node 20.19 claim is too low. The feature and constitution require all UI/QR assets bundled locally.
+**Rationale**: The lockfile requires that Node range for Angular 22.2 packages; the existing README's Node 20.19 claim is too low. The feature and constitution require UI assets bundled locally.
 
 **Alternatives considered**: Retain Node 20.19 because the current README says so (rejected: incompatible with locked Angular engine requirements); load CSS/icons from a CDN (rejected: violates local-first/offline requirements); use a different app framework (rejected: existing Angular app and specification).
 
@@ -18,7 +18,7 @@
 
 ## Decision 3: Extend Existing Domain and Persistence Boundaries
 
-**Decision**: Keep `GameService` responsible for game lifecycle, dealer progression, and corrections; add focused scoring-system/rules logic for validation and score calculation; keep `GameRepository` responsible for local storage and migration; keep `ScoreTransferService` responsible for JSON/schema validation, QR generation, and import/export. Decompose the root component into presentation/workflow components rather than adding more workflows to `App`.
+**Decision**: Keep `GameService` responsible for game lifecycle, dealer progression, and corrections; add focused scoring-system/rules logic for validation and score calculation; keep `GameRepository` responsible for local storage and migration; keep `ScoreTransferService` responsible for JSON/schema validation and backup import/export. Decompose the root component into presentation/workflow components rather than adding more workflows to `App`.
 
 **Rationale**: Repository inspection and a source-wide search confirmed production localStorage writes are confined to `GameRepository`, and versioned JSON serialization is confined to `ScoreTransferService`. These are the smallest existing ownership boundaries for the migration and transfer work. Current `App` owns setup, archive, scoring entry, scanning, and import decisions, so presentation decomposition is justified by concrete cohesion needs.
 
@@ -34,7 +34,7 @@
 
 ## Decision 5: Version the Transfer Contract and Handle Conflicts Explicitly
 
-**Decision**: Define version-2 transfer JSON in `contracts/score-transfer-v2.schema.json`, covering the complete game, snapshot, gifts, IDs, totals/progress inputs, and next-dealer derivation. Continue accepting validated version-1 snapshots as manual-only legacy cards. Validate and preview before any write. If an incoming game ID already exists, never replace it silently; offer cancel or import-as-copy, and assign new game, player, and gift GUIDs to a deliberate copy. If QR encoding exceeds practical capacity, retain the JSON backup-file path.
+**Decision**: Define version-2 backup JSON in `contracts/score-transfer-v2.schema.json`, covering the complete game, snapshot, gifts, IDs, totals/progress inputs, and next-dealer derivation. Continue accepting validated version-1 snapshots as manual-only legacy cards. Validate and preview before any write. If an incoming game ID already exists, never replace it silently; offer cancel or import-as-copy, and assign new game, player, and gift GUIDs to a deliberate copy.
 
 **Rationale**: The current transfer envelope is `{ version: 1, game }` and its model lacks the new contract/rules data. Existing import can replace an archived record with a colliding ID. A versioned schema makes the cross-device payload independently reviewable and testable.
 

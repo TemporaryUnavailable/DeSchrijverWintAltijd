@@ -286,7 +286,7 @@ describe('App', () => {
     await vi.waitFor(() => expect(document.querySelector('#toast-container')).toBeNull());
   });
 
-  it('shows a far-left menu with level-five shadow and home and QR destinations', async () => {
+  it('shows a far-left menu with level-two shadow, home, settings, and backup import', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -301,13 +301,8 @@ describe('App', () => {
     compiled.querySelector<HTMLButtonElement>('[data-action="nav-home"]')?.click();
     fixture.detectChanges();
     expect(compiled.querySelector('.archive-layout')).toBeTruthy();
-    compiled.querySelector<HTMLButtonElement>('.nav-menu-button')?.click();
-    fixture.detectChanges();
-    compiled.querySelector<HTMLButtonElement>('[data-action="nav-qr"]')?.click();
-    fixture.detectChanges();
-    expect(compiled.querySelector('#transfer-title')?.textContent).toContain('QR-code scannen');
-    compiled.querySelector<HTMLButtonElement>('.modal-close')?.click();
-    fixture.detectChanges();
+    expect(compiled.querySelector('label[for="json-import"]')?.textContent).toContain('Back-up importeren');
+    expect(compiled.querySelector<HTMLInputElement>('#json-import')?.accept).toBe('application/json,.json');
     compiled.querySelector<HTMLButtonElement>('.nav-menu-button')?.click();
     fixture.detectChanges();
     compiled.querySelector<HTMLButtonElement>('[data-action="nav-settings"]')?.click();

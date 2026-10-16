@@ -11,42 +11,25 @@
     }
   </dialog>
   <header class="topbar white z-depth-2">
-    <app-navigation (home)="showOverview()" (qrScan)="openTransfer('scan')" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
+    <app-navigation (home)="showOverview()" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
     <a class="brand" href="/" aria-label="Broederschap Abondance, naar overzicht" (click)="showOverview()">
       <span class="brand-name"><span class="brand-title">Broederschap</span><span class="brand-subtitle">Abondance</span></span>
     </a>
 
-    @if (game()) {
     <nav class="top-actions" aria-label="Scorekaartacties">
-      <!--<button class="button button-quiet" type="button" (click)="showOverview()">Overzicht</button>-->
-      <button class="btn-flat" type="button" aria-label="Scorekaart delen" title="Scorekaart delen"
-        (click)="openTransfer('share')">
-        <svg lucideShare2 aria-hidden="true" size="19"></svg>
+      @if (game()) {
+      <button class="btn-flat" type="button" aria-label="Back-up downloaden" title="Back-up downloaden"
+        (click)="exportJson()">
+        Back-up downloaden
       </button>
       <button class="btn-flat red-text text-darken-2" type="button" data-action="delete-scorecard"
         aria-label="Scorekaart verwijderen" title="Scorekaart verwijderen" (click)="deleteCurrentGame()">
         <svg lucideTrash2 aria-hidden="true" size="19"></svg>
       </button>
-      <!--<button class="button button-quiet" type="button" (click)="exportJson()">Back-up downloaden</button>-->
-      <!--<label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
-        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
-        -->
+      }
+      <label class="btn-flat import-button" for="json-import">Back-up importeren</label>
+      <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
     </nav>
-    } @else if (setupOpen()) {
-    <nav class="top-actions" aria-label="Navigatie">
-      <!--<button class="button button-quiet" type="button" (click)="showOverview()">Overzicht</button>
-        <button class="button button-quiet" type="button" (click)="openTransfer('scan')">QR-code scannen</button>
-        <label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
-        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
-      -->
-    </nav>
-    } @else {
-    <!--<nav class="top-actions" aria-label="Scorekaart overnemen">
-        <button class="button button-quiet" type="button" (click)="openTransfer('scan')">QR scannen</button>
-        <label class="button button-quiet import-button" for="json-import">Back-up importeren</label>
-        <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
-      </nav>-->
-    }
   </header>
 
   <main class="main-content">
@@ -169,39 +152,6 @@
   </footer>
   }
 
-  @if (transferOpen()) {
-  <div class="modal-backdrop" (click)="closeTransfer()">
-    <section class="transfer-modal card-panel z-depth-3" role="dialog" aria-modal="true"
-      aria-labelledby="transfer-title" (click)="$event.stopPropagation()">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow">Scorekaart overzetten</p>
-          <h2 id="transfer-title">{{ transferMode() === 'share' ? 'Scorekaart delen' : 'QR-code scannen' }}</h2>
-        </div>
-        <button class="modal-close" type="button" aria-label="Venster sluiten" (click)="closeTransfer()">×</button>
-      </div>
-      @if (transferMode() === 'share') {
-      <div class="qr-frame">
-        @if (qrImage()) { <img [src]="qrImage()" alt="QR-code met de huidige scorekaart"> }
-        @else { <span class="qr-loading">QR</span> }
-      </div>
-      <p class="modal-copy">Scan deze code met een ander apparaat om de scorekaart te importeren.</p>
-      <button class="btn-flat purple-text text-darken-2 modal-action" type="button" (click)="openTransfer('scan')">QR-code
-        scannen <span aria-hidden="true">↗</span></button>
-      } @else {
-      <div id="qr-reader" class="qr-reader"></div>
-      <p class="modal-copy">{{ message() || 'Geef toegang tot je camera om een scorekaart te scannen.' }}</p>
-      <button class="btn waves-effect waves-light modal-action" type="button" (click)="startScanner()">Camera starten
-        <span aria-hidden="true">↗</span></button>
-      }
-      @if (message() && transferMode() === 'share') { <p class="form-message" role="status">{{ message() }}</p> }
-      <div class="modal-divider"><span>Of</span></div>
-      <button class="btn-flat modal-json" type="button" (click)="exportJson()">Back-up downloaden (JSON) <span
-          aria-hidden="true">↓</span></button>
-    </section>
-  </div>
-  }
-
   @if (importPreview(); as preview) {
   <div class="modal-backdrop" (click)="cancelImport()">
     <section class="transfer-modal import-preview card-panel z-depth-3" role="dialog" aria-modal="true"
@@ -236,7 +186,7 @@
   </div>
   }
 
-  @if (message() && !game() && !setupOpen() && !transferOpen() && !importPreview()) {
+  @if (message() && !game() && !setupOpen() && !importPreview()) {
   <p class="form-message repository-message" role="status">{{ message() }}</p>
   }
 

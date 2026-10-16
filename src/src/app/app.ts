@@ -1,4 +1,4 @@
-import { afterNextRender, Component, computed, ElementRef, inject, OnDestroy, signal, viewChild } from '@angular/core';
+import { afterNextRender, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { getLeaderIds } from './score-rules';
 import { GameV2, Gift } from './models/game';
 import { PersistedStateV2 } from './models/persisted-state';
@@ -12,9 +12,8 @@ import { NavigationComponent } from './navigation.component';
 import { ScorecardSetupComponent } from './scorecard-setup.component';
 import { ScoreEntryComponent } from './score-entry.component';
 import { ScoringSystemsComponent } from './scoring-systems.component';
-import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideShare2, LucideSpade, LucideTrash2 } from '@lucide/angular';
+import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideSpade, LucideTrash2 } from '@lucide/angular';
 
-type TransferMode = 'share' | 'scan';
 type Handedness = 'right' | 'left';
 const HANDEDNESS_KEY = 'rikken-handedness';
 interface ImportPreview { game: GameV2; collision: boolean; }
@@ -56,9 +55,9 @@ const EMPTY_STATE: PersistedStateV2 = {
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, LucidePlus, LucideShare2, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
+  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
 })
-export class App implements OnDestroy {
+export class App {
   private readonly handednessDialog = viewChild.required<ElementRef<HTMLDialogElement>>('handednessDialog');
   protected readonly handednessError = signal('');
   protected readonly handedness = signal(this.loadHandedness());
@@ -83,10 +82,7 @@ export class App implements OnDestroy {
   protected readonly tableEditMode = signal(false);
   protected readonly scoreEntryOpen = signal(false);
   protected readonly editingGift = signal<Gift | null>(null);
-  protected readonly transferMode = signal<TransferMode>('share');
-  protected readonly transferOpen = signal(false);
   protected readonly importPreview = signal<ImportPreview | null>(null);
-  protected readonly qrImage = signal('');
   protected readonly message = signal(this.initialLoad.ok ? '' : this.initialLoad.error);
   protected readonly savedAt = signal(this.game()?.updatedAt ?? '');
   protected readonly totals = computed(() => {
@@ -99,8 +95,6 @@ export class App implements OnDestroy {
     return game ? this.gameService.getNextGiftDealerId(game) : null;
   });
   protected readonly entryDealerId = computed(() => this.editingGift()?.dealerId ?? this.nextDealerId());
-
-  private scanner: import('html5-qrcode').Html5Qrcode | null = null;
 
   constructor() {
     afterNextRender(() => {
@@ -273,49 +267,6 @@ export class App implements OnDestroy {
     return this.gameService.getTotals(game);
   }
 
-  protected async openTransfer(mode: TransferMode): Promise<void> {
-    this.transferMode.set(mode);
-    this.transferOpen.set(true);
-    this.message.set('');
-    this.qrImage.set('');
-    if (mode === 'share') {
-      const game = this.game();
-      if (!game) return;
-      try {
-        this.qrImage.set(await this.scoreTransfer.createQrImage(game));
-      } catch {
-        this.message.set('Deze scorekaart past niet in een QR-code. Download een back-upbestand.');
-      }
-    }
-  }
-
-  protected async startScanner(): Promise<void> {
-    this.message.set('Richt de camera op de QR-code van een scorekaart.');
-    try {
-      const { Html5Qrcode, Html5QrcodeSupportedFormats } = await import('html5-qrcode');
-      const scanner = new Html5Qrcode('qr-reader', {
-        formatsToSupport: [Html5QrcodeSupportedFormats.QR_CODE],
-        verbose: false,
-      });
-      this.scanner = scanner;
-      await scanner.start(
-        { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 240, height: 240 } },
-        (text) => void this.importSnapshot(text),
-        () => undefined,
-      );
-    } catch {
-      this.message.set('Camera niet beschikbaar. Importeer een back-upbestand.');
-    }
-  }
-
-  protected async closeTransfer(): Promise<void> {
-    if (this.scanner?.isScanning) await this.scanner.stop().catch(() => undefined);
-    this.scanner?.clear();
-    this.scanner = null;
-    this.transferOpen.set(false);
-  }
-
   protected exportJson(): void {
     const game = this.game();
     if (!game) return;
@@ -355,10 +306,6 @@ export class App implements OnDestroy {
     }).format(new Date(value));
   }
 
-  ngOnDestroy(): void {
-    void this.closeTransfer();
-  }
-
   protected cancelImport(): void {
     this.importPreview.set(null);
   }
@@ -371,7 +318,6 @@ export class App implements OnDestroy {
     this.setupOpen.set(false);
     this.message.set('Scorekaart geïmporteerd.');
     this.saveGame(game);
-    void this.closeTransfer();
   }
 
   private importSnapshot(raw: string): boolean {
@@ -381,7 +327,6 @@ export class App implements OnDestroy {
       const collision = this.repositoryState().games.some((game) => game.id === importedGame.id);
       this.importPreview.set({ game: importedGame, collision });
       this.message.set('');
-      void this.closeTransfer();
       return true;
     } catch {
       this.message.set('Deze back-up is ongeldig of wordt niet ondersteund.');

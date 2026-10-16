@@ -36,15 +36,6 @@ A game is one table session: 12 gifts for four players or 15 gifts for five play
 - Provide a way to export a backup and restore it in the app.
 - Make clear that local-only storage can be lost if browser site data is cleared or the user switches devices.
 
-### QR Code Transfer
-
-- Generate a QR code for a selected game so its scores can be transferred to another device.
-- Include enough versioned game data to resume the game, not only the displayed totals: game and gift GUIDs, player names and order, player count, completed gift results and score changes, current totals, game/rules settings, and next dealer position.
-- Allow importing by scanning a QR code with the device camera. Generate and decode QR data entirely in the browser using locally bundled libraries; do not send game data to an external service.
-- Validate imported data and show a preview, including player names, gift progress, and scores, before saving it locally.
-- Import the snapshot as a resumable game without silently overwriting existing games. Handle malformed, unsupported-version, or duplicate imports with clear feedback.
-- Support QR transfer while a game is in progress so another device can continue from the same gift and dealer position without replaying or duplicating recorded scores.
-
 ### Interface
 
 - Use Dutch labels and Rikken terminology.
@@ -113,20 +104,20 @@ Each game should retain the rules settings used when it was played, so later cha
 - The production build must compile Angular and include required Materialize styles and assets in deployable static output under `dist/`.
 - Document how to serve the production output from a static web host, including the single-page-app fallback to `index.html` where the host requires it.
 - Add a `README.md` with setup, development, production-build and deployment steps, plus a Dutch-language walkthrough for creating a game, entering gifts, correcting or undoing an entry, and reviewing game history.
-- Document QR export and scan-to-import, including camera permission and the requirement to use HTTPS in production (localhost is suitable for development).
+- Document JSON backup export and import, including the local-only storage limitation.
 - Explain that saved games are local to the browser and that users should export backups before clearing browser data or changing devices.
 
 ## Unit Tests
 
-- Add unit tests for game creation, score calculation, gift editing/undo, persistence, QR serialization/import, and GUID preservation.
+- Add unit tests for game creation, score calculation, gift editing/undo, persistence, JSON backup serialization/import, and GUID preservation.
 - Test that remembered names are offered as suggestions while different names and player orders can be used in subsequent games.
-- Cover edge cases including four- and five-player games, dealer rotation and sit-out scoring, gift-count limits, invalid or unbalanced score input, malformed or unsupported QR data, duplicate imports, and resuming a midgame snapshot without applying scores twice.
+- Cover edge cases including four- and five-player games, dealer rotation and sit-out scoring, gift-count limits, invalid or unbalanced score input, malformed or unsupported backup data, duplicate imports, and resuming a midgame snapshot without applying scores twice.
 - Keep scoring tests driven by the configured rules so uncertain rules can be changed without encoding assumptions into test expectations.
 - Make the full unit-test suite runnable with `npm test` and document it in the README.
 
 ## Non-Functional Requirements
 
-- Structure the Angular app with focused components, services, and domain/model types or classes. Separate presentation, game and scoring rules, persistence, and QR transfer responsibilities; use Angular dependency injection and SOLID principles to keep units cohesive, testable, and easy to change. Avoid concentrating unrelated application logic in the root component.
+- Structure the Angular app with focused components, services, and domain/model types or classes. Separate presentation, game and scoring rules, persistence, and backup processing responsibilities; use Angular dependency injection and SOLID principles to keep units cohesive, testable, and easy to change. Avoid concentrating unrelated application logic in the root component.
 - No account, server-side database, or network connection is required for normal use.
 - Persist game state locally in the browser.
 - Do not silently discard an in-progress game; confirm before destructive actions.
@@ -145,11 +136,11 @@ Each game should retain the rules settings used when it was played, so later cha
 9. In a five-player game, the dealer is excluded from play and scoring for that gift; their score remains unchanged.
 10. The documented production build command completes successfully and creates deployable static output containing the Angular app and Materialize assets.
 11. The README explains setup, local development, production deployment, and the scorekeeper's main user workflows.
-12. A user can generate a QR code for a game and import it on another device by scanning it, restoring the same player order, scores, gift history, and dealer position.
+12. A user can export a game as a JSON backup and import it, restoring the same player order, scores, gift history, and dealer position.
 13. A game imported midgame can continue with the next unrecorded gift without duplicating prior score changes or replacing existing local games.
-14. Every game and gift has a unique, stable GUID that survives editing, reload, and QR export/import; a deliberate copy receives new GUIDs.
+14. Every game and gift has a unique, stable GUID that survives editing, reload, and backup export/import; a deliberate copy receives new GUIDs.
 15. The app is usable at Samsung Galaxy A54 portrait phone size, the five-player score table fits the viewport width, and vertical scrolling works without horizontal scrolling.
-16. `npm test` runs the unit-test suite successfully, including the listed scoring, dealer, persistence, GUID, and QR-transfer edge cases.
+16. `npm test` runs the unit-test suite successfully, including the listed scoring, dealer, persistence, GUID, and backup edge cases.
 17. Previously used player names are suggested at setup, but a user can create each game with a different lineup and player order.
 
 These requirements are based on the linked rules page, which notes it was last updated three years ago. Verify scoring details with the group before making them defaults.

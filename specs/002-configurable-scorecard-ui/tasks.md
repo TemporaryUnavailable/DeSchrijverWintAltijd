@@ -103,18 +103,18 @@
 
 ## Phase 7: User Story 6 - Navigate a Clear Table-Ready Interface (Priority: P1)
 
-**Goal**: Provide the far-left menu, home/QR side navigation, requested navbar shadow, fixed home plus FAB, Dutch labels, and a five-column mobile layout.
+**Goal**: Provide the far-left menu, home/settings side navigation, requested navbar shadow, fixed home plus FAB, Dutch labels, and a five-column mobile layout.
 
-**Independent Test**: Use the menu, home and QR actions, and fixed add button at desktop and Galaxy A54 portrait viewport sizes while scrolling.
+**Independent Test**: Use the menu, home and settings actions, and fixed add button at desktop and Galaxy A54 portrait viewport sizes while scrolling.
 
 ### Tests for User Story 6
 
-- [X] T024 [US6] Add component tests for far-left navbar menu, level-5 shadow class, home destination, QR navigation, accessible labels, and fixed home FAB behavior in `src/src/app/app.spec.ts`.
+- [X] T024 [US6] Add component tests for far-left navbar menu, level-5 shadow class, home destination, backup import, accessible labels, and fixed home FAB behavior in `src/src/app/app.spec.ts`.
 - [X] T025 [US6] Add a Playwright viewport test for five-player table fit, no horizontal overflow, vertical scrolling, and fixed bottom-right FAB at 360x780 CSS pixels in `src/e2e/scorecard-layout.spec.ts` and configure its runner in `src/playwright.config.ts`.
 
 ### Implementation for User Story 6
 
-- [X] T026 [US6] Implement the top navbar and side navigation with far-left menu, home destination, and QR entry in `src/src/app/navigation.component.ts` and `src/src/app/navigation.component.html`.
+- [X] T026 [US6] Implement the top navbar and side navigation with far-left menu and home destination in `src/src/app/navigation.component.ts` and `src/src/app/navigation.component.html`.
 - [X] T027 [US6] Add the accessible round plus FAB fixed to the home viewport bottom-right, including mobile safe-area spacing, in `src/src/app/app.html` and `src/src/app/app.css`.
 - [X] T028 [US6] Apply locally bundled Materialize layout patterns, Angular Material M3 interactive components, Lucide action icons, and static M3 baseline roles in `src/src/styles.css` and `src/src/app/app.css`.
 - [X] T029 [US6] Adapt the score table to five readable columns at the reference viewport, with dealer/sit-out and accessible Dutch labels, in `src/src/app/app.css` and `src/src/app/score-table.component.html`.
@@ -123,20 +123,20 @@
 
 ## Phase 8: User Story 5 - Restore and Transfer Scorecards (Priority: P2)
 
-**Goal**: Migrate old local games, persist new state safely, and support validated v1/v2 backups and QR resume without silent replacement or replay.
+**Goal**: Migrate old local games, persist new state safely, and support validated v1/v2 JSON backups without silent replacement or replay.
 
 **Independent Test**: Migrate seeded v1 data, reload, export/import a midgame v2 game on another device, and verify IDs, rules, score history, progress, next dealer, and duplicate conflict behavior.
 
 ### Tests for User Story 5
 
 - [X] T030 [P] [US5] Add repository tests for v1 active/archive migration, seven-player display-only legacy history, ID merge precedence, source-key retention on failed migration, localStorage denial/quota errors, and save failure reporting in `src/src/app/services/game-repository.service.spec.ts`.
-- [X] T031 [P] [US5] Add transfer tests for v1 legacy import, v2 schema/domain validation, totals/progress/next-dealer consistency, oversized QR fallback, malformed versions, duplicate IDs, and copy GUID regeneration in `src/src/app/services/score-transfer.service.spec.ts`.
+- [X] T031 [P] [US5] Add backup tests for v1 legacy import, v2 schema/domain validation, totals/progress/next-dealer consistency, malformed versions, duplicate IDs, and copy GUID regeneration in `src/src/app/services/score-transfer.service.spec.ts`.
 - [X] T032 [US5] Add import-preview workflow tests proving cancel leaves state unchanged, ID collisions offer cancel/copy, and midgame resume does not replay score changes in `src/src/app/app.spec.ts`.
 
 ### Implementation for User Story 5
 
 - [X] T033 [US5] Implement version-2 local-state persistence, validated v1 migration, archive merge, and visible storage failure results in `src/src/app/services/game-repository.service.ts`.
-- [X] T034 [US5] Implement v1/v2 parsing, schema and derived-state validation, QR generation/scanning payloads, and JSON backup serialization in `src/src/app/services/score-transfer.service.ts` using `specs/002-configurable-scorecard-ui/contracts/score-transfer-v2.schema.json`.
+- [X] T034 [US5] Implement v1/v2 parsing, schema and derived-state validation, and JSON backup serialization in `src/src/app/services/score-transfer.service.ts` using `specs/002-configurable-scorecard-ui/contracts/score-transfer-v2.schema.json`.
 - [X] T035 [US5] Add archive-wide import conflict preview with cancel/import-as-copy, regenerated copy GUIDs, backup-file fallback, and unchanged existing games on validation failure in `src/src/app/app.ts` and `src/src/app/app.html`.
 
 **Checkpoint**: Valid imports resume exactly once; invalid or colliding payloads cannot silently overwrite local games; failed storage operations are visible.
@@ -145,7 +145,7 @@
 
 **Purpose**: Complete user documentation and run the feature's required quality gates.
 
-- [X] T036 Update `src/README.md` with supported Node/npm versions, `npm ci`, development/tests/build, static deployment and SPA fallback, HTTPS camera permissions, local-data limitations, and Dutch workflows for setup/scoring/corrections/history/QR/backups.
+- [X] T036 Update `src/README.md` with supported Node/npm versions, `npm ci`, development/tests/build, static deployment and SPA fallback, local-data limitations, and Dutch workflows for setup/scoring/corrections/history/backups.
 - [X] T037 Run `npm ci`, `npm test -- --watch=false`, `npm run build`, and the viewport test from `src/package.json`; fix failures and verify documented commands and bundled assets.
 - [X] T038 Review every FR-001–FR-030 and edge case against the unit-test files listed in `specs/002-configurable-scorecard-ui/plan.md`; close any untested game rule or state transition before release.
 
@@ -159,8 +159,8 @@
 - **US2**: Depends on US1 for system selection and on Foundational for the game model.
 - **US3**: Depends on US1 and US2 for rules snapshots, player roles, and gift state.
 - **US4**: Depends on US3 for recorded gift inputs and changes.
-- **US6**: Depends on Foundational; can be developed in parallel with US3/US4 once the shell and models are stable. Its QR entry is wired to the transfer flow from US5.
-- **US5**: Depends on US3's game/gift shape and US6's QR entry point; it is P2 and follows the P1 stories.
+- **US6**: Depends on Foundational; can be developed in parallel with US3/US4 once the shell and models are stable.
+- **US5**: Depends on US3's game/gift shape; it is P2 and follows the P1 stories.
 - **Polish**: Depends on all desired stories being implemented.
 
 ### Dependency Graph
@@ -185,7 +185,7 @@ graph TD
 
 - After Foundational, T009 and T010 can be written in parallel because they cover game creation and remembered-name services in separate test files.
 - After US3's model and transfer interfaces are stable, T030 and T031 can be written in parallel because repository migration and transfer serialization are separate service boundaries and test files.
-- US6 navigation/layout work can proceed independently of the scoring/correction implementation after foundational types; connect its QR action to the completed US5 workflow during integration.
+- US6 navigation/layout work can proceed independently of the scoring/correction implementation after foundational types.
 
 ## Implementation Strategy
 
@@ -201,7 +201,7 @@ Deliver US1 plus the minimum US2 system-selection path: users can maintain a nam
 4. US3 automatic/manual gift scoring and preview.
 5. US4 corrections, undo, archive, and final standings.
 6. US6 navigation and responsive table interface.
-7. US5 persistence migration, backup, QR transfer, import preview, and conflict safety.
+7. US5 persistence migration, JSON backup, import preview, and conflict safety.
 8. Documentation, full test suite, production build, and viewport acceptance.
 
 ### Parallel Execution Examples

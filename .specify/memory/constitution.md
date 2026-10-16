@@ -18,10 +18,10 @@ Follow-up TODO: confirm the original ratification date
 Every game MUST retain the complete scoring rules selected when it was created. Gift previews and recorded changes MUST use that snapshot, preserve stable game and gift GUIDs, and balance across active players whenever the contract requires conservation. Manual corrections MUST remain available and identifiable. Editing a maintained scoring system MUST NOT alter historical games.
 
 ### II. Local-First Privacy and Data Integrity
-Normal use MUST require no account, server, or network connection. Game data MUST stay in browser storage unless the user explicitly exports or transfers it. QR data MUST be encoded and decoded locally. Imports MUST be validated and previewed, MUST NOT silently replace existing games, and destructive actions MUST require confirmation. Storage failures MUST NOT be reported as successful saves.
+Normal use MUST require no account, server, or network connection. Game data MUST stay in browser storage unless the user explicitly exports or imports a backup. Imports MUST be validated and previewed, MUST NOT silently replace existing games, and destructive actions MUST require confirmation. Storage failures MUST NOT be reported as successful saves.
 
 ### III. Complete Game Requirement Unit Coverage
-Every game-related functional requirement, acceptance scenario, and specified edge case MUST map to one or more automated unit tests. Coverage MUST include scoring systems, contract outcomes, setup, player selection, dealer progression, sit-outs, gift limits, corrections, standings, migration, persistence, stable identifiers, backup/QR transfer, duplicate handling, and midgame resume without replay. Tests MUST use configured rules rather than duplicate scoring assumptions. Browser or integration tests MAY supplement unit tests but MUST NOT replace unit coverage of game rules and state transitions. All required unit tests MUST pass before release.
+Every game-related functional requirement, acceptance scenario, and specified edge case MUST map to one or more automated unit tests. Coverage MUST include scoring systems, contract outcomes, setup, player selection, dealer progression, sit-outs, gift limits, corrections, standings, migration, persistence, stable identifiers, backup/restore, duplicate handling, and midgame resume without replay. Tests MUST use configured rules rather than duplicate scoring assumptions. Browser or integration tests MAY supplement unit tests but MUST NOT replace unit coverage of game rules and state transitions. All required unit tests MUST pass before release.
 
 ### IV. Material Design and Table-Ready Usability
 The interface MUST use Material Design 3 components and fixed static baseline color roles, with accessible contrast and no runtime-generated palette. Materialize CSS MUST remain installed and locally bundled for layout styling; Angular Material M3 MUST provide standard interactive components where the two systems conflict. The interface MUST remain clean, lean, and simple, use Dutch labels and Rikken terminology, and make scores, gifts, and dealer status easy to scan. The complete five-player table MUST fit the Samsung Galaxy A54 portrait viewport without horizontal scrolling. Controls MUST have accessible names and destructive actions MUST explain their consequences.
@@ -35,7 +35,7 @@ Angular code MUST follow clean architecture with explicit, testable responsibili
 - Angular is the application framework. Materialize CSS, Angular Material M3 components, and Lucide Angular icons MUST be installed and bundled locally, not loaded from a CDN.
 - Game data MUST persist in browser storage. The app MUST offer backup export and restore and explain that clearing browser data or changing devices can lose local games.
 - Game and gift identifiers MUST be unique stable GUIDs. A deliberately copied game MUST receive new identifiers.
-- Production output MUST be deployable as static files and include all required application styles, icons, fonts, and transfer assets.
+- Production output MUST be deployable as static files and include all required application styles, icons, and fonts.
 
 ## Delivery Workflow
 

@@ -4,7 +4,6 @@ import { DerivedGameState } from '../models/transfer-snapshot';
 import { GameService } from './game.service';
 import { ScoringService } from './scoring.service';
 
-const MAX_QR_PAYLOAD_LENGTH = 2400;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 @Injectable({ providedIn: 'root' })
@@ -36,19 +35,6 @@ export class ScoreTransferService {
       throw new Error('Deze back-up is ongeldig of wordt niet ondersteund.');
     }
     throw new Error('Deze back-up is ongeldig of wordt niet ondersteund.');
-  }
-
-  async createQrImage(game: Game | GameV2): Promise<string> {
-    const payload = this.serialize(game);
-    if (payload.length > MAX_QR_PAYLOAD_LENGTH) {
-      throw new Error('Deze scorekaart past niet in een QR-code. Download een back-upbestand.');
-    }
-    const QRCode = await import('qrcode');
-    return QRCode.toDataURL(payload, {
-      errorCorrectionLevel: 'L',
-      margin: 2,
-      width: 280,
-    });
   }
 
   copyWithNewIds(game: GameV2): GameV2 {

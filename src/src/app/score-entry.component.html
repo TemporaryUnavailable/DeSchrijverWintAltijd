@@ -40,18 +40,33 @@
       <div class="input-field">
         <div class="tricks-slider">
           <label for="tricks-taken">Slagen rikkers <output>{{ tricksTaken() }}</output></label>
-          <input id="tricks-taken" type="range" min="0" max="13" step="1" aria-label="Slagen rikkers"
+          <input id="tricks-taken" type="range" min="0" max="13" step="1" aria-label="Slagen rikkers" list="number-of-tricks"
             [value]="tricksTaken()" (input)="updateTricks($any($event.target).value)">
         </div>
       </div>
       <div class="input-field">
         <div class="tricks-slider">
           <label for="opponent-tricks">Slagen tegenstanders <output>{{ opponentsTricks() }}</output></label>
-          <input id="opponent-tricks" type="range" min="0" max="13" step="1" aria-label="Slagen tegenstanders"
+          <input id="opponent-tricks" type="range" min="0" max="13" step="1" aria-label="Slagen tegenstanders" list="number-of-tricks"
             [value]="opponentsTricks()" (input)="updateOpponentTricks($any($event.target).value)">
         </div>
       </div>
     </fieldset>
+    <datalist id="number-of-tricks">
+      <option value="0"></option>
+      <option value="1"></option>
+      <option value="2"></option>
+      <option value="3"></option>
+      <option value="4"></option>
+      <option value="5"></option>
+      <option value="6"></option>
+      <option value="7"></option>
+      <option value="8"></option>
+      <option value="9"></option>
+      <option value="11"></option>
+      <option value="12"></option>
+      <option value="13"></option>
+    </datalist>
   </div>
   }
 
@@ -140,7 +155,8 @@
     <button class="btn-flat red-text text-darken-2" type="button" data-action="save-gift" (click)="saveGift()">Opslaan
       met waarschuwing</button>
     } @else {
-    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift opslaan</button>
+    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift
+      opslaan</button>
     }
     @if (message()) { <button class="btn-flat red-text text-darken-2" type="button" data-action="confirm-imbalance"
       (click)="confirmImbalance()">Toch handmatig opslaan</button> }
@@ -148,7 +164,8 @@
     <button class="btn-flat" type="button" data-action="manual-entry" (click)="manualEntry()">Handmatig
       invoeren</button>
     @if (isAutomaticContract() && calculation().changes) {
-    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift opslaan</button>
+    <button class="btn filled waves-effect waves-light" type="button" data-action="save-gift" (click)="saveGift()">Gift
+      opslaan</button>
     }
     }
   </div>

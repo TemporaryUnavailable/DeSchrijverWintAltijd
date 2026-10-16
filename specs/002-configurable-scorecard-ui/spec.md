@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: User description: Implement all missing requirements in `docs/missing.md` and `docs/REQUIREMENTS.md`; add named configurable scoring systems selected at scorecard creation and retained for all gifts; use Materialize components and static Material Design 3 baseline colors; keep the UI clean and simple; add a top navbar with shadow level 5, a far-left menu icon, and home navigation; keep a round plus floating action button fixed at the bottom right on the home screen; provide a home side navigation with QR functionality, opened from the navbar menu.
+**Input**: User description: Implement all missing requirements in `docs/missing.md` and `docs/REQUIREMENTS.md`; add named configurable scoring systems selected at scorecard creation and retained for all gifts; use Materialize components and static Material Design 3 baseline colors; keep the UI clean and simple; add a top navbar with shadow level 5, a far-left menu icon, and home navigation; keep a round plus floating action button fixed at the bottom right on the home screen; provide a home side navigation opened from the navbar menu.
 
 ## Clarifications
 
@@ -91,7 +91,7 @@ A scorekeeper can edit a saved gift, undo the latest gift, view the archive, and
 
 ### User Story 5 - Restore and Transfer Scorecards (Priority: P2)
 
-A scorekeeper can return to locally saved games, export a backup, and transfer a complete in-progress game to another device without losing or repeating scores.
+A scorekeeper can return to locally saved games, export and import a backup, and resume an in-progress game without losing or repeating scores.
 
 **Why this priority**: Local-only storage is private but makes a clear backup and safe transfer path essential.
 
@@ -100,24 +100,24 @@ A scorekeeper can return to locally saved games, export a backup, and transfer a
 **Acceptance Scenarios**:
 
 1. **Given** saved games, **When** the app is reopened, **Then** the archive is restored newest first with scoring system and manual corrections identifiable.
-2. **Given** a QR or backup import, **When** a valid snapshot is previewed and accepted, **Then** players, order, rules, gifts, totals, progress, and next dealer are restored.
-3. **Given** malformed, unsupported, oversized, or duplicate data, **When** it is imported, **Then** clear feedback is shown and existing games remain unchanged.
-4. **Given** a game is exported and resumed on another device, **When** the next gift is recorded, **Then** prior score changes are not replayed.
+2. **Given** a backup import, **When** a valid snapshot is previewed and accepted, **Then** players, order, rules, gifts, totals, progress, and next dealer are restored.
+3. **Given** malformed, unsupported, or duplicate data, **When** it is imported, **Then** clear feedback is shown and existing games remain unchanged.
+4. **Given** a game is exported and resumed from a backup, **When** the next gift is recorded, **Then** prior score changes are not replayed.
 5. **Given** browser data is unavailable or a save fails, **When** the user saves, **Then** the failure is reported and is not presented as a successful save.
 
 ---
 
 ### User Story 6 - Navigate a Clear Table-Ready Interface (Priority: P1)
 
-A scorekeeper can return home, open navigation and QR actions, start a new scorecard from a persistent floating action button, and scan the score table without clutter.
+A scorekeeper can return home, open navigation, start a new scorecard from a persistent floating action button, and scan the score table without clutter.
 
 **Why this priority**: Navigation and score entry must be discoverable and reachable during a game on both phone and desktop.
 
-**Independent Test**: On home and scorecard views, use the navbar, side navigation, QR action, and fixed add button; repeat at desktop and Samsung Galaxy A54 portrait widths while scrolling.
+**Independent Test**: On home and scorecard views, use the navbar, side navigation, backup controls, and fixed add button; repeat at desktop and Samsung Galaxy A54 portrait widths while scrolling.
 
 **Acceptance Scenarios**:
 
-1. **Given** any application view, **When** the user activates the far-left menu icon, **Then** the side navigation opens with a home destination and QR functionality.
+1. **Given** any application view, **When** the user activates the far-left menu icon, **Then** the side navigation opens with a home destination and scoring-system settings.
 2. **Given** the side navigation is open, **When** the user selects home, **Then** the scorecard archive/home screen is shown.
 3. **Given** the home screen is scrolled vertically, **When** the user moves the page, **Then** a round plus floating action button remains fixed at the bottom right and starts new scorecard setup.
 4. **Given** the top navbar is visible, **When** it is reviewed, **Then** it has the requested level-5 shadow treatment and the menu control is at the far left.
@@ -135,7 +135,7 @@ A scorekeeper can return home, open navigation and QR actions, start a new score
 - A gift is edited or removed from the middle of the history, or a game reaches its 12/15 gift limit.
 - Existing migrated archive entries have more than five players; they remain readable as display-only legacy history and cannot receive new gifts.
 - Browser storage is unavailable, full, or fails during migration or save; data is not falsely reported as persisted.
-- A QR code is too large, camera access is denied, an unsupported version is imported, or an ID collides with an archived game.
+- A malformed or unsupported backup is imported, or an ID collides with an archived game.
 - A game is deliberately copied; the copied game and gifts receive new GUIDs.
 - The viewport is narrow or the page is scrolled; no horizontal page overflow occurs and the home floating action button remains fixed.
 
@@ -191,20 +191,20 @@ A scorekeeper can return home, open navigation and QR actions, start a new score
 - **FR-017**: The archive MUST list games newest first and allow viewing, editing, and confirmed deletion. It MUST identify each game's selected system and any manual corrections.
 - **FR-018**: Every game and gift MUST have a unique stable GUID that survives edits, saves, reloads, exports, and imports. Deliberate copies MUST receive new GUIDs.
 - **FR-019**: Users MUST be able to export and restore a validated backup with a preview. Malformed or duplicate imports MUST provide clear feedback and MUST NOT silently overwrite existing games.
-- **FR-020**: Users MUST be able to create and scan a QR transfer entirely in the browser. The versioned snapshot MUST include game and gift GUIDs, player names/order/count, scoring rules, gift results and changes, totals, progress, and next dealer.
-- **FR-021**: Import MUST preview players, progress, and scores before saving. Midgame imports MUST resume at the next unrecorded gift without repeating changes; oversized payloads or camera failure MUST offer a backup-file alternative.
+- **FR-020**: The versioned JSON backup MUST include game and gift GUIDs, player names/order/count, scoring rules, gift results and changes, totals, progress, and next dealer.
+- **FR-021**: Backup import MUST preview players, progress, and scores before saving. Midgame imports MUST resume at the next unrecorded gift without repeating changes; malformed, unsupported, or duplicate backups MUST leave existing games unchanged.
 
 #### Interface and Delivery
 
 - **FR-022**: The interface MUST use Materialize component patterns and fixed Material Design 3 baseline color roles. Color selection MUST be static, not generated from runtime user/device input.
 - **FR-023**: A navbar MUST appear at the top, provide home navigation, show a menu icon at the far left, and have the requested shadow level 5.
-- **FR-024**: The menu icon MUST open a side navigation containing a home destination and QR functionality. Selecting home MUST show the archive/home screen.
+- **FR-024**: The menu icon MUST open a side navigation containing a home destination and scoring-system settings. Selecting home MUST show the archive/home screen.
 - **FR-025**: The home screen MUST provide a round plus floating action button at the bottom right that remains fixed while the page scrolls and opens new scorecard setup. The plus MUST be text or a recognized icon, never an emoji, and the control MUST have an accessible name.
 - **FR-026**: The score table MUST show players as columns and gifts as rows, identify the dealer, distinguish a five-player dealer sitting out, and use Dutch Rikken terminology with clear accessible labels.
 - **FR-027**: At Samsung Galaxy A54 portrait dimensions, all five player columns MUST fit without horizontal scrolling; vertical scrolling MUST work on the home and game views.
-- **FR-028**: The delivered experience MUST include automated unit tests for every game-related functional requirement and specified edge case, including scoring outcomes, systems/snapshots, setup, dealer/sit-out, limits, corrections, persistence/migration, GUIDs, backup/QR, duplicates, and midgame resume. Browser layout tests MAY supplement but MUST NOT replace domain unit tests.
-- **FR-029**: The README MUST document supported prerequisites, install/reproducible install, development, tests, production build/deployment and SPA fallback, camera permissions/HTTPS, local-data limitations, and Dutch walkthroughs for setup, scoring, corrections, history, QR, and backups.
-- **FR-030**: Normal use MUST require no account, server-side database, or network. Required styling, components, icons, fonts, and QR capabilities MUST be bundled locally.
+- **FR-028**: The delivered experience MUST include automated unit tests for every game-related functional requirement and specified edge case, including scoring outcomes, systems/snapshots, setup, dealer/sit-out, limits, corrections, persistence/migration, GUIDs, backup, duplicates, and midgame resume. Browser layout tests MAY supplement but MUST NOT replace domain unit tests.
+- **FR-029**: The README MUST document supported prerequisites, install/reproducible install, development, tests, production build/deployment and SPA fallback, local-data limitations, and Dutch walkthroughs for setup, scoring, corrections, history, and backups.
+- **FR-030**: Normal use MUST require no account, server-side database, or network. Required styling, components, icons, and fonts MUST be bundled locally.
 
 ### Key Entities
 
@@ -224,7 +224,7 @@ A scorekeeper can return home, open navigation and QR actions, start a new score
 - **SC-003**: 100% of game-related requirements and specified edge cases produce their expected state and scoring result during acceptance validation.
 - **SC-004**: Reloading or transferring a game preserves its players/order, rules snapshot, gifts, IDs, totals, progress, and next dealer with no repeated score changes.
 - **SC-005**: All five score columns fit the reference phone viewport without horizontal scrolling, and the floating action button remains visible at a fixed bottom-right position while scrolling.
-- **SC-006**: A user can open the home menu and reach the home screen or QR action in one selection; the fixed add button opens scorecard setup in one selection.
+- **SC-006**: A user can open the home menu and reach the home screen or scoring-system settings in one selection; the fixed add button opens scorecard setup in one selection.
 - **SC-007**: Invalid system names/values, incomplete lineups, and invalid imports are rejected with a clear explanation and leave existing saved games unchanged.
 - **SC-008**: A new user can follow the README to install, run, test, build, deploy, and complete the principal Dutch-language scorekeeping and transfer workflows.
 
@@ -234,7 +234,7 @@ A scorekeeper can return home, open navigation and QR actions, start a new score
 - Editing a maintained system affects future games only. Each existing card retains its complete rules snapshot.
 - Custom values must produce whole-number changes and conserve scores where required. Unsupported Verzaking values are configurable only when confirmed; the app does not invent automatic rules.
 - Existing six- or seven-player records are legacy display-only archive entries; new games remain limited to four or five players.
-- The home/archive screen is the destination for the navbar's home action. The side navigation exposes QR scanning/import and relevant transfer actions.
+- The home/archive screen is the destination for the navbar's home action. The side navigation exposes home navigation, scoring-system settings, and handedness preferences.
 - The plus action is fixed to the viewport bottom-right on the home screen and may account for mobile safe-area insets while remaining reachable.
 - Static Material Design 3 baseline roles define the color palette; Materialize component patterns provide the specified interface components. No runtime-generated theme is required.
 - The product remains a private browser-local scorekeeper for one table session; accounts, cloud sync, and multi-table rotation are out of scope.

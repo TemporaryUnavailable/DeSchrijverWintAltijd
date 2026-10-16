@@ -117,15 +117,8 @@ button, input { font: inherit; }
 .modal-heading { margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-start; text-align: left; }
 .modal-heading h2 { margin: 6px 0 0; }
 .modal-close { width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; color: #212121; font-size: 21px; cursor: pointer; }
-.qr-frame { width: 296px; max-width: 100%; aspect-ratio: 1; margin: 0 auto; display: grid; place-items: center; background: #fff; }
-.qr-frame img { display: block; width: 100%; height: 100%; image-rendering: pixelated; }
-.qr-loading { color: #757575; }
 .modal-copy { max-width: 320px; margin: 16px auto; color: #757575; }
 .modal-action { width: 100%; margin: 4px 0; }
-.qr-reader { width: 100%; overflow: hidden; }
-.qr-reader video { max-height: 310px; object-fit: cover; }
-.qr-reader__scan_region { min-height: 240px; }
-.qr-reader__dashboard { display: none; }
 .modal-divider { margin: 18px 0 10px; display: flex; align-items: center; gap: 12px; color: #757575; font-size: .8rem; }
 .modal-divider::before, .modal-divider::after { height: 1px; flex: 1; background: #e0e0e0; content: ''; }
 .round-modal { width: min(100%, 460px); text-align: left; }
