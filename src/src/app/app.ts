@@ -41,7 +41,11 @@ const GIFT_TOASTS = [
   'Hansrikske',
   'yolo-rikske',
   'Sonja zou fier zijn op u!',
-  'De Sooi zou direct uw foto aan de muur van \'t Hemeltje hangen!'
+  'De Sooi zou direct uw foto aan de muur van \'t Hemeltje hangen!',
+  'Hans Van Aken!',
+  'En nauw?',
+  'Kopen of niet hebben!',
+  'Na mutte ze noa bibike kome...'
 ];
 
 const EMPTY_STATE: PersistedStateV2 = {
@@ -162,7 +166,7 @@ export class App {
       this.saveGame(this.gameService.saveGift(game, gift));
       this.scoreEntryOpen.set(false);
       this.editingGift.set(null);
-      if (isNewGift && Math.random() < 0.6) {
+      if (isNewGift && Math.random() < 0.75) {
         void import('@materializecss/materialize').then(({ Toast }) => {
           new Toast({
             text: GIFT_TOASTS[Math.floor(Math.random() * GIFT_TOASTS.length)],
