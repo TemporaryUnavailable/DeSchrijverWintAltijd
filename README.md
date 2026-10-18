@@ -14,11 +14,10 @@ Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies 
 - Bewerk een gift via **Bewerk**, verwijder die na bevestiging of maak de laatste gift ongedaan. Scores en dealerbeurten worden opnieuw berekend; de overgebleven gift-ID's blijven behouden. Een kaart met 12 gifts (vier spelers) of 15 gifts (vijf spelers) toont de eindstand.
 - Oude v1-kaarten blijven in het overzicht. Ze worden als handmatige, alleen-lezen geschiedenis getoond; ontbrekende spelregels worden niet achteraf afgeleid.
 - Alle tekst in de scoretabel is zwart voor de leesbaarheid; alleen de speler die een gift uitzit wordt grijs getoond.
-- Download of importeer een JSON-back-up via de knoppen in de navigatiebalk. Import toont eerst de kaart; bij een ID-conflict kun je annuleren of als kopie importeren. Een v1-back-up wordt handmatige geschiedenis.
 
 ## Lokale gegevens
 
-Scorekaarten, scoringssystemen en spelersuggesties staan alleen in de lokale browseropslag van dit apparaat. Er is geen account, serverback-up of automatische synchronisatie. Verwijder browsergegevens pas nadat je een JSON-back-up hebt gedownload.
+Scorekaarten, scoringssystemen en spelersuggesties staan alleen in de lokale browseropslag van dit apparaat. Er is geen account, serverback-up of automatische synchronisatie. Als browsergegevens worden gewist of je een ander apparaat gebruikt, zijn deze gegevens niet beschikbaar.
 
 ## Ontwikkelen
 
@@ -64,11 +63,10 @@ Open `http://127.0.0.1:4200/`, controleer de app en stop daarna de server met `C
 2. Voer alle unit- en browser-tests uit met de commando's onder **Testen en bouwen**. Los fouten op voordat je verdergaat.
 3. Bouw expliciet voor productie met `npm run build -- --configuration production`. De build moet zonder fouten eindigen. Beoordeel alle waarschuwingen voordat je publiceert; verhoog bundelbudgetten niet alleen om waarschuwingen te verbergen. Controleer na elke relevante wijziging de build opnieuw.
 4. Start de productieconfiguratie zoals hierboven en controleer handmatig: maak een scorekaart met vier en met vijf spelers, registreer en corrigeer een gift, controleer de eindstand en dealerbeurt, en open een bestaande kaart.
-5. Download een JSON-back-up en importeer die weer. Controleer ook dat een foutieve of conflicterende import niet stilzwijgend bestaande gegevens overschrijft.
-6. Controleer de uiteindelijke buildbestanden in `dist/scorekeeper/browser/`. Publiceer de inhoud van die map, niet de projectmap of `src/`-bronbestanden.
+5. Controleer de uiteindelijke buildbestanden in `dist/scorekeeper/browser/`. Publiceer de inhoud van die map, niet de projectmap of `src/`-bronbestanden.
 
 ## Publiceren
 
 Publiceer de inhoud van `dist/scorekeeper/browser/` naar een statische webhost. Configureer de host om `index.html` terug te geven voor app-routes, serveer de site via HTTPS en controleer dat CSS, lettertypen en JavaScript-bestanden laden. Als de app onder een subpad wordt gehost, moet de Angular `base href` op dat pad zijn afgestemd.
 
-Scorekaarten en instellingen staan in `localStorage` van de browser en origin (protocol, host en poort) waarop de app is geopend. Er is geen serverback-up of synchronisatie. Verander bij een release bij voorkeur niet van origin; maak eerst een JSON-back-up voordat je browsergegevens wist of van origin wisselt. De Materialize- en Material-stijlen en lettertypen worden lokaal gebundeld; voor normaal gebruik is geen backend of CDN nodig.
+Scorekaarten en instellingen staan in `localStorage` van de browser en origin (protocol, host en poort) waarop de app is geopend. Er is geen serverback-up of synchronisatie. Verander bij een release bij voorkeur niet van origin; browsergegevens zijn niet beschikbaar op een ander apparaat of na wissen. De Materialize- en Material-stijlen en lettertypen worden lokaal gebundeld; voor normaal gebruik is geen backend of CDN nodig.

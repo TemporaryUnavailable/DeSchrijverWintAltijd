@@ -89,22 +89,6 @@ A scorekeeper can edit a saved gift, undo the latest gift, view the archive, and
 
 ---
 
-### User Story 5 - Restore and Transfer Scorecards (Priority: P2)
-
-A scorekeeper can return to locally saved games, export and import a backup, and resume an in-progress game without losing or repeating scores.
-
-**Why this priority**: Local-only storage is private but makes a clear backup and safe transfer path essential.
-
-**Independent Test**: Save a midgame scorecard, reload, export and import its snapshot, and verify the next gift and dealer are correct with no prior change applied twice.
-
-**Acceptance Scenarios**:
-
-1. **Given** saved games, **When** the app is reopened, **Then** the archive is restored newest first with scoring system and manual corrections identifiable.
-2. **Given** a backup import, **When** a valid snapshot is previewed and accepted, **Then** players, order, rules, gifts, totals, progress, and next dealer are restored.
-3. **Given** malformed, unsupported, or duplicate data, **When** it is imported, **Then** clear feedback is shown and existing games remain unchanged.
-4. **Given** a game is exported and resumed from a backup, **When** the next gift is recorded, **Then** prior score changes are not replayed.
-5. **Given** browser data is unavailable or a save fails, **When** the user saves, **Then** the failure is reported and is not presented as a successful save.
-
 ---
 
 ### User Story 6 - Navigate a Clear Table-Ready Interface (Priority: P1)
@@ -113,7 +97,7 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 
 **Why this priority**: Navigation and score entry must be discoverable and reachable during a game on both phone and desktop.
 
-**Independent Test**: On home and scorecard views, use the navbar, side navigation, backup controls, and fixed add button; repeat at desktop and Samsung Galaxy A54 portrait widths while scrolling.
+**Independent Test**: On home and scorecard views, use the navbar, side navigation, and fixed add button; repeat at desktop and Samsung Galaxy A54 portrait widths while scrolling.
 
 **Acceptance Scenarios**:
 
@@ -135,7 +119,6 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 - A gift is edited or removed from the middle of the history, or a game reaches its 12/15 gift limit.
 - Existing migrated archive entries have more than five players; they remain readable as display-only legacy history and cannot receive new gifts.
 - Browser storage is unavailable, full, or fails during migration or save; data is not falsely reported as persisted.
-- A malformed or unsupported backup is imported, or an ID collides with an archived game.
 - A game is deliberately copied; the copied game and gifts receive new GUIDs.
 - The viewport is narrow or the page is scrolled; no horizontal page overflow occurs and the home floating action button remains fixed.
 
@@ -185,14 +168,11 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 - **FR-014**: Before a gift is recorded, the system MUST preview its contract, outcome, and each player's score change. Manual per-player score entry and corrections MUST remain available; unbalanced manual changes MUST trigger a warning before saving.
 - **FR-015**: Users MUST be able to edit a saved gift and undo the most recent gift. Gift deletion MUST require confirmation. Recalculation MUST preserve remaining GUIDs and MUST NOT duplicate score changes.
 
-#### History, Persistence, and Transfer
+#### History and Persistence
 
 - **FR-016**: Games MUST save automatically in browser storage, restore after reopening, and report unavailable storage or failed saves. The user MUST be told local data may be lost when site data is cleared or devices change.
 - **FR-017**: The archive MUST list games newest first and allow viewing, editing, and confirmed deletion. It MUST identify each game's selected system and any manual corrections.
-- **FR-018**: Every game and gift MUST have a unique stable GUID that survives edits, saves, reloads, exports, and imports. Deliberate copies MUST receive new GUIDs.
-- **FR-019**: Users MUST be able to export and restore a validated backup with a preview. Malformed or duplicate imports MUST provide clear feedback and MUST NOT silently overwrite existing games.
-- **FR-020**: The versioned JSON backup MUST include game and gift GUIDs, player names/order/count, scoring rules, gift results and changes, totals, progress, and next dealer.
-- **FR-021**: Backup import MUST preview players, progress, and scores before saving. Midgame imports MUST resume at the next unrecorded gift without repeating changes; malformed, unsupported, or duplicate backups MUST leave existing games unchanged.
+- **FR-018**: Every game and gift MUST have a unique stable GUID that survives edits, saves, and reloads.
 
 #### Interface and Delivery
 
@@ -202,8 +182,8 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 - **FR-025**: The home screen MUST provide a round plus floating action button at the bottom right that remains fixed while the page scrolls and opens new scorecard setup. The plus MUST be text or a recognized icon, never an emoji, and the control MUST have an accessible name.
 - **FR-026**: The score table MUST show players as columns and gifts as rows, identify the dealer, distinguish a five-player dealer sitting out, and use Dutch Rikken terminology with clear accessible labels.
 - **FR-027**: At Samsung Galaxy A54 portrait dimensions, all five player columns MUST fit without horizontal scrolling; vertical scrolling MUST work on the home and game views.
-- **FR-028**: The delivered experience MUST include automated unit tests for every game-related functional requirement and specified edge case, including scoring outcomes, systems/snapshots, setup, dealer/sit-out, limits, corrections, persistence/migration, GUIDs, backup, duplicates, and midgame resume. Browser layout tests MAY supplement but MUST NOT replace domain unit tests.
-- **FR-029**: The README MUST document supported prerequisites, install/reproducible install, development, tests, production build/deployment and SPA fallback, local-data limitations, and Dutch walkthroughs for setup, scoring, corrections, history, and backups.
+- **FR-028**: The delivered experience MUST include automated unit tests for every game-related functional requirement and specified edge case, including scoring outcomes, systems/snapshots, setup, dealer/sit-out, limits, corrections, persistence/migration, and GUIDs. Browser layout tests MAY supplement but MUST NOT replace domain unit tests.
+- **FR-029**: The README MUST document supported prerequisites, install/reproducible install, development, tests, production build/deployment and SPA fallback, local-data limitations, and Dutch walkthroughs for setup, scoring, corrections, and history.
 - **FR-030**: Normal use MUST require no account, server-side database, or network. Required styling, components, icons, and fonts MUST be bundled locally.
 
 ### Key Entities
@@ -213,7 +193,6 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 - **Game**: One four- or five-player session, ordered players, selected rules, gifts, progress, and completion state.
 - **Player**: A named seat with stable GUID and running total.
 - **Gift**: Ordered game event containing dealer, contract, outcome, stable GUID, and player changes.
-- **Transfer Snapshot**: Versioned complete game representation used to validate, preview, restore, and resume a card.
 
 ## Success Criteria *(mandatory)*
 
@@ -222,11 +201,11 @@ A scorekeeper can return home, open navigation, start a new scorecard from a per
 - **SC-001**: Users can create four-player and five-player scorecards, complete exactly 12 or 15 gifts, and reach final standings.
 - **SC-002**: In all defined outcomes, the preview and saved changes match the selected system; every conserved gift's changes sum to zero across active players.
 - **SC-003**: 100% of game-related requirements and specified edge cases produce their expected state and scoring result during acceptance validation.
-- **SC-004**: Reloading or transferring a game preserves its players/order, rules snapshot, gifts, IDs, totals, progress, and next dealer with no repeated score changes.
+- **SC-004**: Reloading a game preserves its players/order, rules snapshot, gifts, IDs, totals, progress, and next dealer with no repeated score changes.
 - **SC-005**: All five score columns fit the reference phone viewport without horizontal scrolling, and the floating action button remains visible at a fixed bottom-right position while scrolling.
 - **SC-006**: A user can open the home menu and reach the home screen or scoring-system settings in one selection; the fixed add button opens scorecard setup in one selection.
-- **SC-007**: Invalid system names/values, incomplete lineups, and invalid imports are rejected with a clear explanation and leave existing saved games unchanged.
-- **SC-008**: A new user can follow the README to install, run, test, build, deploy, and complete the principal Dutch-language scorekeeping and transfer workflows.
+- **SC-007**: Invalid system names/values and incomplete lineups are rejected with a clear explanation and leave existing saved games unchanged.
+- **SC-008**: A new user can follow the README to install, run, test, build, deploy, and complete the principal Dutch-language scorekeeping workflows.
 
 ## Assumptions
 

@@ -1,6 +1,6 @@
 # Workspace Setup
 
-- [x] Requirements clarified: Angular scorekeeper with Dutch UI, local persistence, score tracking, and JSON backup/restore.
+- [x] Requirements clarified: Angular scorekeeper with Dutch UI, local persistence, and score tracking.
 - [x] Angular workspace scaffolded in the workspace root; application code is under `src/`.
 - [x] Scorecard workflows implemented and documented in `README.md`.
 - [x] No additional VS Code extensions are required.

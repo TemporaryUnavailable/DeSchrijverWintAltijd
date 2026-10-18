@@ -18,17 +18,11 @@
 
     <nav class="top-actions" aria-label="Scorekaartacties">
       @if (game()) {
-      <button class="btn-flat" type="button" aria-label="Back-up downloaden" title="Back-up downloaden"
-        (click)="exportJson()">
-        Back-up downloaden
-      </button>
       <button class="btn-flat red-text text-darken-2" type="button" data-action="delete-scorecard"
         aria-label="Scorekaart verwijderen" title="Scorekaart verwijderen" (click)="deleteCurrentGame()">
         <svg lucideTrash2 aria-hidden="true" size="19"></svg>
       </button>
       }
-      <label class="btn-flat import-button" for="json-import">Back-up importeren</label>
-      <input id="json-import" class="visually-hidden" type="file" accept="application/json,.json" (change)="importJson($event)" aria-label="Scorekaartback-up importeren">
     </nav>
   </header>
 
@@ -61,7 +55,7 @@
     </section>
     @if (scoreEntryOpen() && entryDealerId(); as dealerId) {
     <div class="modal-backdrop" (click)="cancelScoreEntry()">
-      <section class="transfer-modal round-modal card-panel z-depth-3" role="dialog" aria-modal="true"
+      <section class="app-modal round-modal card-panel z-depth-3" role="dialog" aria-modal="true"
         aria-labelledby="round-title" (click)="$event.stopPropagation()">
         <div class="modal-heading">
           <div>
@@ -152,41 +146,7 @@
   </footer>
   }
 
-  @if (importPreview(); as preview) {
-  <div class="modal-backdrop" (click)="cancelImport()">
-    <section class="transfer-modal import-preview card-panel z-depth-3" role="dialog" aria-modal="true"
-      aria-labelledby="import-preview-title" (click)="$event.stopPropagation()">
-      <div class="modal-heading">
-        <div>
-          <p class="eyebrow">Scorekaart overzetten</p>
-          <h2 id="import-preview-title">Import controleren</h2>
-        </div>
-        <button class="modal-close" type="button" aria-label="Import annuleren" (click)="cancelImport()">×</button>
-      </div>
-      <p><strong>{{ preview.game.name }}</strong></p>
-      <p>{{ participantNames(preview.game) }}</p>
-      <p>Voortgang: {{ previewProgress(preview.game) }} · volgende dealer: {{ previewNextDealer(preview.game) }}</p>
-      <ul class="import-preview-scores" aria-label="Voorbeeld totaalscores">
-        @for (player of preview.game.players; track player.id) {
-        <li><span>{{ player.name }}</span><strong>{{ previewTotals(preview.game)[player.id] }}</strong></li>
-        }
-      </ul>
-      @if (preview.collision) {
-      <p class="form-message" role="alert">Bestaat al in het archief. Importeer als kopie om beide kaarten te bewaren.
-      </p>
-      <button class="btn waves-effect waves-light modal-action" type="button" data-action="import-copy"
-        (click)="confirmImport(true)">Als kopie importeren</button>
-      } @else {
-      <button class="btn waves-effect waves-light modal-action" type="button" data-action="confirm-import"
-        (click)="confirmImport()">Scorekaart importeren</button>
-      }
-      <button class="btn-flat modal-action" type="button" data-action="cancel-import"
-        (click)="cancelImport()">Annuleren</button>
-    </section>
-  </div>
-  }
-
-  @if (message() && !game() && !setupOpen() && !importPreview()) {
+  @if (message() && !game() && !setupOpen()) {
   <p class="form-message repository-message" role="status">{{ message() }}</p>
   }
 

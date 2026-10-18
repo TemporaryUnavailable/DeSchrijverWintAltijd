@@ -18,9 +18,9 @@
 
 ## Decision 3: Extend Existing Domain and Persistence Boundaries
 
-**Decision**: Keep `GameService` responsible for game lifecycle, dealer progression, and corrections; add focused scoring-system/rules logic for validation and score calculation; keep `GameRepository` responsible for local storage and migration; keep `ScoreTransferService` responsible for JSON/schema validation and backup import/export. Decompose the root component into presentation/workflow components rather than adding more workflows to `App`.
+**Decision**: Keep `GameService` responsible for game lifecycle, dealer progression, and corrections; add focused scoring-system/rules logic for validation and score calculation; keep `GameRepository` responsible for local storage and migration. Decompose the root component into presentation/workflow components rather than adding more workflows to `App`.
 
-**Rationale**: Repository inspection and a source-wide search confirmed production localStorage writes are confined to `GameRepository`, and versioned JSON serialization is confined to `ScoreTransferService`. These are the smallest existing ownership boundaries for the migration and transfer work. Current `App` owns setup, archive, scoring entry, scanning, and import decisions, so presentation decomposition is justified by concrete cohesion needs.
+**Rationale**: Repository inspection and a source-wide search confirmed production localStorage writes and serialization are confined to `GameRepository`. This is the smallest existing ownership boundary for persistence and migration. Current `App` owns setup, archive, scoring entry, and navigation decisions, so presentation decomposition is justified by concrete cohesion needs.
 
 **Alternatives considered**: Rewrite the application or add a backend (rejected: unnecessary and violates local-first scope); put all new behavior in `App` (rejected: expands the existing workflow concentration); introduce multiple new projects/packages (rejected: no need for a new deployment boundary).
 
@@ -32,15 +32,7 @@
 
 **Alternatives considered**: Reinterpret old score deltas as a verified default rules system (rejected: invents history); discard old keys after parsing but before a successful v2 write (rejected: risks data loss); reject all old records (rejected: violates readable-history requirement).
 
-## Decision 5: Version the Transfer Contract and Handle Conflicts Explicitly
-
-**Decision**: Define version-2 backup JSON in `contracts/score-transfer-v2.schema.json`, covering the complete game, snapshot, gifts, IDs, totals/progress inputs, and next-dealer derivation. Continue accepting validated version-1 snapshots as manual-only legacy cards. Validate and preview before any write. If an incoming game ID already exists, never replace it silently; offer cancel or import-as-copy, and assign new game, player, and gift GUIDs to a deliberate copy.
-
-**Rationale**: The current transfer envelope is `{ version: 1, game }` and its model lacks the new contract/rules data. Existing import can replace an archived record with a colliding ID. A versioned schema makes the cross-device payload independently reviewable and testable.
-
-**Alternatives considered**: Reuse version 1 with incompatible fields (rejected: old clients cannot reliably validate it); overwrite a same-ID archive entry (rejected by the feature's no-silent-overwrite rule); use a remote transfer service (rejected: violates privacy and offline scope).
-
-## Decision 6: Score from Immutable Snapshots and Preserve Legacy Deltas
+## Decision 5: Score from Immutable Snapshots and Preserve Legacy Deltas
 
 **Decision**: New games require a selected scoring-system snapshot containing its name, revision/identity, numeric configuration, and source-preset verification status. The cited source system begins unverified and is manual-only until first confirmed; per the clarification, later numeric edits do not revoke the maintained system's confirmation. Verification is captured in each game snapshot at creation: a game created while the preset is unverified remains manual-only after later confirmation, while new games created afterward may use automatic scoring. User-created systems may change numeric values only and keep the established contract, roles, outcomes, multipliers, and allocation patterns. Store gift input and applied score changes; use the game's snapshot for previews and automatic changes. Existing cards retain their recorded deltas and are not auto-recalculated.
 
@@ -48,9 +40,9 @@
 
 **Alternatives considered**: Treat source rules as active defaults (rejected by clarification); make approval expire after edits (rejected by clarification); make role mappings freely configurable (rejected by clarification); rewrite historical gifts when a catalog is edited (rejected by snapshot integrity).
 
-## Decision 7: Test Domain Rules and State at the Owning Boundary
+## Decision 6: Test Domain Rules and State at the Owning Boundary
 
-**Decision**: Put scoring, validation, migration, dealer, correction, ID, and import-conflict tests beside their domain services using the existing Vitest setup. Keep component tests for workflows and accessibility; add a browser viewport check for Galaxy A54 portrait fit and fixed FAB behavior. Update the README with accurate runtime, reproducible install, build/deploy, camera, privacy, and Dutch workflow instructions.
+**Decision**: Put scoring, validation, migration, dealer, correction, and ID tests beside their domain services using the existing Vitest setup. Keep component tests for workflows and accessibility; add a browser viewport check for Galaxy A54 portrait fit and fixed FAB behavior. Update the README with accurate runtime, reproducible install, build/deploy, camera, privacy, and Dutch workflow instructions.
 
 **Rationale**: The constitution requires unit-test coverage for every game-related requirement and edge case; browser tests cannot replace this domain coverage. Existing project testing uses Angular CLI's Vitest builder.
 

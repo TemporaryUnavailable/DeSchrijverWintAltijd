@@ -6,7 +6,6 @@ import { GameRepository } from './services/game-repository.service';
 import { GameService } from './services/game.service';
 import { PlayerNameService } from './services/player-name.service';
 import { ScoringSystemService } from './services/scoring-system.service';
-import { ScoreTransferService } from './services/score-transfer.service';
 import { ScoreTableComponent } from './score-table.component';
 import { NavigationComponent } from './navigation.component';
 import { ScorecardSetupComponent } from './scorecard-setup.component';
@@ -16,7 +15,6 @@ import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, Lucide
 
 type Handedness = 'right' | 'left';
 const HANDEDNESS_KEY = 'rikken-handedness';
-interface ImportPreview { game: GameV2; collision: boolean; }
 
 const GIFT_TOASTS = [
   'Hie pikke de kiekes!',
@@ -69,7 +67,6 @@ export class App {
   private readonly gameRepository = inject(GameRepository);
   private readonly scoringSystems = inject(ScoringSystemService);
   private readonly playerNames = inject(PlayerNameService);
-  private readonly scoreTransfer = inject(ScoreTransferService);
   private readonly initialLoad = this.gameRepository.loadState();
   private readonly initialState = this.initialLoad.ok ? this.initialLoad.state : EMPTY_STATE;
   protected readonly repositoryState = signal(this.initialState);
@@ -86,7 +83,6 @@ export class App {
   protected readonly tableEditMode = signal(false);
   protected readonly scoreEntryOpen = signal(false);
   protected readonly editingGift = signal<Gift | null>(null);
-  protected readonly importPreview = signal<ImportPreview | null>(null);
   protected readonly message = signal(this.initialLoad.ok ? '' : this.initialLoad.error);
   protected readonly savedAt = signal(this.game()?.updatedAt ?? '');
   protected readonly totals = computed(() => {
@@ -257,45 +253,6 @@ export class App {
     return game.gifts.filter((gift) => gift.entryMode !== 'automatic').length;
   }
 
-  protected previewProgress(game: GameV2): string {
-    if (!this.isPlayable(game)) return `${game.gifts.length} gifts · alleen geschiedenis`;
-    return `${game.gifts.length} / ${this.gameService.getGiftLimit(game)} gifts`;
-  }
-
-  protected previewNextDealer(game: GameV2): string {
-    const dealerId = this.gameService.getNextGiftDealerId(game);
-    return game.players.find((player) => player.id === dealerId)?.name ?? 'Klaar';
-  }
-
-  protected previewTotals(game: GameV2): Record<string, number> {
-    return this.gameService.getTotals(game);
-  }
-
-  protected exportJson(): void {
-    const game = this.game();
-    if (!game) return;
-    const blob = new Blob([this.scoreTransfer.serialize(game)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${this.fileSafeName(game.name)}-scorekaart.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-  }
-
-  protected async importJson(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-    try {
-      this.importSnapshot(await file.text());
-    } catch {
-      this.message.set('Bestand kan niet worden gelezen.');
-    } finally {
-      input.value = '';
-    }
-  }
-
   protected formatSavedAt(value: string): string {
     return new Intl.DateTimeFormat('nl-NL', { hour: '2-digit', minute: '2-digit' }).format(new Date(value));
   }
@@ -308,34 +265,6 @@ export class App {
       hour: '2-digit',
       minute: '2-digit',
     }).format(new Date(value));
-  }
-
-  protected cancelImport(): void {
-    this.importPreview.set(null);
-  }
-
-  protected confirmImport(asCopy = false): void {
-    const preview = this.importPreview();
-    if (!preview || (preview.collision && !asCopy)) return;
-    const game = asCopy ? this.scoreTransfer.copyWithNewIds(preview.game) : preview.game;
-    this.importPreview.set(null);
-    this.setupOpen.set(false);
-    this.message.set('Scorekaart geïmporteerd.');
-    this.saveGame(game);
-  }
-
-  private importSnapshot(raw: string): boolean {
-    try {
-      const parsed = this.scoreTransfer.parse(raw);
-      const importedGame = 'gifts' in parsed ? parsed : this.gameRepository.convertLegacyGame(parsed);
-      const collision = this.repositoryState().games.some((game) => game.id === importedGame.id);
-      this.importPreview.set({ game: importedGame, collision });
-      this.message.set('');
-      return true;
-    } catch {
-      this.message.set('Deze back-up is ongeldig of wordt niet ondersteund.');
-      return false;
-    }
   }
 
   private saveGame(game: GameV2): void {
@@ -363,7 +292,4 @@ export class App {
     if (!result.ok) this.message.set(result.error);
   }
 
-  private fileSafeName(name: string): string {
-    return name.normalize('NFKD').replace(/[^a-zA-Z0-9-]+/g, '-').replace(/^-|-$/g, '').toLowerCase() || 'rikken';
-  }
 }

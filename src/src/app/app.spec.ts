@@ -5,9 +5,13 @@ import { GameService } from './services/game.service';
 import { ScoringSystemService } from './services/scoring-system.service';
 import { PersistedStateV2 } from './models/persisted-state';
 import { GameV2, Gift } from './models/game';
-import { ScoreTransferService } from './services/score-transfer.service';
 import { GameRepository } from './services/game-repository.service';
 import { Toast } from '@materializecss/materialize';
+
+vi.mock('@materializecss/materialize', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@materializecss/materialize')>();
+  return { ...actual, FormSelect: { init: vi.fn() } };
+});
 
 describe('App', () => {
   const storageKey = 'rikken-scorekeeper-v1';
@@ -92,12 +96,12 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Scorekaarten');
+    expect(compiled.querySelector('#archive-title')?.textContent).toContain('Rik-scorekaarten');
     expect(compiled.querySelector('.archive-empty')?.textContent).toContain('Nog geen scorekaarten');
 
-    compiled.querySelector<HTMLButtonElement>('.archive-new-button')?.click();
+    compiled.querySelector<HTMLButtonElement>('#addNewScorecardButton')?.click();
     fixture.detectChanges();
-    expect(compiled.querySelector('h1')?.textContent?.replace(/\s+/g, ' ')).toContain('Nieuwe scorekaart');
+    expect(compiled.querySelector('.setup-layout')).toBeTruthy();
     expect(compiled.querySelectorAll('[aria-label^="Naam speler"]')).toHaveLength(4);
 
     const addPlayer = compiled.querySelector<HTMLButtonElement>('.add-draft');
@@ -223,10 +227,12 @@ describe('App', () => {
   });
 
   it('creates a v2 scorecard and saves balanced manual gift changes from 100', () => {
+    const systems = TestBed.inject(ScoringSystemService);
+    systems.createSystem('Avondvariant', systems.getSystems()[0].values);
     const fixture = TestBed.createComponent(App);
     const compiled = fixture.nativeElement as HTMLElement;
     fixture.detectChanges();
-    compiled.querySelector<HTMLButtonElement>('.archive-new-button')?.click();
+    compiled.querySelector<HTMLButtonElement>('#addNewScorecardButton')?.click();
     fixture.detectChanges();
 
     const playerInputs = compiled.querySelectorAll<HTMLInputElement>('[aria-label^="Naam speler"]');
@@ -242,7 +248,7 @@ describe('App', () => {
 
     compiled.querySelector<HTMLButtonElement>('.begin-button')?.click();
     fixture.detectChanges();
-    compiled.querySelector<HTMLButtonElement>('.scorecard-footer .home-fab')?.click();
+    compiled.querySelector<HTMLButtonElement>('.scorecard-fab button')?.click();
     fixture.detectChanges();
     expect(compiled.querySelector('[role="dialog"] #round-title')?.textContent).toContain('Score invoeren');
     compiled.querySelector<HTMLButtonElement>('[data-action="manual-entry"]')?.click();
@@ -265,12 +271,13 @@ describe('App', () => {
   });
 
   it('randomly shows a Materialize toast after saving a new gift', async () => {
+    document.querySelector('#toast-container')?.remove();
     const game = createV2Fixture();
     localStorage.setItem(stateKey, JSON.stringify({ ...createState([game]), activeGameId: game.id }));
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const app = fixture.componentInstance as unknown as { saveGift(gift: Gift): void };
-    vi.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.1).mockReturnValueOnce(0.5);
+    vi.spyOn(Math, 'random').mockReturnValueOnce(0.9).mockReturnValueOnce(0.1).mockReturnValueOnce(0.25);
 
     app.saveGift(makeFixtureGift(game));
     await vi.waitFor(() => expect(document.querySelector('.toast')).toBeNull());
@@ -286,7 +293,7 @@ describe('App', () => {
     await vi.waitFor(() => expect(document.querySelector('#toast-container')).toBeNull());
   });
 
-  it('shows a far-left menu with level-two shadow, home, settings, and backup import', async () => {
+  it('shows a far-left menu with level-two shadow, home, and settings', async () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -301,8 +308,6 @@ describe('App', () => {
     compiled.querySelector<HTMLButtonElement>('[data-action="nav-home"]')?.click();
     fixture.detectChanges();
     expect(compiled.querySelector('.archive-layout')).toBeTruthy();
-    expect(compiled.querySelector('label[for="json-import"]')?.textContent).toContain('Back-up importeren');
-    expect(compiled.querySelector<HTMLInputElement>('#json-import')?.accept).toBe('application/json,.json');
     compiled.querySelector<HTMLButtonElement>('.nav-menu-button')?.click();
     fixture.detectChanges();
     compiled.querySelector<HTMLButtonElement>('[data-action="nav-settings"]')?.click();
@@ -315,7 +320,7 @@ describe('App', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    const fab = compiled.querySelector<HTMLButtonElement>('.home-fab');
+    const fab = compiled.querySelector<HTMLButtonElement>('#addNewScorecardButton');
 
     expect(fab?.getAttribute('aria-label')).toBe('Nieuwe scorekaart maken');
     fab?.click();
@@ -421,95 +426,12 @@ describe('App', () => {
     expect(compiled.querySelector('.archive-layout')).not.toBeNull();
   });
 
-  it('cancels an import preview without changing persisted games', () => {
-    const game = createV2Fixture();
-    const state = createState([game]);
-    localStorage.setItem(stateKey, JSON.stringify(state));
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = fixture.componentInstance as unknown as { importSnapshot(raw: string): boolean };
-    app.importSnapshot(TestBed.inject(ScoreTransferService).serialize(game));
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('0 / 12 gifts');
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Noor');
-    expect(fixture.nativeElement.querySelector('.import-preview')).toBeTruthy();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    compiled.querySelector<HTMLButtonElement>('[data-action="cancel-import"]')?.click();
-    fixture.detectChanges();
-
-    expect(JSON.parse(localStorage.getItem(stateKey) ?? '{}')).toEqual(state);
-    expect(fixture.nativeElement.querySelector('.import-preview')).toBeNull();
-  });
-
-  it('rejects an invalid import without changing persisted games', () => {
-    const state = createState([createV2Fixture()]);
-    localStorage.setItem(stateKey, JSON.stringify(state));
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = fixture.componentInstance as unknown as { importSnapshot(raw: string): boolean };
-
-    expect(app.importSnapshot('{"version":2,"game":{"name":17},"derived":{}}')).toBe(false);
-    fixture.detectChanges();
-
-    expect(JSON.parse(localStorage.getItem(stateKey) ?? '{}')).toEqual(state);
-    expect(fixture.nativeElement.textContent).toContain('Deze back-up is ongeldig of wordt niet ondersteund.');
-    expect(fixture.nativeElement.querySelector('.import-preview')).toBeNull();
-  });
-
-  it('offers copy for an archive-wide ID collision and preserves the original card', () => {
-    const game = createV2Fixture();
-    localStorage.setItem(stateKey, JSON.stringify(createState([game])));
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = fixture.componentInstance as unknown as { importSnapshot(raw: string): boolean };
-    app.importSnapshot(TestBed.inject(ScoreTransferService).serialize(game));
-    fixture.detectChanges();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.textContent).toContain('Bestaat al');
-    compiled.querySelector<HTMLButtonElement>('[data-action="import-copy"]')?.click();
-    fixture.detectChanges();
-    const imported = JSON.parse(localStorage.getItem(stateKey) ?? '{}') as PersistedStateV2;
-
-    expect(imported.games).toHaveLength(2);
-    expect(imported.games.some((item) => item.id !== game.id)).toBe(true);
-    expect(imported.games.find((item) => item.id === game.id)?.players.map((player) => player.id)).toEqual(game.players.map((player) => player.id));
-  });
-
-  it('resumes an imported midgame exactly once with derived totals', () => {
-    const game = createV2Fixture();
-    game.gifts.push(makeFixtureGift(game));
-    const fixture = TestBed.createComponent(App);
-    fixture.detectChanges();
-    const app = fixture.componentInstance as unknown as { importSnapshot(raw: string): boolean };
-    app.importSnapshot(TestBed.inject(ScoreTransferService).serialize(game));
-    fixture.detectChanges();
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('1 / 12 gifts');
-    expect((fixture.nativeElement as HTMLElement).textContent?.toLocaleLowerCase('nl-NL')).toContain('volgende dealer: jules');
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('101');
-    expect((fixture.nativeElement as HTMLElement).textContent).toContain('99');
-    const compiled = fixture.nativeElement as HTMLElement;
-    compiled.querySelector<HTMLButtonElement>('[data-action="confirm-import"]')?.click();
-    fixture.detectChanges();
-
-    const saved = JSON.parse(localStorage.getItem(stateKey) ?? '{}') as PersistedStateV2;
-    expect(saved.games[0].gifts).toHaveLength(1);
-    expect(fixture.nativeElement.querySelector('.summary-player strong')?.textContent?.trim()).toBe('101');
-
-    fixture.destroy();
-    const resumed = TestBed.createComponent(App);
-    resumed.detectChanges();
-    expect(resumed.nativeElement.querySelector('.summary-player strong')?.textContent?.trim()).toBe('101');
-    expect(JSON.parse(localStorage.getItem(stateKey) ?? '{}').games[0].gifts).toHaveLength(1);
-  });
-
   it('shows a visible warning when v2 state cannot be saved', () => {
     const repository = TestBed.inject(GameRepository);
     vi.spyOn(repository, 'saveState').mockReturnValue({ ok: false, error: 'Gegevens konden niet worden opgeslagen.' });
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('.archive-new-button')?.click();
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('#addNewScorecardButton')?.click();
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('Gegevens konden niet worden opgeslagen.');
@@ -519,7 +441,7 @@ describe('App', () => {
 function createV2Fixture(): GameV2 {
   const systems = TestBed.inject(ScoringSystemService);
   return TestBed.inject(GameService).createScorecard(
-    'Importkaart',
+    'Testkaart',
     ['Noor', 'Jules', 'Sam', 'Mila'],
     systems.createSnapshot(systems.getSystems()[0].id),
   );

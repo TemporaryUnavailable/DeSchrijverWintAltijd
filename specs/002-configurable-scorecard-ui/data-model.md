@@ -43,12 +43,12 @@ A table session with an immutable selected rules snapshot and ordered gifts.
 
 | Field | Type | Rules |
 |---|---|---|
-| `id` | UUID | Stable; preserved by edits, migration, export, and normal import. |
+| `id` | UUID | Stable; preserved by edits, migration, and reload. |
 | `name` | string | Trimmed display name; default may be supplied by the UI. |
-| `players` | ordered `Player[]` | Four or five for new/playable games; imported legacy history may contain six or seven. |
+| `players` | ordered `Player[]` | Four or five for new/playable games; migrated legacy history may contain six or seven. |
 | `rulesSnapshot` | `RulesSnapshot` or `null` | Required for new games; null only for v1 legacy cards whose original contract rules are unknowable. |
 | `gifts` | ordered `Gift[]` | Up to 12 for four-player and 15 for five-player playable games. |
-| `legacy` | boolean | True for migrated/imported v1 cards; these have no reconstructed contract history. |
+| `legacy` | boolean | True for migrated v1 cards; these have no reconstructed contract history. |
 | `createdAt`, `updatedAt` | ISO 8601 strings | Used for history ordering and save feedback. |
 
 A six/seven-player legacy card is display-only. A four/five-player legacy card retains manual score entry but cannot use automatic scoring without an explicit new game; its existing gifts remain unchanged.
@@ -59,7 +59,7 @@ One recorded deal. Its ordered position determines progress and the expected dea
 
 | Field | Type | Rules |
 |---|---|---|
-| `id` | UUID | Stable through edit, deletion of other gifts, persistence, and transfer. |
+| `id` | UUID | Stable through edit, deletion of other gifts, and persistence. |
 | `dealerId` | player UUID | Current dealer; a five-player dealer is not an active scorer. Later gifts' dealer assignments are recalculated after an earlier gift is removed. |
 | `input` | discriminated contract input or `null` | Stores contract, outcome, trick count and/or participant IDs sufficient for preview/recalculation. `null` for legacy gifts. |
 | `scoreChanges` | map of player UUID to integer | Applied per-player deltas; must include zero for a five-player sitting-out dealer. |
@@ -82,12 +82,6 @@ One versioned local envelope so a complete state transition can be written with 
 
 During migration, parse the existing `rikken-scorekeeper-v1` and `rikken-scorecards-v1` envelopes, merge valid records by game ID (active record takes precedence for a matching ID), preserve their IDs and score changes, and mark them legacy-manual. Write and verify the complete v2 envelope before considering migration successful; leave v1 keys intact if validation or write fails.
 
-## TransferSnapshotV2
-
-The transfer document is `{ "version": 2, "game": Game, "derived": DerivedGameState }`. `derived` contains per-player totals, recorded-gift count, gift limit, and next dealer UUID. These values are included as required for transfer preview and must validate against the game rather than being trusted as independent state. The canonical JSON contract is `contracts/score-transfer-v2.schema.json`.
-
-A validated v1 transfer `{ "version": 1, "game": LegacyGame }` maps to a legacy-manual game. Import previews before saving. If the incoming game UUID already exists locally, cancel or import as a deliberate copy; never replace in place. A copy receives new game, player, and gift UUIDs; a normal transfer preserves IDs.
-
 ## Contract Input Variants
 
 - **Rik/Afrik and Troel**: exactly two distinct rikker UUIDs, two opposing active player UUIDs, and rikkers' trick count `0..13`; Troel uses the fixed multiplier of 2.
@@ -101,16 +95,15 @@ A validated v1 transfer `{ "version": 1, "game": LegacyGame }` maps to a legacy-
 - New games have exactly four or five distinct non-empty players and a selected rules snapshot. Starting totals are 100 each.
 - Each playable four-player game has a 12-gift limit; each five-player game has a 15-gift limit. No gift may be appended past its limit.
 - A gift dealer is the first player for gift 1 and advances one seat per gift, wrapping at the final player. In a five-player game the dealer has zero score change and the other four are active.
-- IDs for games, players, gifts, and systems are valid UUIDs and unique within their corresponding collection. Normal migration/import preserves IDs; deliberate copy regenerates all IDs in the copied game.
+- IDs for games, players, gifts, and systems are valid UUIDs and unique within their corresponding collection. Migration preserves IDs.
 - Point values and score changes are safe integers. Solo-contract values are divisible by three. Contract outcomes conserve points across active players; manual imbalance requires a warning/confirmation before save.
-- Running totals equal 100 plus the sum of each player's recorded gift deltas. The derived transfer totals, progress, and next dealer must match recalculation.
+- Running totals equal 100 plus the sum of each player's recorded gift deltas; progress and next dealer match recalculation.
 - Editing a catalog system never mutates snapshots or score history. The source preset can be selected for manual scoring while unverified, but automatic calculation is gated by the verification state captured in that game's snapshot. Later confirmation enables automatic scoring only for subsequently created games; editing values does not revoke the maintained system's confirmation.
-- Invalid state, unsupported transfer versions, duplicate IDs, storage quota/security errors, or failed migration are reported and must not overwrite valid persisted data.
+- Invalid state, duplicate IDs, storage quota/security errors, or failed migration are reported and must not overwrite valid persisted data.
 
 ## State Transitions
 
 - **Scoring system**: draft -> validated and saved; source preset `unverified` -> `confirmed`; confirmed stays confirmed after numeric edits; removal -> confirmed -> deleted only after explicit confirmation and only if another system remains.
 - **Game**: setup -> in progress -> complete at the configured gift limit. The selected rules snapshot does not transition.
 - **Gift**: draft -> preview -> recorded; recorded -> edited (same ID) or deleted after confirmation; list changes recalculate totals, progress, and subsequent dealer assignments.
-- **Import**: raw data -> version/schema validation -> preview -> save, cancel, or copy-on-ID-conflict. Failed validation leaves existing state untouched.
 - **Legacy migration**: v1 parsed -> converted to legacy-manual v2 records -> validated -> one-envelope v2 save. Failure retains original v1 data and surfaces an error.

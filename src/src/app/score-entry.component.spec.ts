@@ -5,6 +5,11 @@ import { GameV2, Player } from './models/game';
 import { RulesSnapshot } from './models/scoring-system';
 import { ScoringSystemService } from './services/scoring-system.service';
 
+vi.mock('@materializecss/materialize', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@materializecss/materialize')>();
+  return { ...actual, FormSelect: { init: vi.fn() } };
+});
+
 const players: Player[] = ['p1', 'p2', 'p3', 'p4', 'p5'].map((id) => ({ id, name: id }));
 
 describe('ScoreEntryComponent', () => {
@@ -29,13 +34,14 @@ describe('ScoreEntryComponent', () => {
     expect(compiled.querySelectorAll('fieldset legend')[1]?.textContent).toBe('Aantal slagen');
     expect(tricksSlider.type).toBe('range');
     expect(tricksSlider.value).toBe('8');
+    expect(tricksSlider.min).toBe('0');
+    expect(tricksSlider.max).toBe('13');
+    expect(tricksSlider.step).toBe('1');
     expect(opponentSlider.value).toBe('5');
     for (const slider of [tricksSlider, opponentSlider]) {
-      const datalist = compiled.querySelector<HTMLDataListElement>(`datalist[id="${slider.getAttribute('list')}"]`);
-      expect(datalist).not.toBeNull();
-      expect(Array.from(datalist!.options, (option) => option.value)).toEqual(
-        Array.from({ length: 14 }, (_, index) => String(index)),
-      );
+      expect(slider.min).toBe('0');
+      expect(slider.max).toBe('13');
+      expect(slider.step).toBe('1');
     }
     expect(compiled.querySelector('.score-preview h5')).toBeNull();
     expect(compiled.querySelector('.score-preview')?.getAttribute('role')).toBe('group');

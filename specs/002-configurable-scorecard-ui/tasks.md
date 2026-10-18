@@ -2,7 +2,7 @@
 
 **Input**: Design documents from `specs/002-configurable-scorecard-ui/`
 
-**Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `contracts/score-transfer-v2.schema.json`, `quickstart.md`
+**Prerequisites**: `plan.md`, `spec.md`, `research.md`, `data-model.md`, `quickstart.md`
 
 **Tests**: Automated unit tests are explicitly required by FR-028 and the constitution. Every game-related requirement and edge case is mapped to a story-level test task; browser layout tests supplement domain tests.
 
@@ -19,9 +19,9 @@
 **Purpose**: Define the shared domain and persistence contracts required before story implementation.
 
 - [X] T002 Define scoring-system values, verification state, immutable rules snapshots, and discriminated gift inputs in `src/src/app/models/scoring-system.ts` and `src/src/app/models/game.ts`.
-- [X] T003 Define the version-2 persisted-state and transfer envelope types, including derived totals/progress/next dealer, in `src/src/app/models/persisted-state.ts` and `src/src/app/models/transfer-snapshot.ts`.
+- [X] T003 Define the version-2 persisted-state type in `src/src/app/models/persisted-state.ts`.
 
-**Checkpoint**: Shared types are available for all story work; no story should introduce a conflicting game, gift, or transfer representation.
+**Checkpoint**: Shared types are available for all story work; no story should introduce a conflicting game or gift representation.
 
 ## Phase 3: User Story 1 - Maintain Scoring Systems (Priority: P1)
 
@@ -109,7 +109,7 @@
 
 ### Tests for User Story 6
 
-- [X] T024 [US6] Add component tests for far-left navbar menu, level-5 shadow class, home destination, backup import, accessible labels, and fixed home FAB behavior in `src/src/app/app.spec.ts`.
+- [X] T024 [US6] Add component tests for far-left navbar menu, level-5 shadow class, home destination, accessible labels, and fixed home FAB behavior in `src/src/app/app.spec.ts`.
 - [X] T025 [US6] Add a Playwright viewport test for five-player table fit, no horizontal overflow, vertical scrolling, and fixed bottom-right FAB at 360x780 CSS pixels in `src/e2e/scorecard-layout.spec.ts` and configure its runner in `src/playwright.config.ts`.
 
 ### Implementation for User Story 6
@@ -121,33 +121,29 @@
 
 **Checkpoint**: Navigation actions remain discoverable, the home FAB stays fixed while scrolling, and five player columns fit without horizontal scrolling.
 
-## Phase 8: User Story 5 - Restore and Transfer Scorecards (Priority: P2)
+## Phase 8: Local Persistence Migration
 
-**Goal**: Migrate old local games, persist new state safely, and support validated v1/v2 JSON backups without silent replacement or replay.
+**Goal**: Migrate old local games and persist new state safely.
 
-**Independent Test**: Migrate seeded v1 data, reload, export/import a midgame v2 game on another device, and verify IDs, rules, score history, progress, next dealer, and duplicate conflict behavior.
+**Independent Test**: Migrate seeded v1 data, reload, and verify IDs, score history, and dealer progress.
 
 ### Tests for User Story 5
 
 - [X] T030 [P] [US5] Add repository tests for v1 active/archive migration, seven-player display-only legacy history, ID merge precedence, source-key retention on failed migration, localStorage denial/quota errors, and save failure reporting in `src/src/app/services/game-repository.service.spec.ts`.
-- [X] T031 [P] [US5] Add backup tests for v1 legacy import, v2 schema/domain validation, totals/progress/next-dealer consistency, malformed versions, duplicate IDs, and copy GUID regeneration in `src/src/app/services/score-transfer.service.spec.ts`.
-- [X] T032 [US5] Add import-preview workflow tests proving cancel leaves state unchanged, ID collisions offer cancel/copy, and midgame resume does not replay score changes in `src/src/app/app.spec.ts`.
 
 ### Implementation for User Story 5
 
-- [X] T033 [US5] Implement version-2 local-state persistence, validated v1 migration, archive merge, and visible storage failure results in `src/src/app/services/game-repository.service.ts`.
-- [X] T034 [US5] Implement v1/v2 parsing, schema and derived-state validation, and JSON backup serialization in `src/src/app/services/score-transfer.service.ts` using `specs/002-configurable-scorecard-ui/contracts/score-transfer-v2.schema.json`.
-- [X] T035 [US5] Add archive-wide import conflict preview with cancel/import-as-copy, regenerated copy GUIDs, backup-file fallback, and unchanged existing games on validation failure in `src/src/app/app.ts` and `src/src/app/app.html`.
+- [X] T033 Implement version-2 local-state persistence, validated v1 migration, archive merge, and visible storage failure results in `src/src/app/services/game-repository.service.ts`.
 
-**Checkpoint**: Valid imports resume exactly once; invalid or colliding payloads cannot silently overwrite local games; failed storage operations are visible.
+**Checkpoint**: Migrated records resume exactly once and failed storage operations are visible.
 
 ## Phase 9: Polish and Cross-Cutting Concerns
 
 **Purpose**: Complete user documentation and run the feature's required quality gates.
 
-- [X] T036 Update `src/README.md` with supported Node/npm versions, `npm ci`, development/tests/build, static deployment and SPA fallback, local-data limitations, and Dutch workflows for setup/scoring/corrections/history/backups.
+- [X] T036 Update `src/README.md` with supported Node/npm versions, `npm ci`, development/tests/build, static deployment and SPA fallback, local-data limitations, and Dutch workflows for setup/scoring/corrections/history.
 - [X] T037 Run `npm ci`, `npm test -- --watch=false`, `npm run build`, and the viewport test from `src/package.json`; fix failures and verify documented commands and bundled assets.
-- [X] T038 Review every FR-001–FR-030 and edge case against the unit-test files listed in `specs/002-configurable-scorecard-ui/plan.md`; close any untested game rule or state transition before release.
+- [X] T038 Review every in-scope functional requirement and edge case against the unit-test files listed in `specs/002-configurable-scorecard-ui/plan.md`; close any untested game rule or state transition before release.
 
 ## Dependencies and Execution Order
 
@@ -160,7 +156,7 @@
 - **US3**: Depends on US1 and US2 for rules snapshots, player roles, and gift state.
 - **US4**: Depends on US3 for recorded gift inputs and changes.
 - **US6**: Depends on Foundational; can be developed in parallel with US3/US4 once the shell and models are stable.
-- **US5**: Depends on US3's game/gift shape; it is P2 and follows the P1 stories.
+- **Persistence migration**: Depends on US3's game/gift shape and runs after the P1 stories.
 - **Polish**: Depends on all desired stories being implemented.
 
 ### Dependency Graph
@@ -174,24 +170,23 @@ graph TD
   US3 --> US4
   Foundation --> US6
   US2 --> US6
-  US3 --> US5
-  US6 --> US5
   US4 --> Polish
-  US5 --> Polish
+  US3 --> Persistence
+  Persistence --> Polish
   US6 --> Polish
 ```
 
 ### Parallel Opportunities
 
 - After Foundational, T009 and T010 can be written in parallel because they cover game creation and remembered-name services in separate test files.
-- After US3's model and transfer interfaces are stable, T030 and T031 can be written in parallel because repository migration and transfer serialization are separate service boundaries and test files.
+- After US3's model is stable, persistence migration tests can be written against the repository boundary.
 - US6 navigation/layout work can proceed independently of the scoring/correction implementation after foundational types.
 
 ## Implementation Strategy
 
 ### MVP First
 
-Deliver US1 plus the minimum US2 system-selection path: users can maintain a named scoring system, choose it when creating a four/five-player scorecard, and the game retains its rules snapshot. This small setup slice is required to independently prove US1's selection scenario. Then add contract scoring (US3), corrections/history (US4), navigation/table usability (US6), and local migration/transfer (US5).
+Deliver US1 plus the minimum US2 system-selection path: users can maintain a named scoring system, choose it when creating a four/five-player scorecard, and the game retains its rules snapshot. This small setup slice is required to independently prove US1's selection scenario. Then add contract scoring (US3), corrections/history (US4), navigation/table usability (US6), and local migration.
 
 ### Incremental Delivery
 
@@ -201,7 +196,7 @@ Deliver US1 plus the minimum US2 system-selection path: users can maintain a nam
 4. US3 automatic/manual gift scoring and preview.
 5. US4 corrections, undo, archive, and final standings.
 6. US6 navigation and responsive table interface.
-7. US5 persistence migration, JSON backup, import preview, and conflict safety.
+7. Local persistence migration.
 8. Documentation, full test suite, production build, and viewport acceptance.
 
 ### Parallel Execution Examples
@@ -213,7 +208,6 @@ After foundation:
 
 After the game/gift model is stable:
 - T030 migration/persistence unit tests in src/src/app/services/game-repository.service.spec.ts
-- T031 transfer/schema unit tests in src/src/app/services/score-transfer.service.spec.ts
 ```
 
 ## Notes

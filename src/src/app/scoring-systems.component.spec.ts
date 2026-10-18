@@ -59,7 +59,7 @@ describe('ScoringSystemsComponent', () => {
     expect(compiled.querySelector('.system-list')?.textContent).toContain('Bestaand');
   });
 
-  it('requires explicit confirmation before the source preset is marked verified', () => {
+  it('shows the unverified source preset and requires confirmation', () => {
     const fixture = TestBed.createComponent(ScoringSystemsComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;

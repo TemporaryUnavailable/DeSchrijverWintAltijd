@@ -128,7 +128,7 @@ export class ScoringSystemService {
       name: SOURCE_SYSTEM_NAME,
       revision: 1,
       kind: 'source-preset',
-      verification: 'confirmed',
+      verification: 'unverified',
       values: sourceValues(),
     };
     this.repository.saveScoringSystems([preset]);

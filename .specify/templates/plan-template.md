@@ -41,7 +41,7 @@
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
 - **Scoring integrity**: Does the design preserve game rules snapshots, stable GUIDs, previews, and required score balance?
-- **Local-first privacy**: Do storage and transfer remain local, with validated imports, explicit destructive confirmation, and visible storage failures?
+- **Local-first privacy**: Does storage remain local, with explicit destructive confirmation and visible storage failures?
 - **Game requirement unit tests**: Does every in-scope game requirement, acceptance scenario, and specified edge case map to unit tests?
 - **Material Design usability**: Does the design use static Material 3 roles and M3 components, Dutch terminology, and a clean table-ready layout that fits five players at the reference phone size?
 - **Angular architecture**: Do models, services, and components have cohesive responsibilities and explicit dependency boundaries?

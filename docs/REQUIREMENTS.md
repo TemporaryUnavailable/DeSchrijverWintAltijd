@@ -32,8 +32,7 @@ A game is one table session: 12 gifts for four players or 15 gifts for five play
 
 - Save games automatically in browser local storage and restore them after reopening the app.
 - List previous games and allow viewing, editing, and deleting them with confirmation.
-- Assign every game and every gift a unique, stable GUID when it is created. Keep each identifier when its record is edited, saved, exported, or restored; a deliberately copied game receives new identifiers.
-- Provide a way to export a backup and restore it in the app.
+- Assign every game and every gift a unique, stable GUID when it is created. Keep each identifier when its record is edited, saved, or reloaded.
 - Make clear that local-only storage can be lost if browser site data is cleared or the user switches devices.
 
 ### Interface
@@ -45,7 +44,7 @@ A game is one table session: 12 gifts for four players or 15 gifts for five play
 - Make the current gift, player names, and running scores easy to scan.
 - Display players in columns and gifts in rows in the score table.
 - Clearly mark the dealer for each gift. For five-player games, visually distinguish the dealer as sitting out that gift.
-- Use icons selectively where they make an action or status easier to recognize, such as undo, export, or delete. Do not add icons decoratively or to every label; provide visible text or an accessible name for controls where the icon alone may be unclear.
+- Use icons selectively where they make an action or status easier to recognize, such as undo or delete. Do not add icons decoratively or to every label; provide visible text or an accessible name for controls where the icon alone may be unclear.
 
 ## Scoring Rules and Source
 
@@ -104,20 +103,19 @@ Each game should retain the rules settings used when it was played, so later cha
 - The production build must compile Angular and include required Materialize styles and assets in deployable static output under `dist/`.
 - Document how to serve the production output from a static web host, including the single-page-app fallback to `index.html` where the host requires it.
 - Add a `README.md` with setup, development, production-build and deployment steps, plus a Dutch-language walkthrough for creating a game, entering gifts, correcting or undoing an entry, and reviewing game history.
-- Document JSON backup export and import, including the local-only storage limitation.
-- Explain that saved games are local to the browser and that users should export backups before clearing browser data or changing devices.
+- Explain that saved games are local to the browser and may be lost if browser data is cleared or the user changes devices.
 
 ## Unit Tests
 
-- Add unit tests for game creation, score calculation, gift editing/undo, persistence, JSON backup serialization/import, and GUID preservation.
+- Add unit tests for game creation, score calculation, gift editing/undo, persistence, and GUID preservation.
 - Test that remembered names are offered as suggestions while different names and player orders can be used in subsequent games.
-- Cover edge cases including four- and five-player games, dealer rotation and sit-out scoring, gift-count limits, invalid or unbalanced score input, malformed or unsupported backup data, duplicate imports, and resuming a midgame snapshot without applying scores twice.
+- Cover edge cases including four- and five-player games, dealer rotation and sit-out scoring, gift-count limits, invalid or unbalanced score input, and resuming a midgame after reload without applying scores twice.
 - Keep scoring tests driven by the configured rules so uncertain rules can be changed without encoding assumptions into test expectations.
 - Make the full unit-test suite runnable with `npm test` and document it in the README.
 
 ## Non-Functional Requirements
 
-- Structure the Angular app with focused components, services, and domain/model types or classes. Separate presentation, game and scoring rules, persistence, and backup processing responsibilities; use Angular dependency injection and SOLID principles to keep units cohesive, testable, and easy to change. Avoid concentrating unrelated application logic in the root component.
+- Structure the Angular app with focused components, services, and domain/model types or classes. Separate presentation, game and scoring rules, and persistence responsibilities; use Angular dependency injection and SOLID principles to keep units cohesive, testable, and easy to change. Avoid concentrating unrelated application logic in the root component.
 - No account, server-side database, or network connection is required for normal use.
 - Persist game state locally in the browser.
 - Do not silently discard an in-progress game; confirm before destructive actions.
@@ -129,18 +127,15 @@ Each game should retain the rules settings used when it was played, so later cha
 2. A user can start a five-player game, record 15 gifts, and see final standings.
 3. Reloading the app restores saved and in-progress games.
 4. A user can enter a manual correction and see its effect on all player totals.
-5. A user can export a backup and restore it in the app.
-6. Games using configurable or manually corrected scoring remain identifiable in history.
-7. The score table displays each player in a column and each gift in a row.
-8. The leftmost player deals the first gift; the dealer marker advances one column per gift and wraps after the last player column (column four or five according to table size).
-9. In a five-player game, the dealer is excluded from play and scoring for that gift; their score remains unchanged.
-10. The documented production build command completes successfully and creates deployable static output containing the Angular app and Materialize assets.
-11. The README explains setup, local development, production deployment, and the scorekeeper's main user workflows.
-12. A user can export a game as a JSON backup and import it, restoring the same player order, scores, gift history, and dealer position.
-13. A game imported midgame can continue with the next unrecorded gift without duplicating prior score changes or replacing existing local games.
-14. Every game and gift has a unique, stable GUID that survives editing, reload, and backup export/import; a deliberate copy receives new GUIDs.
-15. The app is usable at Samsung Galaxy A54 portrait phone size, the five-player score table fits the viewport width, and vertical scrolling works without horizontal scrolling.
-16. `npm test` runs the unit-test suite successfully, including the listed scoring, dealer, persistence, GUID, and backup edge cases.
-17. Previously used player names are suggested at setup, but a user can create each game with a different lineup and player order.
+5. Games using configurable or manually corrected scoring remain identifiable in history.
+6. The score table displays each player in a column and each gift in a row.
+7. The leftmost player deals the first gift; the dealer marker advances one column per gift and wraps after the last player column (column four or five according to table size).
+8. In a five-player game, the dealer is excluded from play and scoring for that gift; their score remains unchanged.
+9. The documented production build command completes successfully and creates deployable static output containing the Angular app and Materialize assets.
+10. The README explains setup, local development, production deployment, and the scorekeeper's main user workflows.
+11. Every game and gift has a unique, stable GUID that survives editing and reload.
+12. The app is usable at Samsung Galaxy A54 portrait phone size, the five-player score table fits the viewport width, and vertical scrolling works without horizontal scrolling.
+13. `npm test` runs the unit-test suite successfully, including the listed scoring, dealer, persistence, and GUID edge cases.
+14. Previously used player names are suggested at setup, but a user can create each game with a different lineup and player order.
 
 These requirements are based on the linked rules page, which notes it was last updated three years ago. Verify scoring details with the group before making them defaults.

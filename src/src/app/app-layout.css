@@ -108,12 +108,7 @@ button, input { font: inherit; }
 .form-message { margin: 10px 0; color: #d32f2f; font-size: .85rem; }
 
 .modal-backdrop { position: fixed; inset: 0; z-index: 20; padding: 20px; display: grid; place-items: center; background: rgba(0, 0, 0, .32); }
-.transfer-modal { width: min(100%, 440px); max-height: min(92dvh, 760px); overflow-y: auto; text-align: center; }
-.import-preview { display: grid; gap: 8px; }
-.import-preview p { margin: 0; }
-.import-preview .modal-heading { margin-bottom: 8px; }
-.import-preview-scores { margin: 4px 0; padding: 0; list-style: none; border-top: 1px solid #e0e0e0; }
-.import-preview-scores li { min-height: 36px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e0e0e0; }
+.app-modal { width: min(100%, 440px); max-height: min(92dvh, 760px); overflow-y: auto; text-align: center; }
 .modal-heading { margin-bottom: 18px; display: flex; justify-content: space-between; align-items: flex-start; text-align: left; }
 .modal-heading h2 { margin: 6px 0 0; }
 .modal-close { width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; color: #212121; font-size: 21px; cursor: pointer; }
