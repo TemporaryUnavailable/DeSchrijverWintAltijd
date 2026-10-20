@@ -1,0 +1,132 @@
+<section class="statistics" aria-labelledby="statistics-title">
+  <header class="statistics-heading">
+    <div>
+      <p class="eyebrow"><span class="live-dot"></span> Alle scorekaarten</p>
+      <h1 id="statistics-title">Statistieken</h1>
+      <p class="statistics-note">Contract- en slaggegevens tellen alleen handjes mee waarvan de invoer bewaard is.</p>
+    </div>
+  </header>
+
+  <section class="statistics-overview" aria-label="Overzicht">
+    <article class="overview-stat">
+      <span>Scorekaarten</span>
+      <strong>{{ statistics().gameCount }}</strong>
+    </article>
+    <article class="overview-stat">
+      <span>Handjes totaal</span>
+      <strong>{{ statistics().giftCount }}</strong>
+    </article>
+    <article class="overview-stat">
+      <span>Gemiddeld per kaart</span>
+      <strong>{{ formatAverage(statistics().averageGiftsPerGame) }}</strong>
+    </article>
+    <article class="overview-stat">
+      <span>Handjes met contractgegevens</span>
+      <strong>{{ statistics().typedGiftCount }}</strong>
+    </article>
+  </section>
+
+  <section class="statistics-section" aria-labelledby="contract-statistics-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="contract-statistics-title">Contracten</h2>
+        <p>{{ statistics().typedGiftCount }} handjes met opgeslagen invoer</p>
+      </div>
+    </div>
+
+    <div class="contract-highlights">
+      <article class="contract-highlight most-played">
+        <span class="highlight-label">Meest gespeeld</span>
+        @if (statistics().mostPlayed.length) {
+        <strong>@for (item of statistics().mostPlayed; track item.contract) { <span>{{ item.label }}</span> }</strong>
+        <span>{{ statistics().mostPlayed[0].count }} handjes</span>
+        } @else {
+        <strong>—</strong>
+        <span>Nog geen contracten geregistreerd</span>
+        }
+      </article>
+      <article class="contract-highlight least-played">
+        <span class="highlight-label">Minst gespeeld, minstens één keer</span>
+        @if (statistics().leastPlayed.length) {
+        <strong>@for (item of statistics().leastPlayed; track item.contract) { <span>{{ item.label }}</span> }</strong>
+        <span>{{ statistics().leastPlayed[0].count }} handjes</span>
+        } @else {
+        <strong>—</strong>
+        <span>Nog geen contracten geregistreerd</span>
+        }
+      </article>
+    </div>
+
+    <div class="contract-table-wrap">
+      <table class="contract-table">
+        <thead>
+          <tr><th scope="col">Contract</th><th scope="col">Handjes</th><th scope="col">Aandeel</th></tr>
+        </thead>
+        <tbody>
+          @for (contract of statistics().contractCounts; track contract.contract) {
+          <tr>
+            <th scope="row">{{ contract.label }}</th>
+            <td>{{ contract.count }}</td>
+            <td>{{ formatPercent(contract.share) }}</td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="statistics-section" aria-labelledby="trick-statistics-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="trick-statistics-title">Slagen van de rikkers</h2>
+        <p>Gemiddelde en verdeling per contract</p>
+      </div>
+    </div>
+    <div class="trick-statistics">
+      @for (stat of statistics().trickStatistics; track stat.contract) {
+      <article class="trick-statistic">
+        <div class="trick-statistic-heading">
+          <h3>{{ stat.label }}</h3>
+          <span>{{ stat.count }} handjes</span>
+        </div>
+        <p class="trick-average"><strong>{{ formatAverage(stat.average) }}</strong><span>slagen gemiddeld</span></p>
+        @if (stat.distribution.length) {
+        <div class="trick-distribution" role="list" [attr.aria-label]="'Verdeling slagen ' + stat.label">
+          @for (item of stat.distribution; track item.tricks) {
+          <div class="trick-row" role="listitem">
+            <span class="trick-count-label">{{ item.tricks }}</span>
+            <div class="trick-track" aria-hidden="true"><span [style.width.%]="trickBarWidth(item.count, stat.distribution)"></span></div>
+            <strong>{{ item.count }}</strong>
+          </div>
+          }
+        </div>
+        } @else {
+        <p class="no-statistics">Nog geen handjes geregistreerd.</p>
+        }
+      </article>
+      }
+    </div>
+  </section>
+
+  <section class="statistics-section" aria-labelledby="outcome-statistics-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="outcome-statistics-title">Winkans per contract</h2>
+        <p>Historisch aandeel gewonnen; Rik/Afrik en Troel tellen als winst vanaf 8 slagen. Handmatige invoer en Verzaking hebben geen opgeslagen uitkomst.</p>
+      </div>
+    </div>
+    @if (statistics().outcomeStatistics.length) {
+    <div class="outcome-list">
+      @for (stat of statistics().outcomeStatistics; track stat.contract) {
+      <div class="outcome-row">
+        <strong>{{ stat.label }}</strong>
+        <span>{{ stat.successes }} van {{ stat.attempts }} {{ stat.sampleLabel }} geslaagd</span>
+        <strong>{{ formatPercent(stat.successRate) }}</strong>
+      </div>
+      }
+    </div>
+    } @else {
+    <p class="no-statistics">Nog geen opgeslagen uitkomsten voor solo- of Miserie-contracten.</p>
+    }
+  </section>
+</section>

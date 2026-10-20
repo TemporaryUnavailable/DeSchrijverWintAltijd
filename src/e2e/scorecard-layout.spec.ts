@@ -218,3 +218,19 @@ test('menu changes handedness immediately and remembers it without changing the 
   await expect(dialog).not.toBeVisible();
   await expect(page.locator('.archive-layout')).toBeVisible();
 });
+
+test('opens statistics from the menu and returns to the archive on a phone viewport', async ({ page }) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
+  await page.getByRole('button', { name: 'Navigatiemenu openen' }).click();
+  await page.getByRole('button', { name: 'Statistieken', exact: true }).click();
+
+  await expect(page.getByRole('heading', { name: 'Statistieken' })).toBeVisible();
+  await expect(page.locator('#addNewScorecardButton')).toHaveCount(0);
+  await expect(page.getByText('Nog geen contracten geregistreerd').first()).toBeVisible();
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+  await page.getByRole('button', { name: 'Navigatiemenu openen' }).click();
+  await page.getByRole('button', { name: 'Home', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Rik-scorekaarten.' })).toBeVisible();
+});

@@ -1,0 +1,61 @@
+:host { display: block; width: 100%; }
+
+.statistics { width: 100%; padding: 52px 0 72px; }
+.statistics-heading { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0; }
+.statistics-heading h1 { margin: 12px 0 6px; font-family: Georgia, 'Times New Roman', serif; font-size: 2rem; font-weight: 500; }
+.statistics-note, .section-heading p, .highlight-label, .contract-highlight > span:last-child,
+.trick-statistic-heading > span, .trick-average > span, .no-statistics { color: #757575; font-size: .85rem; }
+.statistics-note { margin: 0; }
+.statistics-overview { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid #e0e0e0; }
+.overview-stat { min-width: 0; min-height: 104px; padding: 18px 20px; display: grid; align-content: center; gap: 8px; border-right: 1px solid #e0e0e0; }
+.overview-stat:last-child { border-right: 0; }
+.overview-stat span { color: #616161; font-size: .82rem; }
+.overview-stat strong { font-size: 1.65rem; font-variant-numeric: tabular-nums; }
+.statistics-section { margin-top: 38px; }
+.section-heading { margin-bottom: 18px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.section-heading h2 { margin: 0; font-size: 1.25rem; font-weight: 600; }
+.section-heading p { margin: 5px 0 0; }
+.contract-highlights { margin-bottom: 22px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-block: 1px solid #e0e0e0; }
+.contract-highlight { min-width: 0; min-height: 124px; padding: 17px 20px; display: grid; align-content: center; gap: 8px; }
+.contract-highlight + .contract-highlight { border-left: 1px solid #e0e0e0; }
+.highlight-label { font-size: .78rem; }
+.contract-highlight strong { display: flex; flex-wrap: wrap; gap: 6px 14px; font-family: Georgia, 'Times New Roman', serif; font-size: 1.35rem; font-weight: 500; overflow-wrap: anywhere; }
+.contract-table-wrap { overflow-x: auto; }
+.contract-table { width: 100%; border-collapse: collapse; }
+.contract-table th, .contract-table td { height: 42px; padding: 7px 12px; border-bottom: 1px solid #e0e0e0; text-align: right; font-size: .9rem; font-variant-numeric: tabular-nums; }
+.contract-table th:first-child { text-align: left; }
+.contract-table tbody th { font-weight: 500; }
+.trick-statistics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
+.trick-statistic { min-width: 0; padding: 16px 0; border-top: 1px solid #e0e0e0; }
+.trick-statistic-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.trick-statistic-heading h3 { margin: 0; font-size: 1.05rem; }
+.trick-statistic-heading > span { white-space: nowrap; }
+.trick-average { margin: 12px 0 17px; display: flex; align-items: baseline; gap: 8px; }
+.trick-average strong { color: var(--app-primary-dark); font-size: 1.8rem; font-variant-numeric: tabular-nums; }
+.trick-distribution { display: grid; gap: 6px; }
+.trick-row { min-height: 20px; display: grid; grid-template-columns: 24px minmax(0, 1fr) 24px; align-items: center; gap: 8px; font-size: .78rem; font-variant-numeric: tabular-nums; }
+.trick-count-label { text-align: right; }
+.trick-track { height: 8px; overflow: hidden; background: #f1efeb; }
+.trick-track span { height: 100%; display: block; background: var(--app-primary); }
+.outcome-list { border-top: 1px solid #e0e0e0; }
+.outcome-row { min-height: 48px; display: grid; grid-template-columns: minmax(0, 1fr) auto 72px; align-items: center; gap: 16px; border-bottom: 1px solid #e0e0e0; font-size: .9rem; }
+.outcome-row > span { color: #616161; }
+.outcome-row > strong:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 680px) {
+  .statistics { padding: 34px 0 52px; }
+  .statistics-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .overview-stat { min-height: 88px; padding: 14px; }
+  .overview-stat:nth-child(2) { border-right: 0; }
+  .overview-stat:nth-child(-n + 2) { border-bottom: 1px solid #e0e0e0; }
+  .contract-highlights, .trick-statistics { grid-template-columns: 1fr; }
+  .contract-highlight + .contract-highlight { border-top: 1px solid #e0e0e0; border-left: 0; }
+  .statistics-section { margin-top: 30px; }
+}
+
+@media (max-width: 420px) {
+  .contract-table th, .contract-table td { padding-inline: 7px; }
+  .outcome-row { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 12px; padding-block: 8px; }
+  .outcome-row > span { grid-column: 1; grid-row: 2; }
+  .outcome-row > strong:last-child { grid-column: 2; grid-row: 1 / span 2; }
+}

@@ -167,6 +167,27 @@ describe('App', () => {
     expect(compiled.querySelector('#game-title')?.textContent).toContain('Zaterdag bij Jan');
   });
 
+  it('opens archive-wide statistics from the side navigation', () => {
+    const game = createV2Fixture();
+    game.gifts.push(
+      { ...makeFixtureGift(game), input: { contract: 'troel', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 10 } },
+      { ...makeFixtureGift(game), id: 'rik-gift', input: { contract: 'rik-afrik', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 8 } },
+      { ...makeFixtureGift(game), id: 'legacy-gift', input: null, entryMode: 'legacy-manual' },
+    );
+    localStorage.setItem(stateKey, JSON.stringify(createState([game])));
+
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    compiled.querySelector<HTMLButtonElement>('[data-action="nav-statistics"]')?.click();
+    fixture.detectChanges();
+
+    expect(compiled.querySelector('#statistics-title')?.textContent).toContain('Statistieken');
+    expect(compiled.querySelector('.most-played')?.textContent).toContain('Troel');
+    expect(compiled.querySelector('.trick-statistic')?.textContent).toContain('8');
+    expect(compiled.querySelector('.statistics-overview')?.textContent).toContain('3');
+  });
+
   it('migrates and resumes the previously active legacy scorecard on startup', () => {
     const createdAt = '2026-10-02T18:00:00.000Z';
     localStorage.setItem(storageKey, JSON.stringify({

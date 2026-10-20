@@ -11,7 +11,8 @@
     }
   </dialog>
   <header class="topbar white z-depth-2">
-    <app-navigation (home)="showOverview()" (settings)="showScoringSystems()" (handedness)="handednessDialog.showModal()" />
+    <app-navigation (home)="showOverview()" (settings)="showScoringSystems()" (statistics)="showStatistics()"
+      (handedness)="handednessDialog.showModal()" />
     <a class="brand" href="/" aria-label="Broederschap Abondance, naar overzicht" (click)="showOverview()">
       <span class="brand-name"><span class="brand-title">Broederschap</span><span class="brand-subtitle">Abondance</span></span>
     </a>
@@ -30,6 +31,8 @@
     @if (message()) { <p class="form-message" role="status">{{ message() }}</p> }
     @if (settingsOpen()) {
     <app-scoring-systems />
+    } @else if (statisticsOpen()) {
+    <app-statistics [games]="archivedGames()" />
     } @else if (game(); as currentGame) {
     <section class="scorecard" aria-labelledby="game-title">
       <div class="scorecard-heading">
@@ -116,6 +119,7 @@
   </main>
 
   @if (game(); as currentGame) {
+  @if (!statisticsOpen()) {
   <footer class="scorecard-footer">
     <div class="scorecard-footer-content">
       <div class="valign-wrapper">
@@ -145,12 +149,13 @@
     </div>
   </footer>
   }
+  }
 
   @if (message() && !game() && !setupOpen()) {
   <p class="form-message repository-message" role="status">{{ message() }}</p>
   }
 
-  @if (!setupOpen() && !settingsOpen() && !game()) {
+  @if (!setupOpen() && !settingsOpen() && !statisticsOpen() && !game()) {
   <div class="fixed-action-btn">
     <button class="btn-floating btn-large waves-effect waves-circle purple lighten-2 white-text z-depth-2"
       id="addNewScorecardButton"

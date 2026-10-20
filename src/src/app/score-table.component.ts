@@ -34,7 +34,7 @@ export class ScoreTableComponent {
   }
 
   isV2(): boolean {
-    return 'handjes' in this.game;
+    return 'gifts' in this.game;
   }
 
   legacyGame(): Game {
@@ -83,7 +83,7 @@ export class ScoreTableComponent {
   }
 
   requestDeleteGift(giftId: string): void {
-    if (window.confirm('Deze gift verwijderen? De volgende dealers en totaalscores worden opnieuw berekend.')) {
+    if (window.confirm('Dit handje verwijderen? De volgende dealers en totaalscores worden opnieuw berekend.')) {
       this.removeGift.emit(giftId);
     }
   }

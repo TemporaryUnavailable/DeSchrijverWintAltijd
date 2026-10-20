@@ -11,6 +11,7 @@ import { NavigationComponent } from './navigation.component';
 import { ScorecardSetupComponent } from './scorecard-setup.component';
 import { ScoreEntryComponent } from './score-entry.component';
 import { ScoringSystemsComponent } from './scoring-systems.component';
+import { StatisticsComponent } from './statistics.component';
 import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideSpade, LucideTrash2 } from '@lucide/angular';
 
 type Handedness = 'right' | 'left';
@@ -57,7 +58,7 @@ const EMPTY_STATE: PersistedStateV2 = {
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
+  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, StatisticsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
 })
 export class App {
   private readonly handednessDialog = viewChild.required<ElementRef<HTMLDialogElement>>('handednessDialog');
@@ -79,6 +80,7 @@ export class App {
   ));
   protected readonly setupOpen = signal(false);
   protected readonly settingsOpen = signal(false);
+  protected readonly statisticsOpen = signal(false);
   protected readonly giftDetailsVisible = signal(false);
   protected readonly tableEditMode = signal(false);
   protected readonly scoreEntryOpen = signal(false);
@@ -197,6 +199,7 @@ export class App {
     this.message.set('');
     this.game.set(null);
     this.settingsOpen.set(false);
+    this.statisticsOpen.set(false);
     this.persistState({ ...this.repositoryState(), activeGameId: null });
     this.setupOpen.set(true);
     this.savedAt.set('');
@@ -216,6 +219,7 @@ export class App {
     this.game.set(null);
     this.setupOpen.set(false);
     this.settingsOpen.set(false);
+    this.statisticsOpen.set(false);
     this.message.set('');
     this.persistState({ ...this.repositoryState(), activeGameId: null });
   }
@@ -242,7 +246,14 @@ export class App {
 
   protected showScoringSystems(): void {
     this.setupOpen.set(false);
+    this.statisticsOpen.set(false);
     this.settingsOpen.set(true);
+  }
+
+  protected showStatistics(): void {
+    this.setupOpen.set(false);
+    this.settingsOpen.set(false);
+    this.statisticsOpen.set(true);
   }
 
   protected scoringSystemLabel(game: GameV2): string {

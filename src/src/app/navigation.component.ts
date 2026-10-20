@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnDestroy, ViewChild, output, signal } from '@angular/core';
-import { LucideHouse, LucideMenu, LucideSettings } from '@lucide/angular';
+import { LucideChartNoAxesColumnIncreasing, LucideHouse, LucideMenu, LucideSettings } from '@lucide/angular';
 import type { Sidenav } from '@materializecss/materialize';
 
 @Component({
   selector: 'app-navigation',
-  imports: [LucideHouse, LucideMenu, LucideSettings],
+  imports: [LucideChartNoAxesColumnIncreasing, LucideHouse, LucideMenu, LucideSettings],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.css',
 })
@@ -12,6 +12,7 @@ export class NavigationComponent implements OnDestroy {
   @ViewChild('sidenav', { static: true }) private sidenavElement!: ElementRef<HTMLUListElement>;
   readonly home = output<void>();
   readonly settings = output<void>();
+  readonly statistics = output<void>();
   readonly handedness = output<void>();
   protected readonly open = signal(false);
   private sidenav?: Sidenav;
@@ -52,6 +53,11 @@ export class NavigationComponent implements OnDestroy {
   protected openSettings(): void {
     this.closeMenu();
     this.settings.emit();
+  }
+
+  protected openStatistics(): void {
+    this.closeMenu();
+    this.statistics.emit();
   }
 
   protected openHandedness(): void {
