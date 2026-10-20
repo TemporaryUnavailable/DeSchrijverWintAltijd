@@ -43,7 +43,7 @@ const GIFT_TOASTS = [
   'Hans Van Aken!',
   'En nauw?',
   'Kopen of niet hebben!',
-  'Na mutte ze noa bibike kome...'
+  'Na mutte ze no bibike kome...'
 ];
 
 const EMPTY_STATE: PersistedStateV2 = {

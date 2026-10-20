@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      @if (!isPlayable(currentGame)) { <p class="toolbar-note" role="status">Alleen historische weergave; nieuwe gifts
+      @if (!isPlayable(currentGame)) { <p class="toolbar-note" role="status">Alleen historische weergave; nieuwe handjes
         zijn niet beschikbaar.</p> }
       <app-score-table [game]="currentGame" [totals]="totals()" [leaders]="leaders()"
         [showGiftLabels]="giftDetailsVisible()" [showScoreChanges]="giftDetailsVisible()" [showEditControls]="tableEditMode()" (editGift)="editGift($event)"
@@ -89,10 +89,10 @@
             <strong class="archive-title">{{ archivedGame.name }}</strong>
             <span class="archive-participants">{{ participantNames(archivedGame) }}</span>
             <span class="archive-participants">{{ scoringSystemLabel(archivedGame) }} · {{ manualGiftCount(archivedGame)
-              }} handmatige gifts</span>
+              }} handmatige handjes</span>
           </span>
           <span class="archive-entry-meta">
-            <span>{{ giftCount(archivedGame) }} {{ giftCount(archivedGame) === 1 ? 'gift' : 'gifts' }}</span>
+            <span>{{ giftCount(archivedGame) }} {{ giftCount(archivedGame) === 1 ? 'handje' : 'handjes' }}</span>
             @if (!isPlayable(archivedGame)) { <span>Alleen geschiedenis</span> }
             <span class="archive-arrow" aria-hidden="true">↗</span>
           </span>

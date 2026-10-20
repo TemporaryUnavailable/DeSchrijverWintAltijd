@@ -34,7 +34,7 @@ export class ScoreTableComponent {
   }
 
   isV2(): boolean {
-    return 'gifts' in this.game;
+    return 'handjes' in this.game;
   }
 
   legacyGame(): Game {
