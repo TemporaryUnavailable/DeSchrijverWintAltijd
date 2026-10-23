@@ -26,7 +26,7 @@ const GIFT_TOASTS = [
   'Kernfusie!',
   'Broederschap!',
   'Broederschap is hoofdzaak!',
-  'Gij moet delen. Nu weeral?',
+  'Moet ik nu weeral delen?',
   'De logistiek verantwoordelijke zorgt voor de kaarten.',
   'Op het Belgisch kampioenschap...',
   'Bij de Landelijke Gilde...',
@@ -44,7 +44,8 @@ const GIFT_TOASTS = [
   'Hans Van Aken!',
   'En nauw?',
   'Kopen of niet hebben!',
-  'Na mutte ze no bibike kome...'
+  'Na mutte ze no bibike kome...',
+  'Een presserke"
 ];
 
 const EMPTY_STATE: PersistedStateV2 = {
@@ -164,7 +165,7 @@ export class App {
       this.saveGame(this.gameService.saveGift(game, gift));
       this.scoreEntryOpen.set(false);
       this.editingGift.set(null);
-      if (isNewGift && Math.random() < 0.75) {
+      if (isNewGift && Math.random() < 1.0) {
         void import('@materializecss/materialize').then(({ Toast }) => {
           new Toast({
             text: GIFT_TOASTS[Math.floor(Math.random() * GIFT_TOASTS.length)],
