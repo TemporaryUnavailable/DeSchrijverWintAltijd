@@ -89,6 +89,7 @@ describe('ScoreEntryComponent', () => {
     fixture.detectChanges();
 
     expect(compiled.querySelector<HTMLSelectElement>('[aria-label="Soloist"]')?.value).toBe('');
+    expect(compiled.querySelector<HTMLSelectElement>('[aria-label="Uitkomst"]')?.value).toBe('true');
     expect(compiled.querySelector('[data-player-id="p5"] svg[lucideToilet]')).not.toBeNull();
     expect(compiled.querySelector('[data-player-id="p5"] small')).toBeNull();
   });

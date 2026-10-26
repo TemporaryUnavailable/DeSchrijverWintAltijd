@@ -89,6 +89,7 @@ export class ScoreEntryComponent implements OnInit {
 
   protected updateContract(value: ContractKind): void {
     this.contract.set(value);
+    if (this.isSoloContract()) this.successes.update((outcomes) => [true, outcomes[1]]);
     this.message.set('');
     this.imbalanceConfirmed.set(false);
   }
