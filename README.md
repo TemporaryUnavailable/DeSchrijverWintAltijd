@@ -14,6 +14,7 @@ Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies 
 - Bewerk een gift via **Bewerk**, verwijder die na bevestiging of maak de laatste gift ongedaan. Scores en dealerbeurten worden opnieuw berekend; de overgebleven gift-ID's blijven behouden. Een kaart met 12 gifts (vier spelers) of 15 gifts (vijf spelers) toont de eindstand.
 - Oude v1-kaarten blijven in het overzicht. Ze worden als handmatige, alleen-lezen geschiedenis getoond; ontbrekende spelregels worden niet achteraf afgeleid.
 - Alle tekst in de scoretabel is zwart voor de leesbaarheid; alleen de speler die een gift uitzit wordt grijs getoond.
+- De spelersnamen blijven bovenaan zichtbaar tijdens het scrollen door de scoretabel. De tabel scrolt mee met de pagina, zonder eigen verticale schuifbalk.
 
 ## Lokale gegevens
 

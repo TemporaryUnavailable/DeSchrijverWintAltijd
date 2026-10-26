@@ -87,12 +87,13 @@ for (const viewport of [
 }
 
 test('five-player table fits a phone viewport and the scorecard footer follows long content', async ({ page }) => {
+  test.setTimeout(120_000);
   await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.getByRole('button', { name: 'Rechtshandig', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Scorekaarten.' })).toBeVisible();
   await page.getByRole('button', { name: 'Scorekaart maken' }).first().click();
   await page.getByRole('button', { name: 'Speler toevoegen' }).click();
-  await page.getByRole('combobox', { name: 'Scoringssysteem' }).click();
+  await page.locator('input[role="combobox"][aria-label="Scoringssysteem"]').click();
   await page.getByRole('option', { name: 'Broederschap Abondance', exact: true }).click();
 
   const names = ['Noor', 'Jules', 'Sam', 'Mila', 'Pim'];
@@ -135,6 +136,26 @@ test('five-player table fits a phone viewport and the scorecard footer follows l
   await expect(table.locator('.dealer-sit-out').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
   await expect(table.locator('.dealer-sit-out .score-value').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
   await expect(table.locator('.dealer-sit-out .dealer-mark').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
+  for (const width of [320, 412, 1280]) {
+    await page.setViewportSize({ width, height: 640 });
+    await page.evaluate(() => {
+      const table = document.querySelector('.score-table')!;
+      window.scrollTo(0, window.scrollY + table.getBoundingClientRect().top + 200);
+    });
+    await expect.poll(() => table.locator('thead th').evaluateAll((headers) =>
+      headers.every((header) => Math.abs(header.getBoundingClientRect().top) < 1),
+    )).toBe(true);
+    for (const name of names) {
+      await expect(table.getByRole('columnheader', { name, exact: true })).toBeInViewport({ ratio: 1 });
+    }
+    await expect(table.locator('tbody tr').first()).not.toBeInViewport();
+    await expect(tableScroll).toHaveCSS('overflow-y', 'visible');
+    await expect.poll(() => tableScroll.evaluate((element) =>
+      element.scrollHeight <= element.clientHeight && element.scrollTop === 0,
+    )).toBe(true);
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.setViewportSize({ width: 412, height: 915 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
   await expect(footer).toBeInViewport();

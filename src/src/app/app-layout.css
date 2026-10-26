@@ -65,11 +65,11 @@ button, input { font: inherit; }
 .summary-player.is-leading strong { color: var(--app-primary-dark); }
 .table-toolbar { margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
 .table-toolbar h2 { margin: 0 0 4px; }
-.table-scroll { overflow-x: auto; border: 1px solid #e0e0e0; background: #fff; scrollbar-color: #9e9e9e transparent; }
+.table-scroll { border: 1px solid #e0e0e0; background: #fff; }
 .score-table { width: 100%; min-width: 0; table-layout: fixed; color: #000; }
 .score-table th, .score-table td { border-bottom: 1px solid #e0e0e0; }
 .score-table thead { background: #fafafa; color: inherit; }
-.score-table thead th { height: 50px; font-size: .8rem; }
+.score-table thead th { position: sticky; top: 0; z-index: 1; height: 50px; background: #fafafa; font-size: .8rem; }
 .score-table .round-heading { width: 48px; padding-left: 4px; }
 .gift-label-heading, .gift-label-column { width: 88px; }
 .player-heading { position: relative; min-width: 0; padding: 0 2px; text-align: center; }
