@@ -36,6 +36,7 @@ describe('App', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
     Reflect.deleteProperty(HTMLDialogElement.prototype, 'showModal');
     Reflect.deleteProperty(HTMLDialogElement.prototype, 'close');
     localStorage.removeItem(storageKey);
@@ -110,6 +111,27 @@ describe('App', () => {
 
     expect(compiled.querySelectorAll('[aria-label^="Naam speler"]')).toHaveLength(5);
     expect(compiled.querySelector('.add-draft')).toBeNull();
+  });
+
+  it('exports every archived scorecard in one JSON file', async () => {
+    const firstGame = createV2Fixture();
+    const secondGame = { ...createV2Fixture(), id: 'second-game', name: 'Tweede kaart' };
+    const games = [firstGame, secondGame];
+    localStorage.setItem(stateKey, JSON.stringify(createState(games)));
+    const createObjectURL = vi.fn((_file: Blob) => 'blob:scorecards');
+    const revokeObjectURL = vi.fn();
+    vi.stubGlobal('URL', { createObjectURL, revokeObjectURL });
+    const click = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function (this: HTMLAnchorElement) {
+      expect(this.download).toBe('rikken-scorekaarten.json');
+    });
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[aria-label="Exporteer alle scorekaarten als JSON"]')?.click();
+
+    const file = createObjectURL.mock.calls[0][0];
+    expect(await file.text()).toBe(JSON.stringify(games, null, 2));
+    expect(click).toHaveBeenCalledOnce();
+    expect(revokeObjectURL).toHaveBeenCalledWith('blob:scorecards');
   });
 
   it('keeps older archived cards with more than five players readable', () => {

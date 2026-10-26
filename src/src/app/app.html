@@ -81,6 +81,10 @@
           <h3 id="archive-title">Rik-scorekaarten<span>.</span></h3>
           <p class="archive-intro">Open een scorekaart of maak een nieuwe.</p>
         </div>
+        <button class="btn-flat" type="button" aria-label="Exporteer alle scorekaarten als JSON" (click)="exportGames()">
+          <svg lucideDownload aria-hidden="true" size="18"></svg>
+          <span>Exporteer JSON</span>
+        </button>
       </div>
 
       @if (sortedGames().length) {

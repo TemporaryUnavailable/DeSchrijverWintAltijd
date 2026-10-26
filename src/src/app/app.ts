@@ -12,6 +12,7 @@ import { ScorecardSetupComponent } from './scorecard-setup.component';
 import { ScoreEntryComponent } from './score-entry.component';
 import { ScoringSystemsComponent } from './scoring-systems.component';
 import { StatisticsComponent } from './statistics.component';
+import { LucideDownload } from '@lucide/angular';
 import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideSpade, LucideTrash2 } from '@lucide/angular';
 
 type Handedness = 'right' | 'left';
@@ -59,7 +60,7 @@ const EMPTY_STATE: PersistedStateV2 = {
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, StatisticsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
+  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, StatisticsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub, LucideDownload],
 })
 export class App {
   private readonly handednessDialog = viewChild.required<ElementRef<HTMLDialogElement>>('handednessDialog');
@@ -132,6 +133,16 @@ export class App {
     this.setupOpen.set(false);
     this.message.set('');
     this.saveGame(game);
+  }
+
+  protected exportGames(): void {
+    const file = new Blob([JSON.stringify(this.archivedGames(), null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'rikken-scorekaarten.json';
+    link.click();
+    URL.revokeObjectURL(url);
   }
 
   protected addGift(): void {
