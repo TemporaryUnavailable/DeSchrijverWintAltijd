@@ -8,7 +8,7 @@
 .starting-score-field legend { margin-bottom: 8px; font-weight: 500; }
 .starting-score-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .starting-score-option { min-height: 44px; padding: 8px 12px; display: flex; align-items: center; gap: 9px; border: 1px solid #bdbdbd; border-radius: 4px; background: #fff; cursor: pointer; }
-.starting-score-option:has(input:checked) { border-color: var(--app-primary-dark); background: #fff8e1; }
+.starting-score-option:has(input:checked) { border-color: var(--app-primary-dark); background: var(--app-secondary-light); }
 .starting-score-option input { margin: 0; accent-color: var(--app-primary-dark); }
 
 @media (max-width: 760px) {

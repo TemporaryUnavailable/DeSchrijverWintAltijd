@@ -12,13 +12,14 @@
   </dialog>
   <header class="topbar white z-depth-2">
     <app-navigation (home)="showOverview()" (settings)="showScoringSystems()" (statistics)="showStatistics()"
-      (handedness)="handednessDialog.showModal()" />
+      (handedness)="handednessDialog.showModal()" (exportAll)="exportGames()" />
     <a class="brand" href="/" aria-label="Broederschap Abondance, naar overzicht" (click)="showOverview()">
+      <svg class="brand-mark" lucideSpade aria-hidden="true" size="20"></svg>
       <span class="brand-name"><span class="brand-title">Broederschap</span><span class="brand-subtitle">Abondance</span></span>
     </a>
 
     <nav class="top-actions" aria-label="Scorekaartacties">
-      @if (game()) {
+      @if (game() && !statisticsOpen()) {
       <button class="btn-flat red-text text-darken-2" type="button" data-action="delete-scorecard"
         aria-label="Scorekaart verwijderen" title="Scorekaart verwijderen" (click)="deleteCurrentGame()">
         <svg lucideTrash2 aria-hidden="true" size="19"></svg>
@@ -81,9 +82,6 @@
           <h3 id="archive-title">Rik-scorekaarten<span>.</span></h3>
           <p class="archive-intro">Open een scorekaart of maak een nieuwe.</p>
         </div>
-        <button class="btn-flat" type="button" aria-label="Exporteer alle scorekaarten als JSON" (click)="exportGames()">
-          <svg lucideDownload aria-hidden="true" size="18"></svg>
-        </button>
       </div>
 
       @if (sortedGames().length) {

@@ -3,11 +3,12 @@
 @import './app/app-layout.css';
 
 :root {
-	--app-primary: #ba68c8;
-	--app-primary-dark: #7b1fa2;
-	--app-secondary: #ffd54f;
-	--app-secondary-light: #fff8e1;
-	--md-sys-color-on-background: #fff;
+	--app-primary: #4f217a;
+	--app-primary-dark: #0b253e;
+	--app-secondary: #e91e63;
+	--app-secondary-light: #fce4ec;
+	--md-sys-color-primary: #4f217a;
+	--md-sys-color-on-background: #0b253e;
 }
 
 :root[theme='light'] {
@@ -16,12 +17,15 @@
 
 * { box-sizing: border-box; }
 html { min-width: 320px; min-height: 100%; }
-body { min-width: 320px; min-height: 100dvh; margin: 0; }
+body { min-width: 320px; min-height: 100dvh; margin: 0; background: #f7f6fb; color: #0b253e; font-family: 'Roboto Variable', Roboto, sans-serif; }
 button, input { font: inherit; }
 button { border: 0; }
 button.btn:not(.btn-flat):not(.btn-floating):not(.tonal) { background-color: var(--app-primary); }
-button.btn:not(.btn-flat):not(.btn-floating):not(.tonal):hover { background-color: #ab47bc; }
-button.btn.tonal { background-color: var(--app-secondary); color: #212121; }
+button.btn:not(.btn-flat):not(.btn-floating):not(.tonal):hover { background-color: #6b4097; }
+button.btn.tonal { background-color: var(--app-secondary-light); color: #4f217a; }
+
+.card-panel, .card, .handedness-dialog, .app-modal { border-radius: 18px; }
+.app-modal { background: #fff; }
 
 #toast-container:has(.toast.toast-quote) {
 	position: fixed;

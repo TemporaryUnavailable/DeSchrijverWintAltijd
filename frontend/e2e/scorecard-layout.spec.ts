@@ -27,7 +27,7 @@ test('keeps the light palette and native controls when the phone prefers dark mo
 for (const viewport of [
   { width: 320, height: 640 },
   { width: 360, height: 740 },
-  { width: 412, height: 915 },
+  { width: 412, height: 892 },
 ]) {
   test(`gift entry fits ${viewport.width}x${viewport.height} without scrolling for every contract`, async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
@@ -43,6 +43,10 @@ for (const viewport of [
     await page.getByRole('button', { name: 'Gift toevoegen', exact: true }).click();
 
     const dialog = page.getByRole('dialog', { name: 'Score invoeren' });
+    await expect(dialog.locator('input[aria-label="Contract"]')).toHaveCSS('border-radius', '10px');
+    await expect(dialog.locator('.score-preview-row').first()).toHaveCSS('border-top-color', 'rgb(107, 64, 151)');
+    await expect(dialog.locator('.score-preview-row strong').first()).toHaveCSS('color', 'rgb(79, 33, 122)');
+    await expect(dialog.locator('input[type="range"]').first()).toHaveCSS('accent-color', 'rgb(233, 30, 99)');
     await page.setViewportSize(viewport);
     for (const contract of [
       'Rik/Afrik', 'Troel', 'Abondance', 'Miserie', 'Twee-speler-Miserie',
@@ -103,17 +107,26 @@ test('five-player table fits a phone viewport and the scorecard footer follows l
   await page.getByRole('button', { name: 'Scorekaart maken' }).last().click();
 
   await expect(page.locator('.score-table .player-heading')).toHaveCount(5);
+  const deleteScorecard = page.getByRole('button', { name: 'Scorekaart verwijderen' });
+  await expect(deleteScorecard).toBeVisible();
+  await expect(deleteScorecard).toHaveCSS('background-color', 'rgb(233, 30, 99)');
+  await expect(deleteScorecard).toHaveCSS('color', 'rgb(255, 255, 255)');
+  const menuButton = page.getByRole('button', { name: 'Navigatiemenu openen' });
+  await expect(menuButton).toBeVisible();
+  const menuX = await menuButton.evaluate((element) => element.getBoundingClientRect().x);
+  const brandX = await page.locator('.brand').evaluate((element) => element.getBoundingClientRect().x);
+  expect(menuX).toBeLessThan(brandX);
   const table = page.locator('.score-table');
   const tableColors = () => table.locator('th, td, span, button, svg').evaluateAll((elements) =>
-    [...new Set(elements.filter((element) => !element.closest('.dealer-sit-out'))
+    [...new Set(elements.filter((element) => !element.closest('.dealer-cell'))
       .map((element) => getComputedStyle(element).color))],
   );
-  await expect.poll(tableColors).toEqual(['rgb(0, 0, 0)']);
+  await expect.poll(tableColors).toEqual(['rgb(11, 37, 62)']);
   const footer = page.locator('.scorecard-footer');
   await expect(footer).toBeVisible();
   await page.setViewportSize({ width: 360, height: 1200 });
   await expect.poll(() => footer.evaluate((element) => Math.abs(element.getBoundingClientRect().bottom - window.innerHeight) < 2)).toBe(true);
-  await page.setViewportSize({ width: 412, height: 915 });
+  await page.setViewportSize({ width: 412, height: 892 });
   await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   const tableScroll = page.locator('.table-scroll');
   await expect.poll(() => tableScroll.evaluate((element) => element.scrollWidth <= element.clientWidth)).toBe(true);
@@ -132,10 +145,11 @@ test('five-player table fits a phone viewport and the scorecard footer follows l
   await footer.getByRole('button', { name: 'Bewerk- en verwijderknoppen tonen' }).click();
   await expect(table.locator('.score-gain')).toHaveText('+10');
   await expect(table.locator('.score-loss')).toHaveText('-10');
-  await expect.poll(tableColors).toEqual(['rgb(0, 0, 0)']);
-  await expect(table.locator('.dealer-sit-out').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
-  await expect(table.locator('.dealer-sit-out .score-value').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
-  await expect(table.locator('.dealer-sit-out .dealer-mark').first()).toHaveCSS('color', 'rgb(97, 97, 97)');
+  await expect.poll(tableColors).toEqual(['rgb(11, 37, 62)']);
+  await expect(table.locator('.dealer-cell').first()).toHaveCSS('background-color', 'rgb(107, 64, 151)');
+  await expect(table.locator('.dealer-cell').first()).toHaveCSS('color', 'rgb(255, 255, 255)');
+  await expect(table.locator('.dealer-sit-out').first()).toHaveCSS('background-color', 'rgb(107, 64, 151)');
+  await expect(table.locator('.dealer-sit-out').first()).toHaveCSS('color', 'rgb(255, 255, 255)');
   for (const width of [320, 412, 1280]) {
     await page.setViewportSize({ width, height: 640 });
     await page.evaluate(() => {
@@ -155,7 +169,7 @@ test('five-player table fits a phone viewport and the scorecard footer follows l
     )).toBe(true);
     await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   }
-  await page.setViewportSize({ width: 412, height: 915 });
+  await page.setViewportSize({ width: 412, height: 892 });
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await expect.poll(() => page.evaluate(() => window.scrollY > 0)).toBe(true);
   await expect(footer).toBeInViewport();

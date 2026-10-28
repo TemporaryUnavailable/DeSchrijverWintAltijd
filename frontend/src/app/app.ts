@@ -12,7 +12,6 @@ import { ScorecardSetupComponent } from './scorecard-setup.component';
 import { ScoreEntryComponent } from './score-entry.component';
 import { ScoringSystemsComponent } from './scoring-systems.component';
 import { StatisticsComponent } from './statistics.component';
-import { LucideDownload } from '@lucide/angular';
 import { LucideClub, LucideDiamond, LucideEye, LucideEyeOff, LucideHeart, LucidePencil, LucidePencilOff, LucidePlus, LucideSpade, LucideTrash2 } from '@lucide/angular';
 
 type Handedness = 'right' | 'left';
@@ -60,7 +59,7 @@ const EMPTY_STATE: PersistedStateV2 = {
 @Component({
   selector: 'app-root',
   templateUrl: './app.html',
-  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, StatisticsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub, LucideDownload],
+  imports: [ScoreTableComponent, NavigationComponent, ScorecardSetupComponent, ScoreEntryComponent, ScoringSystemsComponent, StatisticsComponent, LucidePlus, LucideTrash2, LucideEye, LucideEyeOff, LucidePencil, LucidePencilOff, LucideHeart, LucideDiamond, LucideSpade, LucideClub],
 })
 export class App {
   private readonly handednessDialog = viewChild.required<ElementRef<HTMLDialogElement>>('handednessDialog');

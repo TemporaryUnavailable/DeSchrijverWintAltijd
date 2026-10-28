@@ -126,7 +126,7 @@ describe('App', () => {
     });
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
-    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[aria-label="Exporteer alle scorekaarten als JSON"]')?.click();
+    (fixture.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('[data-action="nav-export"]')?.click();
 
     const file = createObjectURL.mock.calls[0][0];
     expect(await file.text()).toBe(JSON.stringify(games, null, 2));
@@ -467,6 +467,21 @@ describe('App', () => {
     expect(savedState.games).toHaveLength(0);
     expect(savedState.activeGameId).toBeNull();
     expect(compiled.querySelector('.archive-layout')).not.toBeNull();
+  });
+
+  it('hides the delete-scorecard button on the statistics page', () => {
+    const game = createV2Fixture();
+    localStorage.setItem(stateKey, JSON.stringify({ ...createState([game]), activeGameId: game.id }));
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+
+    expect(compiled.querySelector('[data-action="delete-scorecard"]')).not.toBeNull();
+    compiled.querySelector<HTMLButtonElement>('[data-action="nav-statistics"]')?.click();
+    fixture.detectChanges();
+
+    expect(compiled.querySelector('app-statistics')).not.toBeNull();
+    expect(compiled.querySelector('[data-action="delete-scorecard"]')).toBeNull();
   });
 
   it('shows a visible warning when v2 state cannot be saved', () => {

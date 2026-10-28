@@ -68,52 +68,46 @@ describe('StatisticsService', () => {
     expect(service.summarize([]).averageGiftsPerGame).toBeNull();
   });
 
-  it('ranks player combinations independent of seating order and their most played contract', () => {
-    const games = [
-      makeGame('first', [
-        makeGift({ contract: 'rik-afrik', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 8 }),
-        makeGift({ contract: 'abondance', soloistId: 'p3', success: true }),
-        makeGift({ contract: 'manual' }),
-      ]),
-      makeGame('second', [
-        makeGift({ contract: 'rik-afrik', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 9 }),
-        makeGift({ contract: 'troel', rikkerIds: ['p3', 'p4'], tricksTakenByRikkers: 6 }),
-      ]),
+  it('ranks Rik/Troel partners by frequency and averages their combined score', () => {
+    const firstPlayers = [
+      { id: 'a1', name: 'Alice' }, { id: 'b1', name: 'Bob' },
+      { id: 'c1', name: 'Charlie' }, { id: 'd1', name: 'Daan' },
     ];
-    games[1].players.reverse();
-    const lessCommon = makeGame('third', []);
-    lessCommon.players = ['p1', 'p2', 'p3', 'p5'].map((playerId) => ({ id: playerId, name: playerId }));
-    games.push(lessCommon);
-
-    const statistics = service.summarize(games);
-    expect(statistics.playerCombinationStatistics).toEqual([
-      {
-        key: 'p1|p2|p3|p4',
-        players: ['p1', 'p2', 'p3', 'p4'],
-        gameCount: 2,
-        mostPlayedContracts: [{ contract: 'rik-afrik', label: 'Rik/Afrik', count: 2 }],
-      },
-      {
-        key: 'p1|p2|p3|p5',
-        players: ['p1', 'p2', 'p3', 'p5'],
-        gameCount: 1,
-        mostPlayedContracts: [],
-      },
+    const secondPlayers = [
+      { id: 'd2', name: 'Daan' }, { id: 'c2', name: 'Charlie' },
+      { id: 'b2', name: 'Bob' }, { id: 'a2', name: 'Alice' },
+    ];
+    const statistics = service.summarize([
+      makeGame('first', [
+        makeGift({ contract: 'rik-afrik', rikkerIds: ['a1', 'b1'], tricksTakenByRikkers: 8 }, { a1: 4, b1: 4 }),
+      ], firstPlayers),
+      makeGame('second', [
+        makeGift({ contract: 'troel', rikkerIds: ['b2', 'a2'], tricksTakenByRikkers: 9 }, { a2: 6, b2: 6 }),
+      ], secondPlayers),
+      makeGame('third', [
+        makeGift({ contract: 'rik-afrik', rikkerIds: ['a3', 'c3'], tricksTakenByRikkers: 5 }, { a3: -2, c3: -2 }),
+        makeGift({ contract: 'manual' }, { c3: 20, d3: -20 }),
+      ], [
+        { id: 'a3', name: 'Alice' }, { id: 'b3', name: 'Bob' },
+        { id: 'c3', name: 'Charlie' }, { id: 'd3', name: 'Daan' },
+      ]),
     ]);
-    expect(statistics.mostCommonCombinations.map(({ key }) => key)).toEqual(['p1|p2|p3|p4']);
-    expect(statistics.leastCommonCombinations.map(({ key }) => key)).toEqual(['p1|p2|p3|p5']);
+
+    expect(statistics.partnerCombinations).toEqual([
+      { key: '["Alice","Bob"]', players: ['Alice', 'Bob'], gameCount: 2, averageScore: 10 },
+      { key: '["Alice","Charlie"]', players: ['Alice', 'Charlie'], gameCount: 1, averageScore: -4 },
+    ]);
+    expect(statistics.mostFrequentPartners.map(({ key }) => key)).toEqual(['["Alice","Bob"]']);
+    expect(statistics.leastFrequentPartners.map(({ key }) => key)).toEqual(['["Alice","Charlie"]']);
   });
 
-  it('reports lineups without typed game types and safely handles no scorecards', () => {
-    const statistics = service.summarize([makeGame('manual-only', [makeGift({ contract: 'manual' })])]);
-
-    expect(statistics.playerCombinationStatistics[0].mostPlayedContracts).toEqual([]);
-    expect(service.summarize([]).playerCombinationStatistics).toEqual([]);
-  });
 });
 
-function makeGame(id: string, gifts: Gift[]): GameV2 {
-  const players: Player[] = ['p1', 'p2', 'p3', 'p4'].map((playerId) => ({ id: playerId, name: playerId }));
+function makeGame(
+  id: string,
+  gifts: Gift[],
+  players: Player[] = ['p1', 'p2', 'p3', 'p4'].map((playerId) => ({ id: playerId, name: playerId })),
+): GameV2 {
   const createdAt = '2026-10-01T18:00:00.000Z';
   return {
     id,
@@ -127,6 +121,6 @@ function makeGame(id: string, gifts: Gift[]): GameV2 {
   };
 }
 
-function makeGift(input: GiftInput | null): Gift {
-  return { id: crypto.randomUUID(), dealerId: 'p1', input, scoreChanges: {}, entryMode: input ? 'automatic' : 'legacy-manual' };
+function makeGift(input: GiftInput | null, scoreChanges: Record<string, number> = {}): Gift {
+  return { id: crypto.randomUUID(), dealerId: 'p1', input, scoreChanges, entryMode: input ? 'automatic' : 'legacy-manual' };
 }
