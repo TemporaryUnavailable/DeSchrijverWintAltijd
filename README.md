@@ -2,6 +2,22 @@
 
 Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies een scoringssysteem en houd elke gift en totaalscore bij.
 
+## Repositorystructuur
+
+Deze repository bevat de Angular-app en reserveert mappen voor een toekomstige .NET API:
+
+```text
+/
+├── frontend/                         # Angular-workspace
+├── src/
+│   └── DeSchrijverWintAltijd.Api/     # Gereserveerd voor de .NET API
+├── tests/
+│   └── DeSchrijverWintAltijd.Api.Tests/ # Gereserveerd voor .NET-tests
+└── .github/workflows/                # CI en deployment van de frontend
+```
+
+De .NET-mappen zijn nog leeg; er zijn nog geen API-code of `.csproj`-bestanden. De solution `DeSchrijverWintAltijd.slnx` staat in de repository-root en bevat nog geen projecten. De workflow publiceert alleen de statische Angular-app. Ontwikkel- en testcommando's voor Angular voer je uit vanuit `frontend/`.
+
 ## Spelen
 
 - De app gebruikt altijd het lichte thema, ook als je telefoon of browser op donker staat.
@@ -24,7 +40,7 @@ Scorekaarten, scoringssystemen en spelersuggesties staan alleen in de lokale bro
 
 Vereist Node.js `^22.22.3 || ^24.15.0 || >=26.0.0` en npm `11.19.0`.
 
-Voer commando's uit vanuit de Angular-projectmap (`src/`):
+Voer commando's uit vanuit de Angular-projectmap (`frontend/`):
 
 ```powershell
 npm ci
@@ -35,7 +51,7 @@ Open `http://localhost:4200/`.
 
 ## Testen en bouwen
 
-Voer deze controles uit vanuit de Angular-projectmap (`src/`) voordat je een release maakt:
+Voer deze controles uit vanuit de Angular-projectmap (`frontend/`) voordat je een release maakt:
 
 ```powershell
 npm ci
@@ -64,10 +80,10 @@ Open `http://127.0.0.1:4200/`, controleer de app en stop daarna de server met `C
 2. Voer alle unit- en browser-tests uit met de commando's onder **Testen en bouwen**. Los fouten op voordat je verdergaat.
 3. Bouw expliciet voor productie met `npm run build -- --configuration production`. De build moet zonder fouten eindigen. Beoordeel alle waarschuwingen voordat je publiceert; verhoog bundelbudgetten niet alleen om waarschuwingen te verbergen. Controleer na elke relevante wijziging de build opnieuw.
 4. Start de productieconfiguratie zoals hierboven en controleer handmatig: maak een scorekaart met vier en met vijf spelers, registreer en corrigeer een gift, controleer de eindstand en dealerbeurt, en open een bestaande kaart.
-5. Controleer de uiteindelijke buildbestanden in `dist/scorekeeper/browser/`. Publiceer de inhoud van die map, niet de projectmap of `src/`-bronbestanden.
+5. Controleer de uiteindelijke buildbestanden in `frontend/dist/scorekeeper/browser/`. Publiceer de inhoud van die map, niet de projectmap of `frontend/src/`-bronbestanden.
 
 ## Publiceren
 
-Publiceer de inhoud van `dist/scorekeeper/browser/` naar een statische webhost. Configureer de host om `index.html` terug te geven voor app-routes, serveer de site via HTTPS en controleer dat CSS, lettertypen en JavaScript-bestanden laden. Als de app onder een subpad wordt gehost, moet de Angular `base href` op dat pad zijn afgestemd.
+Publiceer de inhoud van `frontend/dist/scorekeeper/browser/` naar een statische webhost. Configureer de host om `index.html` terug te geven voor app-routes, serveer de site via HTTPS en controleer dat CSS, lettertypen en JavaScript-bestanden laden. Als de app onder een subpad wordt gehost, moet de Angular `base href` op dat pad zijn afgestemd.
 
 Scorekaarten en instellingen staan in `localStorage` van de browser en origin (protocol, host en poort) waarop de app is geopend. Er is geen serverback-up of synchronisatie. Verander bij een release bij voorkeur niet van origin; browsergegevens zijn niet beschikbaar op een ander apparaat of na wissen. De Materialize- en Material-stijlen en lettertypen worden lokaal gebundeld; voor normaal gebruik is geen backend of CDN nodig.

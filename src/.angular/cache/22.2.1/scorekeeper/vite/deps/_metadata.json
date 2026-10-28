@@ -1,0 +1,48 @@
+{
+  "hash": "9301845d",
+  "configHash": "1f25e15f",
+  "lockfileHash": "b13890c1",
+  "browserHash": "18599e0f",
+  "optimized": {
+    "@angular/core": {
+      "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
+      "file": "@angular_core.js",
+      "fileHash": "691e7b86",
+      "needsInterop": false
+    },
+    "@angular/platform-browser": {
+      "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
+      "file": "@angular_platform-browser.js",
+      "fileHash": "7edf7506",
+      "needsInterop": false
+    },
+    "@angular/router": {
+      "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
+      "file": "@angular_router.js",
+      "fileHash": "7d029955",
+      "needsInterop": false
+    },
+    "@lucide/angular": {
+      "src": "../../../../../../node_modules/@lucide/angular/fesm2022/lucide-angular.mjs",
+      "file": "@lucide_angular.js",
+      "fileHash": "58b37279",
+      "needsInterop": false
+    },
+    "@materializecss/materialize": {
+      "src": "../../../../../../node_modules/@materializecss/materialize/dist/js/materialize.mjs",
+      "file": "@materializecss_materialize.js",
+      "fileHash": "93d390b4",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "core-Dl1ZlCfZ": {
+      "file": "core-Dl1ZlCfZ.js",
+      "isDynamicEntry": false
+    },
+    "platform-browser-BRYd5-Fy": {
+      "file": "platform-browser-BRYd5-Fy.js",
+      "isDynamicEntry": false
+    }
+  }
+}

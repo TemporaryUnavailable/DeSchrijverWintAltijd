@@ -20,7 +20,7 @@ Extend the current Angular scorekeeper with named configurable scoring systems a
 
 **Target Platform**: Static Angular SPA on current desktop/mobile browsers. No application server or network connection for normal use.
 
-**Project Type**: Existing single-project Angular web application under `src/`.
+**Project Type**: Angular web application under `frontend/`; reserved .NET API and test directories at the repository root.
 
 **Performance Goals**: No remote calls or formal throughput SLO. Rules operate over at most five active players and 15 gifts; previews and score updates must remain immediate during table use.
 
@@ -55,21 +55,19 @@ specs/002-configurable-scorecard-ui/
 ### Source Code (repository root)
 
 ```text
-src/
+frontend/
 ├── package.json
 ├── package-lock.json
-├── README.md
 └── src/
     ├── styles.css
-    └── app/
-        ├── app.ts
-        ├── components/            # Archive, setup, scoring, table, navigation
-        ├── models/                # Game, scoring-system, gift, and snapshot types
-        ├── services/              # Scoring, repository/migration, and names
-        └── *.spec.ts              # Focused Vitest domain and component tests
+    └── app/                       # Components, models, services, and tests
+src/
+└── DeSchrijverWintAltijd.Api/     # Reserved; no .NET project files yet
+tests/
+└── DeSchrijverWintAltijd.Api.Tests/ # Reserved; no .NET project files yet
 ```
 
-**Structure Decision**: Keep the existing Angular project under `src/` and its `src/src/app/models`, `services`, and colocated `*.spec.ts` conventions; add cohesive presentation components without adding a backend or new workspace project.
+**Structure Decision**: Keep the Angular workspace under `frontend/` and its `src/app` conventions; reserve `src/DeSchrijverWintAltijd.Api/` and `tests/DeSchrijverWintAltijd.Api.Tests/` for future .NET projects without adding backend code as part of this UI feature.
 
 ## Requirement-to-Test Map
 
