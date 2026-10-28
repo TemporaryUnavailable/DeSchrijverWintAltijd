@@ -67,6 +67,49 @@ describe('StatisticsService', () => {
   it('returns null for average gifts when there are no scorecards', () => {
     expect(service.summarize([]).averageGiftsPerGame).toBeNull();
   });
+
+  it('ranks player combinations independent of seating order and their most played contract', () => {
+    const games = [
+      makeGame('first', [
+        makeGift({ contract: 'rik-afrik', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 8 }),
+        makeGift({ contract: 'abondance', soloistId: 'p3', success: true }),
+        makeGift({ contract: 'manual' }),
+      ]),
+      makeGame('second', [
+        makeGift({ contract: 'rik-afrik', rikkerIds: ['p1', 'p2'], tricksTakenByRikkers: 9 }),
+        makeGift({ contract: 'troel', rikkerIds: ['p3', 'p4'], tricksTakenByRikkers: 6 }),
+      ]),
+    ];
+    games[1].players.reverse();
+    const lessCommon = makeGame('third', []);
+    lessCommon.players = ['p1', 'p2', 'p3', 'p5'].map((playerId) => ({ id: playerId, name: playerId }));
+    games.push(lessCommon);
+
+    const statistics = service.summarize(games);
+    expect(statistics.playerCombinationStatistics).toEqual([
+      {
+        key: 'p1|p2|p3|p4',
+        players: ['p1', 'p2', 'p3', 'p4'],
+        gameCount: 2,
+        mostPlayedContracts: [{ contract: 'rik-afrik', label: 'Rik/Afrik', count: 2 }],
+      },
+      {
+        key: 'p1|p2|p3|p5',
+        players: ['p1', 'p2', 'p3', 'p5'],
+        gameCount: 1,
+        mostPlayedContracts: [],
+      },
+    ]);
+    expect(statistics.mostCommonCombinations.map(({ key }) => key)).toEqual(['p1|p2|p3|p4']);
+    expect(statistics.leastCommonCombinations.map(({ key }) => key)).toEqual(['p1|p2|p3|p5']);
+  });
+
+  it('reports lineups without typed game types and safely handles no scorecards', () => {
+    const statistics = service.summarize([makeGame('manual-only', [makeGift({ contract: 'manual' })])]);
+
+    expect(statistics.playerCombinationStatistics[0].mostPlayedContracts).toEqual([]);
+    expect(service.summarize([]).playerCombinationStatistics).toEqual([]);
+  });
 });
 
 function makeGame(id: string, gifts: Gift[]): GameV2 {

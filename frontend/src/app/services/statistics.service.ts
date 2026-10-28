@@ -27,6 +27,13 @@ export interface OutcomeStatistic {
   successRate: number;
 }
 
+export interface PlayerCombinationStatistic {
+  key: string;
+  players: string[];
+  gameCount: number;
+  mostPlayedContracts: { contract: GiftInput['contract']; label: string; count: number }[];
+}
+
 export interface GameStatistics {
   gameCount: number;
   giftCount: number;
@@ -37,6 +44,9 @@ export interface GameStatistics {
   leastPlayed: ContractStatistic[];
   trickStatistics: TrickStatistic[];
   outcomeStatistics: OutcomeStatistic[];
+  playerCombinationStatistics: PlayerCombinationStatistic[];
+  mostCommonCombinations: PlayerCombinationStatistic[];
+  leastCommonCombinations: PlayerCombinationStatistic[];
 }
 
 const CONTRACTS: readonly { contract: GiftInput['contract']; label: string }[] = [
@@ -71,6 +81,10 @@ export class StatisticsService {
     const highestCount = Math.max(0, ...rankedContracts.map(({ count }) => count));
     const lowestCount = Math.min(...rankedContracts.map(({ count }) => count));
 
+    const playerCombinationStatistics = this.summarizePlayerCombinations(games);
+    const mostGames = Math.max(0, ...playerCombinationStatistics.map(({ gameCount }) => gameCount));
+    const fewestGames = Math.min(...playerCombinationStatistics.map(({ gameCount }) => gameCount));
+
     return {
       gameCount: games.length,
       giftCount: gifts.length,
@@ -81,7 +95,48 @@ export class StatisticsService {
       leastPlayed: rankedContracts.filter(({ count }) => count === lowestCount),
       trickStatistics: this.summarizeTricks(typedGifts),
       outcomeStatistics: this.summarizeOutcomes(typedGifts),
+      playerCombinationStatistics,
+      mostCommonCombinations: playerCombinationStatistics.filter(({ gameCount }) => gameCount === mostGames),
+      leastCommonCombinations: playerCombinationStatistics.filter(({ gameCount }) => gameCount === fewestGames),
     };
+  }
+
+  private summarizePlayerCombinations(games: readonly GameV2[]): PlayerCombinationStatistic[] {
+    const combinations = new Map<string, {
+      players: string[];
+      gameCount: number;
+      contracts: Map<GiftInput['contract'], number>;
+    }>();
+    for (const game of games) {
+      const key = game.players.map(({ id }) => id).sort().join('|');
+      const combination = combinations.get(key) ?? {
+        players: game.players.map(({ name }) => name).sort((a, b) => a.localeCompare(b, 'nl')),
+        gameCount: 0,
+        contracts: new Map<GiftInput['contract'], number>(),
+      };
+      combination.gameCount += 1;
+      for (const gift of game.gifts) {
+        const contract = gift.input?.contract;
+        if (contract && contract !== 'manual') {
+          combination.contracts.set(contract, (combination.contracts.get(contract) ?? 0) + 1);
+        }
+      }
+      combinations.set(key, combination);
+    }
+
+    return [...combinations.entries()]
+      .map(([key, combination]) => {
+        const highestCount = Math.max(0, ...combination.contracts.values());
+        return {
+          key,
+          players: combination.players,
+          gameCount: combination.gameCount,
+          mostPlayedContracts: CONTRACTS
+            .filter(({ contract }) => combination.contracts.get(contract) === highestCount && highestCount > 0)
+            .map(({ contract, label }) => ({ contract, label, count: highestCount })),
+        };
+      })
+      .sort((a, b) => b.gameCount - a.gameCount || a.players.join(', ').localeCompare(b.players.join(', '), 'nl'));
   }
 
   private summarizeTricks(gifts: readonly TypedGift[]): TrickStatistic[] {

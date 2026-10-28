@@ -26,6 +26,59 @@
     </article>
   </section>
 
+  <section class="statistics-section" aria-labelledby="combination-statistics-title">
+    <div class="section-heading">
+      <div>
+        <h2 id="combination-statistics-title">Spelerscombinaties</h2>
+        <p>Line-ups tellen als dezelfde combinatie, ongeacht de zitvolgorde</p>
+      </div>
+    </div>
+    @if (statistics().playerCombinationStatistics.length) {
+    <div class="contract-highlights">
+      <article class="contract-highlight">
+        <span class="highlight-label">Vaakst samen gespeeld</span>
+        @for (item of statistics().mostCommonCombinations; track item.key) {
+        <strong>{{ item.players.join(' + ') }}</strong>
+        <span>{{ item.gameCount }} scorekaarten</span>
+        }
+      </article>
+      <article class="contract-highlight">
+        <span class="highlight-label">Minst vaak samen gespeeld</span>
+        @for (item of statistics().leastCommonCombinations; track item.key) {
+        <strong>{{ item.players.join(' + ') }}</strong>
+        <span>{{ item.gameCount }} scorekaarten</span>
+        }
+      </article>
+    </div>
+    <div class="contract-table-wrap">
+      <table class="contract-table">
+        <thead>
+          <tr><th scope="col">Spelers</th><th scope="col">Scorekaarten</th><th scope="col">Meest gespeeld type</th></tr>
+        </thead>
+        <tbody>
+          @for (combination of statistics().playerCombinationStatistics; track combination.key) {
+          <tr>
+            <th scope="row">{{ combination.players.join(' + ') }}</th>
+            <td>{{ combination.gameCount }}</td>
+            <td>
+              @if (combination.mostPlayedContracts.length) {
+              @for (contract of combination.mostPlayedContracts; track contract.contract) {
+              <span>{{ contract.label }} ({{ contract.count }})</span>
+              }
+              } @else {
+              <span>Geen contractgegevens</span>
+              }
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    } @else {
+    <p class="no-statistics">Er zijn nog geen spelerscombinaties om te vergelijken.</p>
+    }
+  </section>
+
   <section class="statistics-section" aria-labelledby="contract-statistics-title">
     <div class="section-heading">
       <div>
