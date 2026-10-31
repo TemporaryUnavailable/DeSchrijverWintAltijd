@@ -68,7 +68,7 @@ describe('StatisticsService', () => {
     expect(service.summarize([]).averageGiftsPerGame).toBeNull();
   });
 
-  it('ranks Rik/Troel partners by frequency and averages their combined score', () => {
+  it('ranks Rik/Troel partners by frequency and averages tricks taken by the pair', () => {
     const firstPlayers = [
       { id: 'a1', name: 'Alice' }, { id: 'b1', name: 'Bob' },
       { id: 'c1', name: 'Charlie' }, { id: 'd1', name: 'Daan' },
@@ -94,8 +94,8 @@ describe('StatisticsService', () => {
     ]);
 
     expect(statistics.partnerCombinations).toEqual([
-      { key: '["Alice","Bob"]', players: ['Alice', 'Bob'], gameCount: 2, averageScore: 10 },
-      { key: '["Alice","Charlie"]', players: ['Alice', 'Charlie'], gameCount: 1, averageScore: -4 },
+      { key: '["Alice","Bob"]', players: ['Alice', 'Bob'], gameCount: 2, averageTricks: 8.5 },
+      { key: '["Alice","Charlie"]', players: ['Alice', 'Charlie'], gameCount: 1, averageTricks: 5 },
     ]);
     expect(statistics.mostFrequentPartners.map(({ key }) => key)).toEqual(['["Alice","Bob"]']);
     expect(statistics.leastFrequentPartners.map(({ key }) => key)).toEqual(['["Alice","Charlie"]']);

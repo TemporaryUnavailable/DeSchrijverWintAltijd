@@ -31,7 +31,7 @@ export interface PartnerCombinationStatistic {
   key: string;
   players: string[];
   gameCount: number;
-  averageScore: number;
+  averageTricks: number;
 }
 
 export interface GameStatistics {
@@ -101,7 +101,7 @@ export class StatisticsService {
   }
 
   private summarizePartnerCombinations(games: readonly GameV2[]): PartnerCombinationStatistic[] {
-    const combinations = new Map<string, { players: string[]; gameCount: number; score: number }>();
+    const combinations = new Map<string, { players: string[]; gameCount: number; tricks: number }>();
     for (const game of games) {
       for (const gift of game.gifts) {
         const input = gift.input;
@@ -113,9 +113,9 @@ export class StatisticsService {
         if (!firstPlayer || !secondPlayer) continue;
         const players = [firstPlayer.name, secondPlayer.name].sort((a, b) => a.localeCompare(b, 'nl'));
         const key = JSON.stringify(players);
-        const combination = combinations.get(key) ?? { players, gameCount: 0, score: 0 };
+        const combination = combinations.get(key) ?? { players, gameCount: 0, tricks: 0 };
         combination.gameCount += 1;
-        combination.score += (gift.scoreChanges[firstId] ?? 0) + (gift.scoreChanges[secondId] ?? 0);
+        combination.tricks += input.tricksTakenByRikkers;
         combinations.set(key, combination);
       }
     }
@@ -125,7 +125,7 @@ export class StatisticsService {
         key,
         players: combination.players,
         gameCount: combination.gameCount,
-        averageScore: combination.score / combination.gameCount,
+        averageTricks: combination.tricks / combination.gameCount,
       }))
       .sort((a, b) => b.gameCount - a.gameCount || a.players.join(', ').localeCompare(b.players.join(', '), 'nl'));
   }

@@ -79,7 +79,7 @@
     <div class="section-heading">
       <div>
         <h2 id="partner-statistics-title">Rik/Troel-partners</h2>
-        <p>Rik/Afrik en Troel; gemiddelde teamscore per handje</p>
+        <p>Rik/Afrik en Troel; gemiddeld aantal slagen van het rikteam per handje</p>
       </div>
     </div>
     @if (statistics().partnerCombinations.length) {
@@ -88,28 +88,28 @@
         <span class="highlight-label">Vaakst samengespeeld</span>
         @for (item of statistics().mostFrequentPartners; track item.key) {
         <strong>{{ item.players.join(' + ') }}</strong>
-        <span>{{ item.gameCount }} handjes · gemiddeld {{ formatAverage(item.averageScore) }} punten</span>
+        <span>{{ item.gameCount }} handjes · gemiddeld {{ formatAverage(item.averageTricks) }} slagen</span>
         }
       </article>
       <article class="contract-highlight">
         <span class="highlight-label">Minst vaak samengespeeld</span>
         @for (item of statistics().leastFrequentPartners; track item.key) {
         <strong>{{ item.players.join(' + ') }}</strong>
-        <span>{{ item.gameCount }} handjes · gemiddeld {{ formatAverage(item.averageScore) }} punten</span>
+        <span>{{ item.gameCount }} handjes · gemiddeld {{ formatAverage(item.averageTricks) }} slagen</span>
         }
       </article>
     </div>
     <div class="contract-table-wrap">
       <table class="contract-table">
         <thead>
-          <tr><th scope="col">Spelers</th><th scope="col">Handjes samen</th><th scope="col">Gemiddelde teamscore</th></tr>
+          <tr><th scope="col">Spelers</th><th scope="col">Handjes samen</th><th scope="col">Gem. slagen rikteam</th></tr>
         </thead>
         <tbody>
           @for (combination of statistics().partnerCombinations; track combination.key) {
           <tr>
             <th scope="row">{{ combination.players.join(' + ') }}</th>
             <td>{{ combination.gameCount }}</td>
-            <td>{{ formatAverage(combination.averageScore) }}</td>
+            <td>{{ formatAverage(combination.averageTricks) }}</td>
           </tr>
           }
         </tbody>
