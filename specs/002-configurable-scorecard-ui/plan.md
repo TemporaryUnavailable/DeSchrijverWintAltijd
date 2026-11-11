@@ -20,7 +20,7 @@ Extend the current Angular scorekeeper with named configurable scoring systems a
 
 **Target Platform**: Static Angular SPA on current desktop/mobile browsers. No application server or network connection for normal use.
 
-**Project Type**: Angular web application under `frontend/`; reserved .NET API and test directories at the repository root.
+**Project Type**: Angular web application under `frontend/`; reserved .NET API and test directories under `backend/`.
 
 **Performance Goals**: No remote calls or formal throughput SLO. Rules operate over at most five active players and 15 gifts; previews and score updates must remain immediate during table use.
 
@@ -61,13 +61,14 @@ frontend/
 └── src/
     ├── styles.css
     └── app/                       # Components, models, services, and tests
-src/
-└── DeSchrijverWintAltijd.Api/     # Reserved; no .NET project files yet
-tests/
-└── DeSchrijverWintAltijd.Api.Tests/ # Reserved; no .NET project files yet
+backend/
+├── src/
+│   └── DeSchrijverWintAltijd.Api/     # Reserved; no .NET project files yet
+└── tests/
+    └── DeSchrijverWintAltijd.Api.Tests/ # Reserved; no .NET project files yet
 ```
 
-**Structure Decision**: Keep the Angular workspace under `frontend/` and its `src/app` conventions; reserve `src/DeSchrijverWintAltijd.Api/` and `tests/DeSchrijverWintAltijd.Api.Tests/` for future .NET projects without adding backend code as part of this UI feature.
+**Structure Decision**: Keep the Angular workspace under `frontend/` and its `src/app` conventions; reserve `backend/src/DeSchrijverWintAltijd.Api/` and `backend/tests/DeSchrijverWintAltijd.Api.Tests/` for future .NET projects without adding backend code as part of this UI feature.
 
 ## Requirement-to-Test Map
 

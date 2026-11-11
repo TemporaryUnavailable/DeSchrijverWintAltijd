@@ -4,15 +4,16 @@ Een lokale scorekaart voor Rikken. Maak een spel met vier of vijf spelers, kies 
 
 ## Repositorystructuur
 
-Deze repository bevat de Angular-app en reserveert mappen voor een toekomstige .NET API:
+Deze repository bevat de Angular-app en reserveert een aparte mapstructuur voor de toekomstige .NET API:
 
 ```text
 /
 ├── frontend/                         # Angular-workspace
-├── src/
-│   └── DeSchrijverWintAltijd.Api/     # Gereserveerd voor de .NET API
-├── tests/
-│   └── DeSchrijverWintAltijd.Api.Tests/ # Gereserveerd voor .NET-tests
+├── backend/
+│   ├── src/
+│   │   └── DeSchrijverWintAltijd.Api/ # Gereserveerd voor de .NET API
+│   └── tests/
+│       └── DeSchrijverWintAltijd.Api.Tests/ # Gereserveerd voor .NET-tests
 └── .github/workflows/                # CI en deployment van de frontend
 ```
 
